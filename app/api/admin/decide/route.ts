@@ -4,13 +4,20 @@ import {
   sendMeetingEmail,
   sendRejectionEmail,
   sendCustomEmail,
+  sendNextStageEmail,
 } from "@/lib/email/resend";
 import { requireAdmin, logAuditEntry } from "@/lib/admin/access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type Action = "approve" | "schedule" | "reject" | "welcome" | "custom_email";
+type Action =
+  | "approve"
+  | "schedule"
+  | "reject"
+  | "welcome"
+  | "custom_email"
+  | "next_stage";
 type Kind = "talent_application" | "company_inquiry";
 
 export async function POST(request: Request) {
@@ -31,6 +38,7 @@ export async function POST(request: Request) {
     message?: string;
     ctaLabel?: string;
     ctaUrl?: string;
+    followUp?: boolean;
   };
   try {
     body = await request.json();
@@ -38,8 +46,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { kind, id, action, meetingAt, meetingLink, note, subject, message, ctaLabel, ctaUrl } =
-    body || ({} as any);
+  const {
+    kind,
+    id,
+    action,
+    meetingAt,
+    meetingLink,
+    note,
+    subject,
+    message,
+    ctaLabel,
+    ctaUrl,
+    followUp,
+  } = body || ({} as any);
   if (!kind || !id || !action) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -76,10 +95,52 @@ export async function POST(request: Request) {
 
   // 5) Branch on action
   if (action === "reject") {
+    // Save a full snapshot for records BEFORE deleting the application.
+    const { error: snapErr } = await sb.from("rejected_snapshots").insert({
+      source_table: table,
+      source_id: id,
+      email: recipientEmail,
+      full_name: recipientName,
+      reason: note || null,
+      snapshot: row,
+      rejected_by: ctx.userId,
+      rejected_by_email: ctx.email,
+    });
+    if (snapErr) {
+      return NextResponse.json(
+        { error: `Could not save record snapshot: ${snapErr.message}` },
+        { status: 500 }
+      );
+    }
+
+    // Notify the applicant, then permanently delete the application.
+    const emailRes = await sendRejectionEmail({
+      email: recipientEmail,
+      fullName: recipientName,
+      reason: note,
+    });
+
+    const { error: delErr } = await sb.from(table).delete().eq("id", id);
+    if (delErr) return NextResponse.json({ error: delErr.message }, { status: 500 });
+
+    await logAuditEntry(sb, {
+      actor_id: ctx.userId,
+      actor_email: ctx.email,
+      action: auditAction("reject"),
+      resource_type: kind,
+      resource_id: id,
+      summary: `Rejected & removed ${auditTargetLabel(row)} (snapshot saved)`,
+      metadata: { note: note || null, recipient: recipientEmail, snapshot_saved: true, deleted: true },
+    });
+    return NextResponse.json({ success: true, email: emailRes, deleted: true });
+  }
+
+  if (action === "next_stage") {
+    const newStatus = kind === "talent_application" ? "approved" : "qualified";
     const { error: updErr } = await sb
       .from(table)
       .update({
-        status: "rejected",
+        status: newStatus,
         decision_at: new Date().toISOString(),
         decided_by: userData.user.id,
         decision_note: note || null,
@@ -87,18 +148,20 @@ export async function POST(request: Request) {
       .eq("id", id);
     if (updErr) return NextResponse.json({ error: updErr.message }, { status: 500 });
 
-    const emailRes = await sendRejectionEmail({
+    const emailRes = await sendNextStageEmail({
       email: recipientEmail,
       fullName: recipientName,
-      reason: note,
+      roleLabel,
+      loginUrl,
+      customMessage: note,
     });
     await logAuditEntry(sb, {
       actor_id: ctx.userId,
       actor_email: ctx.email,
-      action: auditAction("reject"),
+      action: auditAction("next_stage"),
       resource_type: kind,
       resource_id: id,
-      summary: `Rejected ${auditTargetLabel(row)}`,
+      summary: `Advanced ${auditTargetLabel(row)} to the next stage`,
       metadata: { note: note || null, recipient: recipientEmail },
     });
     return NextResponse.json({ success: true, email: emailRes });
@@ -168,10 +231,20 @@ export async function POST(request: Request) {
       meetingAt: meetingDate,
       meetingLink,
       customMessage: note,
-      title:
-        kind === "talent_application"
-          ? "DeepTalent — Talent Intro Call"
-          : "DeepTalent — Partnership Call",
+      title: followUp
+        ? "DeepTalent — Follow-up Interview"
+        : kind === "talent_application"
+        ? "DeepTalent — Talent Intro Call"
+        : "DeepTalent — Partnership Call",
+      subject: followUp
+        ? `Your next DeepTalent interview — ${meetingDate.toLocaleString("en-GB", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            hour: "numeric",
+            minute: "2-digit",
+          })}`
+        : undefined,
     });
     await logAuditEntry(sb, {
       actor_id: ctx.userId,

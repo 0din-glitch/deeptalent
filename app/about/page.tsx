@@ -66,15 +66,15 @@ export default function AboutPage() {
                 <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
                   <Image
                     src="/images/founder.jpg"
-                    alt="Founder of DeepTalent"
+                    alt="Joshua Raymond Onifade, MD/CEO of DeepTalent"
                     fill
                     className="object-cover object-top"
                     sizes="(max-width: 1024px) 100vw, 33vw"
                   />
                 </div>
                 <div className="mt-5">
-                  <p className="font-bold text-gray-900 text-lg leading-tight">Founder &amp; CEO</p>
-                  <p className="text-[#3B5BDB] text-sm font-medium mt-0.5">DeepTalent Platform</p>
+                  <p className="font-bold text-gray-900 text-lg leading-tight">Joshua Raymond Onifade</p>
+                  <p className="text-[#3B5BDB] text-sm font-medium mt-0.5">MD/CEO DeepTalent Platform</p>
                   <a
                     href="https://www.linkedin.com/company/deeptalentplatform/"
                     target="_blank"
@@ -125,6 +125,79 @@ export default function AboutPage() {
                   If you are a serious professional from the Global South seeking world-class opportunities without leaving the continent — we are building for you.
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet the Leaders */}
+      <section className="py-20 px-6 md:px-12 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-2xl mx-auto text-center mb-16">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-xs font-semibold uppercase tracking-wide mb-4">
+              Leadership
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-balance">Meet the Leaders</h2>
+            <p className="text-gray-600 mt-4 text-pretty">
+              Driving innovation and building Africa&apos;s most trusted global talent infrastructure.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+            {/* Joshua Raymond Onifade */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-full max-w-xs mb-6">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image
+                    src="/images/founder.jpg"
+                    alt="Joshua Raymond Onifade"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Joshua Raymond Onifade</h3>
+              <p className="text-[#3B5BDB] font-semibold mt-2">MD/CEO</p>
+              <p className="text-gray-600 text-sm mt-3 leading-relaxed">
+                Leading the infrastructure revolution. Nearly 20 years in African structured finance, transforming how talent flows across continents.
+              </p>
+              <a
+                href="https://www.linkedin.com/company/deeptalentplatform/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 mt-4 text-sm text-gray-500 hover:text-[#3B5BDB] transition-colors"
+              >
+                <Linkedin className="size-4" /> LinkedIn
+              </a>
+            </div>
+
+            {/* Adedayo Setro A. */}
+            <div className="flex flex-col items-center text-center">
+              <div className="w-full max-w-xs mb-6">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image
+                    src="/images/leader-setro.jpg"
+                    alt="Adedayo Setro A., DMD of DeepTalent Platform"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Adedayo Setro A.</h3>
+              <p className="text-[#3B5BDB] font-semibold mt-2">DMD, DeepTalent Platform</p>
+              <p className="text-gray-600 text-sm mt-3 leading-relaxed">
+                Scaling excellence. Dedicated to building systems that connect Africa&apos;s finest professionals with global opportunities.
+              </p>
+              <a
+                href="https://www.linkedin.com/company/deeptalentplatform/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 mt-4 text-sm text-gray-500 hover:text-[#3B5BDB] transition-colors"
+              >
+                <Linkedin className="size-4" /> LinkedIn
+              </a>
             </div>
           </div>
         </div>

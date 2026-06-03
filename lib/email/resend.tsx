@@ -29,6 +29,25 @@ function resolveFromEmail(): string {
 
 export const FROM_EMAIL = resolveFromEmail();
 
+// All replies to DeepTalent mail route to this shared inbox.
+export const REPLY_TO_EMAIL = "mail@deeptalentplatform.com";
+
+// Small reusable footer line stating where replies go. Inserted into the
+// body of every transactional email so it's visible in the text/HTML itself.
+const REPLY_NOTICE_HTML = `<p style="margin:14px 0 0 0;font-size:12px;color:#9ca3af;line-height:1.6;">All replies go to <a href="mailto:${REPLY_TO_EMAIL}" style="color:#3B5BDB;text-decoration:none;">${REPLY_TO_EMAIL}</a>.</p>`;
+
+// Centered footer banner injected right before </body> in minified templates.
+const REPLY_NOTICE_BANNER = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:0 0 24px 0;"><p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.6;">All replies go to <a href="mailto:${REPLY_TO_EMAIL}" style="color:#3B5BDB;text-decoration:none;">${REPLY_TO_EMAIL}</a>.</p></td></tr></table>`;
+
+// Inserts the reply-routing notice just before the closing body tag so it
+// renders in the visible body of any HTML email.
+function withReplyNotice(html: string): string {
+  if (html.includes("</body>")) {
+    return html.replace("</body>", `${REPLY_NOTICE_BANNER}</body>`);
+  }
+  return html + REPLY_NOTICE_BANNER;
+}
+
 function getResendClient() {
   if (!process.env.RESEND_API_KEY) {
     console.error("[Resend] RESEND_API_KEY is not set");
@@ -57,6 +76,7 @@ export async function sendConfirmationEmail(
           </div>
           <p style="color: #9ca3af; font-size: 14px; margin-bottom: 10px;">Or copy this link: <a href="${confirmLink}" style="color: #3B5BDB;">${confirmLink}</a></p>
           <p style="color: #9ca3af; font-size: 12px; margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px;">This link expires in 24 hours. If you didn't sign up for DeepTalent, please ignore this email.</p>
+          ${REPLY_NOTICE_HTML}
         </body>
       </html>
     `;
@@ -64,6 +84,7 @@ export async function sendConfirmationEmail(
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
+      replyTo: REPLY_TO_EMAIL,
       subject: "Confirm your DeepTalent account",
       html,
     });
@@ -101,6 +122,7 @@ export async function sendPasswordResetEmail(
           </div>
           <p style="color: #9ca3af; font-size: 14px; margin-bottom: 10px;">Or copy this link: <a href="${resetLink}" style="color: #3B5BDB;">${resetLink}</a></p>
           <p style="color: #9ca3af; font-size: 12px; margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px;">This link expires in 1 hour. If you didn't request a password reset, please ignore this email or contact support.</p>
+          ${REPLY_NOTICE_HTML}
         </body>
       </html>
     `;
@@ -108,6 +130,7 @@ export async function sendPasswordResetEmail(
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
+      replyTo: REPLY_TO_EMAIL,
       subject: "Reset your DeepTalent password",
       html,
     });
@@ -196,7 +219,7 @@ export async function sendTemporaryPasswordEmail(
                 <div class="footer">
                   <p style="margin-bottom: 12px; font-weight: 500; color: #6b7280;">DeepTalent</p>
                   <p>© ${new Date().getFullYear()} DeepTalent. All rights reserved.</p>
-                  <p style="margin-top: 8px; opacity: 0.7;">This is an automated email. Please do not reply directly to this message.</p>
+                  <p style="margin-top: 8px; opacity: 0.7;">All replies go to ${REPLY_TO_EMAIL}.</p>
                 </div>
               </div>
             </div>
@@ -208,6 +231,7 @@ export async function sendTemporaryPasswordEmail(
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
+      replyTo: REPLY_TO_EMAIL,
       subject: "Your temporary password for DeepTalent",
       html,
     });
@@ -251,8 +275,9 @@ export async function sendWelcomeEmail(opts: {
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.email,
+      replyTo: REPLY_TO_EMAIL,
       subject: "Welcome to DeepTalent — your application is approved",
-      html: welcomeHtml(opts),
+      html: withReplyNotice(welcomeHtml(opts)),
     });
     if (result.error) {
       console.error("[Resend] Welcome email API error:", result.error);
@@ -307,6 +332,7 @@ export async function sendMeetingEmail(opts: {
   meetingLink: string;
   customMessage?: string;
   title?: string;
+  subject?: string;
 }) {
   try {
     const resend = getResendClient();
@@ -330,14 +356,17 @@ export async function sendMeetingEmail(opts: {
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.email,
-      subject: `Your DeepTalent meeting — ${meetingWhen}`,
-      html: meetingHtml({
-        fullName: opts.fullName,
-        meetingWhen,
-        meetingLink: opts.meetingLink,
-        calendarUrl,
-        customMessage: opts.customMessage,
-      }),
+      replyTo: REPLY_TO_EMAIL,
+      subject: opts.subject || `Your DeepTalent meeting — ${meetingWhen}`,
+      html: withReplyNotice(
+        meetingHtml({
+          fullName: opts.fullName,
+          meetingWhen,
+          meetingLink: opts.meetingLink,
+          calendarUrl,
+          customMessage: opts.customMessage,
+        })
+      ),
     });
     if (result.error) {
       console.error("[Resend] Meeting email API error:", result.error);
@@ -346,6 +375,51 @@ export async function sendMeetingEmail(opts: {
     return { success: true, messageId: result.data?.id || "sent", calendarUrl };
   } catch (error: any) {
     console.error("[Resend] Meeting email exception:", error?.message || error);
+    return { success: false, error: error?.message || String(error) };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Next-stage email — sent after an interview/meeting when the candidate or
+// partner is advanced to the next stage of the process.
+// ---------------------------------------------------------------------------
+export async function sendNextStageEmail(opts: {
+  email: string;
+  fullName: string;
+  roleLabel: string;
+  loginUrl: string;
+  customMessage?: string;
+}) {
+  try {
+    const resend = getResendClient();
+    const firstName = (opts.fullName || "there").split(" ")[0] || "there";
+    const customBlock = opts.customMessage
+      ? `<div style="background:#eef2ff;border-left:4px solid #3B5BDB;border-radius:6px;padding:16px 20px;margin:0 0 22px 0;font-size:14px;color:#1e3a8a;line-height:1.7;">${escapeHtml(
+          opts.customMessage
+        ).replace(/\n/g, "<br/>")}</div>`
+      : "";
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Good news from DeepTalent</title></head><body style="margin:0;padding:0;background-color:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;padding:24px 0;"><tr><td align="center"><table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.06);"><tr><td style="background:linear-gradient(135deg,#3B5BDB 0%,#2d42a6 100%);padding:44px 32px;text-align:center;color:#ffffff;"><p style="margin:0;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;opacity:.85;">DeepTalent</p><h1 style="margin:10px 0 0 0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">You&rsquo;re moving forward</h1><p style="margin:8px 0 0 0;font-size:15px;opacity:.92;">Great conversation &mdash; here&rsquo;s what&rsquo;s next.</p></td></tr><tr><td style="padding:40px 32px 8px 32px;"><p style="margin:0 0 16px 0;font-size:16px;font-weight:500;color:#111827;">Hi ${escapeHtml(
+      firstName
+    )},</p><p style="margin:0 0 18px 0;font-size:15px;line-height:1.7;color:#4b5563;">Thank you for taking the time to meet with the DeepTalent team. We&rsquo;re pleased to let you know that we&rsquo;d like to advance you to the next stage of our process as a ${escapeHtml(
+      opts.roleLabel
+    )}.</p>${customBlock}<p style="margin:0 0 28px 0;font-size:15px;line-height:1.7;color:#4b5563;">Our team will be in touch shortly with the details of the next step. In the meantime, keep your dashboard and profile up to date.</p><table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 12px auto;"><tr><td align="center" style="border-radius:8px;background:#3B5BDB;"><a href="${
+      opts.loginUrl
+    }" style="display:inline-block;padding:13px 36px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">Go to your dashboard</a></td></tr></table></td></tr><tr><td style="padding:18px 32px 32px 32px;border-top:1px solid #e5e7eb;text-align:center;"><p style="margin:18px 0 4px 0;font-size:13px;color:#6b7280;font-weight:500;">DeepTalent</p><p style="margin:0;font-size:12px;color:#9ca3af;">&copy; ${new Date().getFullYear()} DeepTalent Platform. All rights reserved.</p></td></tr></table></td></tr></table></body></html>`;
+
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: opts.email,
+      replyTo: REPLY_TO_EMAIL,
+      subject: "Good news — you're moving to the next stage with DeepTalent",
+      html: withReplyNotice(html),
+    });
+    if (result.error) {
+      console.error("[Resend] Next-stage email API error:", result.error);
+      return { success: false, error: result.error.message || JSON.stringify(result.error) };
+    }
+    return { success: true, messageId: result.data?.id || "sent" };
+  } catch (error: any) {
+    console.error("[Resend] Next-stage email exception:", error?.message || error);
     return { success: false, error: error?.message || String(error) };
   }
 }
@@ -435,11 +509,11 @@ export async function sendContactAutoReplyEmail(opts: {
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.email,
-      replyTo: "Mail@deeptalentplatform.com",
+      replyTo: REPLY_TO_EMAIL,
       subject: submittedSubject
         ? `We received your message — ${submittedSubject}`
         : "We received your message — DeepTalent",
-      html,
+      html: withReplyNotice(html),
     });
 
     if (result.error) {
@@ -470,8 +544,9 @@ export async function sendRejectionEmail(opts: {
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.email,
+      replyTo: REPLY_TO_EMAIL,
       subject: "Update on your DeepTalent application",
-      html,
+      html: withReplyNotice(html),
     });
     if (result.error) {
       console.error("[Resend] Rejection email API error:", result.error);
@@ -532,9 +607,9 @@ export async function sendCustomEmail(opts: {
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.email,
+      replyTo: REPLY_TO_EMAIL,
       subject: opts.subject,
-      html: customHtml(opts),
-      ...(opts.replyTo ? { replyTo: opts.replyTo } : {}),
+      html: withReplyNotice(customHtml(opts)),
     });
     if (result.error) {
       console.error("[Resend] Custom email API error:", result.error);
