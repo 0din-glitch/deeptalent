@@ -108,7 +108,11 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [openId, setOpenId] = useState<string | null>(null);
   const [actionModal, setActionModal] = useState<
-    | { type: "schedule" | "reject" | "approve" | "email"; row: Row }
+    | {
+        type: "schedule" | "reject" | "approve" | "email" | "next_stage";
+        row: Row;
+        followUp?: boolean;
+      }
     | null
   >(null);
   const [showAddRole, setShowAddRole] = useState(false);
@@ -325,27 +329,48 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-end gap-1">
-                      <ActionButton
-                        title="Schedule meeting"
-                        onClick={() => setActionModal({ type: "schedule", row: r })}
-                        color="blue"
-                      >
-                        <CalendarClock className="size-3.5" />
-                      </ActionButton>
-                      <ActionButton
-                        title="Approve & send welcome email"
-                        onClick={() => setActionModal({ type: "approve", row: r })}
-                        color="emerald"
-                      >
-                        <CheckCircle2 className="size-3.5" />
-                      </ActionButton>
-                      <ActionButton
-                        title="Reject"
-                        onClick={() => setActionModal({ type: "reject", row: r })}
-                        color="rose"
-                      >
-                        <XCircle className="size-3.5" />
-                      </ActionButton>
+                      {r.meeting_at ? (
+                        <>
+                          <ActionButton
+                            title="Forward to next stage"
+                            onClick={() => setActionModal({ type: "next_stage", row: r })}
+                            color="emerald"
+                          >
+                            <ChevronRight className="size-3.5" />
+                          </ActionButton>
+                          <ActionButton
+                            title="Schedule another interview"
+                            onClick={() => setActionModal({ type: "schedule", row: r, followUp: true })}
+                            color="blue"
+                          >
+                            <CalendarClock className="size-3.5" />
+                          </ActionButton>
+                        </>
+                      ) : (
+                        <>
+                          <ActionButton
+                            title="Schedule meeting"
+                            onClick={() => setActionModal({ type: "schedule", row: r })}
+                            color="blue"
+                          >
+                            <CalendarClock className="size-3.5" />
+                          </ActionButton>
+                          <ActionButton
+                            title="Approve & send welcome email"
+                            onClick={() => setActionModal({ type: "approve", row: r })}
+                            color="emerald"
+                          >
+                            <CheckCircle2 className="size-3.5" />
+                          </ActionButton>
+                          <ActionButton
+                            title="Reject"
+                            onClick={() => setActionModal({ type: "reject", row: r })}
+                            color="rose"
+                          >
+                            <XCircle className="size-3.5" />
+                          </ActionButton>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -355,7 +380,12 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
         )}
       </div>
 
-      <DetailDrawer kind={kind} row={openRow} onClose={() => setOpenId(null)} onAction={(t) => openRow && setActionModal({ type: t, row: openRow })} />
+      <DetailDrawer
+        kind={kind}
+        row={openRow}
+        onClose={() => setOpenId(null)}
+        onAction={(t, followUp) => openRow && setActionModal({ type: t, row: openRow, followUp })}
+      />
 
       <ActionModal
         kind={kind}
@@ -538,7 +568,10 @@ function DetailDrawer({
   kind: Kind;
   row: Row | null;
   onClose: () => void;
-  onAction: (type: "schedule" | "approve" | "reject" | "email") => void;
+  onAction: (
+    type: "schedule" | "approve" | "reject" | "email" | "next_stage",
+    followUp?: boolean
+  ) => void;
 }) {
   if (!row) return null;
   const isTalent = kind === "talent_application";
@@ -649,31 +682,57 @@ function DetailDrawer({
         </div>
 
         <footer className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-3 flex flex-wrap items-center gap-2">
-          <button
-            onClick={() => onAction("schedule")}
-            className="flex-1 min-w-[160px] h-10 rounded-lg bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2d42a6] inline-flex items-center justify-center gap-1.5"
-          >
-            <CalendarClock className="size-4" /> Schedule meeting
-          </button>
-          <button
-            onClick={() => onAction("email")}
-            className="h-10 px-4 rounded-lg bg-blue-50 text-[#3B5BDB] text-sm font-semibold hover:bg-blue-100 inline-flex items-center gap-1.5"
-            title="Send a custom email"
-          >
-            <Mail className="size-4" /> Email
-          </button>
-          <button
-            onClick={() => onAction("approve")}
-            className="h-10 px-4 rounded-lg bg-emerald-50 text-emerald-700 text-sm font-semibold hover:bg-emerald-100 inline-flex items-center gap-1.5"
-          >
-            <CheckCircle2 className="size-4" /> Approve
-          </button>
-          <button
-            onClick={() => onAction("reject")}
-            className="h-10 px-4 rounded-lg bg-rose-50 text-rose-700 text-sm font-semibold hover:bg-rose-100 inline-flex items-center gap-1.5"
-          >
-            <XCircle className="size-4" /> Reject
-          </button>
+          {row.meeting_at ? (
+            <>
+              <button
+                onClick={() => onAction("next_stage")}
+                className="flex-1 min-w-[160px] h-10 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 inline-flex items-center justify-center gap-1.5"
+              >
+                <ChevronRight className="size-4" /> Forward to next stage
+              </button>
+              <button
+                onClick={() => onAction("schedule", true)}
+                className="h-10 px-4 rounded-lg bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2d42a6] inline-flex items-center gap-1.5"
+              >
+                <CalendarClock className="size-4" /> Schedule another interview
+              </button>
+              <button
+                onClick={() => onAction("email")}
+                className="h-10 px-4 rounded-lg bg-blue-50 text-[#3B5BDB] text-sm font-semibold hover:bg-blue-100 inline-flex items-center gap-1.5"
+                title="Send a custom email"
+              >
+                <Mail className="size-4" /> Email
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => onAction("schedule")}
+                className="flex-1 min-w-[160px] h-10 rounded-lg bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2d42a6] inline-flex items-center justify-center gap-1.5"
+              >
+                <CalendarClock className="size-4" /> Schedule meeting
+              </button>
+              <button
+                onClick={() => onAction("email")}
+                className="h-10 px-4 rounded-lg bg-blue-50 text-[#3B5BDB] text-sm font-semibold hover:bg-blue-100 inline-flex items-center gap-1.5"
+                title="Send a custom email"
+              >
+                <Mail className="size-4" /> Email
+              </button>
+              <button
+                onClick={() => onAction("approve")}
+                className="h-10 px-4 rounded-lg bg-emerald-50 text-emerald-700 text-sm font-semibold hover:bg-emerald-100 inline-flex items-center gap-1.5"
+              >
+                <CheckCircle2 className="size-4" /> Approve
+              </button>
+              <button
+                onClick={() => onAction("reject")}
+                className="h-10 px-4 rounded-lg bg-rose-50 text-rose-700 text-sm font-semibold hover:bg-rose-100 inline-flex items-center gap-1.5"
+              >
+                <XCircle className="size-4" /> Reject
+              </button>
+            </>
+          )}
         </footer>
       </aside>
     </div>
