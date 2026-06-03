@@ -794,7 +794,11 @@ function ActionModal({
   onDone,
 }: {
   kind: Kind;
-  modal: { type: "schedule" | "approve" | "reject" | "email"; row: Row } | null;
+  modal: {
+    type: "schedule" | "approve" | "reject" | "email" | "next_stage";
+    row: Row;
+    followUp?: boolean;
+  } | null;
   onClose: () => void;
   onDone: () => void;
 }) {
@@ -810,22 +814,26 @@ function ActionModal({
   const [error, setError] = useState<string | null>(null);
 
   if (!modal) return null;
-  const { type, row } = modal;
+  const { type, row, followUp } = modal;
   const recipientName =
     kind === "talent_application" ? (row as TalentRow).full_name : (row as CompanyRow).contact_name;
 
   const titleMap = {
-    schedule: "Schedule a meeting",
+    schedule: followUp ? "Schedule another interview" : "Schedule a meeting",
     approve: "Approve & send welcome",
     reject: "Reject application",
     email: "Send custom email",
+    next_stage: "Forward to next stage",
   } as const;
 
   const descMap = {
-    schedule: `Pick a time and paste the meeting link. ${recipientName} will get a branded email with a Google Calendar add link.`,
+    schedule: followUp
+      ? `Set up a follow-up interview with ${recipientName}. They'll receive a branded email with the new time and a Google Calendar add link.`
+      : `Pick a time and paste the meeting link. ${recipientName} will get a branded email with a Google Calendar add link.`,
     approve: `Mark as approved and send the branded welcome email to ${recipientName}.`,
-    reject: `Mark as rejected. ${recipientName} will receive a polite rejection email — add a reason if you'd like to share it with them.`,
-    email: `Compose a one-off email to ${recipientName}. It's wrapped in the DeepTalent template and replies will route back to you.`,
+    reject: `Reject and permanently remove this application. A polite rejection email is sent to ${recipientName} and a snapshot is archived for your records.`,
+    email: `Compose a one-off email to ${recipientName}. It's wrapped in the DeepTalent template and replies route to mail@deeptalentplatform.com.`,
+    next_stage: `Advance ${recipientName} to the next stage after the meeting. They'll get a branded email letting them know they're moving forward.`,
   };
 
   async function submit() {
@@ -847,6 +855,7 @@ function ActionModal({
         // datetime-local gives us a local timestamp; convert to ISO via Date()
         payload.meetingAt = new Date(meetingAt).toISOString();
         payload.meetingLink = meetingLink;
+        if (followUp) payload.followUp = true;
       }
       if (type === "email") {
         if (!emailSubject.trim() || !emailMessage.trim()) {
@@ -902,7 +911,7 @@ function ActionModal({
               className={`size-9 rounded-lg flex items-center justify-center shrink-0 ${
                 type === "schedule"
                   ? "bg-blue-50 text-[#3B5BDB]"
-                  : type === "approve"
+                  : type === "approve" || type === "next_stage"
                   ? "bg-emerald-50 text-emerald-600"
                   : type === "reject"
                   ? "bg-rose-50 text-rose-600"
@@ -913,6 +922,8 @@ function ActionModal({
                 <CalendarClock className="size-4" />
               ) : type === "approve" ? (
                 <CheckCircle2 className="size-4" />
+              ) : type === "next_stage" ? (
+                <ChevronRight className="size-4" />
               ) : type === "reject" ? (
                 <XCircle className="size-4" />
               ) : (
@@ -1048,7 +1059,7 @@ function ActionModal({
             className={`h-10 px-5 rounded-lg text-sm font-semibold text-white inline-flex items-center gap-1.5 disabled:opacity-60 ${
               type === "schedule"
                 ? "bg-[#3B5BDB] hover:bg-[#2d42a6]"
-                : type === "approve"
+                : type === "approve" || type === "next_stage"
                 ? "bg-emerald-600 hover:bg-emerald-700"
                 : type === "reject"
                 ? "bg-rose-600 hover:bg-rose-700"
@@ -1061,6 +1072,8 @@ function ActionModal({
               <Send className="size-4" />
             ) : type === "approve" ? (
               <CheckCircle2 className="size-4" />
+            ) : type === "next_stage" ? (
+              <ChevronRight className="size-4" />
             ) : type === "reject" ? (
               <XCircle className="size-4" />
             ) : (
@@ -1072,6 +1085,8 @@ function ActionModal({
               ? "Send invite"
               : type === "approve"
               ? "Approve & send"
+              : type === "next_stage"
+              ? "Forward & notify"
               : type === "reject"
               ? "Reject & notify"
               : "Send email"}
