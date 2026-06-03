@@ -65,7 +65,7 @@ export default function AboutPage() {
               <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100">
                 <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
                   <Image
-                    src="/images/founder-joshua.jpg"
+                    src="/images/founder.jpg"
                     alt="Joshua Raymond Onifade, MD/CEO of DeepTalent"
                     fill
                     className="object-cover object-top"
@@ -149,7 +149,7 @@ export default function AboutPage() {
               <div className="w-full max-w-xs mb-6">
                 <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
                   <Image
-                    src="/images/founder-joshua.jpg"
+                    src="/images/founder.jpg"
                     alt="Joshua Raymond Onifade"
                     fill
                     className="object-cover object-top"
@@ -175,11 +175,14 @@ export default function AboutPage() {
             {/* Adedayo Setro A. */}
             <div className="flex flex-col items-center text-center">
               <div className="w-full max-w-xs mb-6">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-gradient-to-br from-[#3B5BDB]/10 to-[#8690FD]/10 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-5xl font-bold text-[#3B5BDB]/30 mb-2">AS</div>
-                    <p className="text-[#3B5BDB]/20 font-semibold">Adedayo Setro A.</p>
-                  </div>
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image
+                    src="/images/leader-setro.jpg"
+                    alt="Adedayo Setro A., DMD of DeepTalent Platform"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
                 </div>
               </div>
               <h3 className="text-2xl font-bold text-gray-900">Adedayo Setro A.</h3>
