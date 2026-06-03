@@ -155,7 +155,7 @@ function Hero() {
           >
             Connect with accredited and vetted experts in{" "}
             <span className="font-semibold text-white">finance</span>,{" "}
-            <span className="font-semibold text-white">technology</span> and more, and discover reliable work opportunities—all in one trusted marketplace.
+            <span className="font-semibold text-white">technology</span> and more—all in one trusted global infrastructure.
           </motion.p>
 
           <motion.div
