@@ -1,0 +1,82 @@
+<!--
+  DeepTalent — Meeting Call-Up Email Template
+  Sent when an admin schedules a meeting with an applicant or company.
+  Tokens replaced server-side:
+    {{full_name}}        — recipient display name
+    {{meeting_when}}     — formatted human-readable time (e.g. "Wed, May 21 2026 at 3:00 PM GMT")
+    {{meeting_link}}     — Zoom / Google Meet / Teams URL
+    {{calendar_url}}     — Google Calendar add-event URL
+    {{custom_message}}   — optional message from admin (HTML safe). Pass empty string when none.
+    {{year}}             — current year
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your DeepTalent meeting is scheduled</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;padding:24px 0;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px rgba(15,23,42,0.06);">
+        <tr>
+          <td style="background:linear-gradient(135deg,#3B5BDB 0%,#2d42a6 100%);padding:44px 32px;text-align:center;color:#ffffff;">
+            <p style="margin:0;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;opacity:.85;">DeepTalent</p>
+            <h1 style="margin:10px 0 0 0;font-size:28px;font-weight:700;letter-spacing:-0.5px;">You&rsquo;re booked in</h1>
+            <p style="margin:8px 0 0 0;font-size:15px;opacity:.92;">Meeting confirmation &amp; details below.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:40px 32px 8px 32px;">
+            <p style="margin:0 0 16px 0;font-size:16px;font-weight:500;color:#111827;">Hi {{full_name}},</p>
+            <p style="margin:0 0 22px 0;font-size:15px;line-height:1.7;color:#4b5563;">
+              Thanks for moving forward with DeepTalent. We&rsquo;ve scheduled a call to walk through your next steps. Please find the details below.
+            </p>
+            {{custom_message}}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px 8px 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border:1px solid #e2e8f0;border-radius:12px;padding:24px;">
+              <tr><td>
+                <p style="margin:0 0 6px 0;font-size:11px;font-weight:700;color:#3B5BDB;text-transform:uppercase;letter-spacing:0.7px;">When</p>
+                <p style="margin:0 0 18px 0;font-size:18px;font-weight:600;color:#0f172a;line-height:1.4;">{{meeting_when}}</p>
+                <p style="margin:0 0 6px 0;font-size:11px;font-weight:700;color:#3B5BDB;text-transform:uppercase;letter-spacing:0.7px;">Where</p>
+                <p style="margin:0;font-size:14px;line-height:1.6;color:#475569;word-break:break-all;"><a href="{{meeting_link}}" style="color:#3B5BDB;text-decoration:none;font-weight:500;">{{meeting_link}}</a></p>
+              </td></tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 32px 8px 32px;text-align:center;">
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+              <tr>
+                <td style="border-radius:8px;background:#3B5BDB;padding:0 6px 0 0;">
+                  <a href="{{meeting_link}}" style="display:inline-block;padding:13px 26px;font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">Join the meeting</a>
+                </td>
+                <td style="border-radius:8px;background:#ffffff;border:1px solid #cbd5e1;padding:0 6px 0 6px;">
+                  <a href="{{calendar_url}}" target="_blank" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:600;color:#3B5BDB;text-decoration:none;border-radius:8px;">Add to Google Calendar</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:28px 32px 32px 32px;">
+            <div style="background:#fff7ed;border-left:4px solid #f59e0b;border-radius:6px;padding:14px 18px;">
+              <p style="margin:0;font-size:13px;color:#78350f;line-height:1.6;"><strong style="color:#92400e;">Tip:</strong> Test your audio &amp; camera 2&ndash;3 minutes early. If you can&rsquo;t make it, just reply to this email and we&rsquo;ll find a new slot.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px 32px 32px;border-top:1px solid #e5e7eb;text-align:center;">
+            <p style="margin:20px 0 4px 0;font-size:13px;color:#6b7280;font-weight:500;">DeepTalent</p>
+            <p style="margin:0;font-size:12px;color:#9ca3af;">&copy; {{year}} DeepTalent Platform. All rights reserved.</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,205 @@
+{/* 
+DEEPTALENT BRANDED SUPABASE EMAIL TEMPLATES
+============================================
+
+Paste these HTML blocks into your Supabase Dashboard:
+  Authentication → Email Templates → [select template] → Source
+
+Available Supabase template variables:
+  {{ .ConfirmationURL }}  - The confirmation/magic-link URL
+  {{ .Email }}            - The recipient's email
+  {{ .Token }}            - The 6-digit OTP code (if using OTP)
+  {{ .TokenHash }}        - Hashed token (advanced)
+  {{ .SiteURL }}          - The site URL configured in Supabase
+  {{ .RedirectTo }}       - The redirect URL passed to the auth call
+
+To replace the logo, host an image at a public URL (e.g. on your Vercel
+deployment or in a public bucket) and swap the <img> src below.
+*/}
+
+============================================================
+TEMPLATE 1: "Confirm signup" (Authentication → Email Templates → Confirm signup)
+============================================================
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body style="margin:0;padding:0;background-color:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;line-height:1.6;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f9fafb;padding:40px 20px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.07);">
+            <!-- Header -->
+            <tr>
+              <td style="background:linear-gradient(135deg,#3B5BDB 0%,#2d42a6 100%);padding:48px 30px;text-align:center;">
+                <div style="display:inline-block;width:64px;height:64px;background:#ffffff;border-radius:16px;line-height:64px;text-align:center;margin-bottom:16px;">
+                  <span style="font-size:32px;font-weight:800;color:#3B5BDB;letter-spacing:-1px;">DT</span>
+                </div>
+                <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px;">Welcome to DeepTalent</h1>
+                <p style="margin:8px 0 0 0;color:rgba(255,255,255,0.9);font-size:14px;">Confirm your email to get started</p>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:40px 30px;">
+                <p style="margin:0 0 20px 0;font-size:16px;color:#1f2937;font-weight:500;">Hi there,</p>
+                <p style="margin:0 0 28px 0;font-size:15px;color:#6b7280;line-height:1.8;">
+                  Thanks for joining DeepTalent. Click the button below to confirm your email address and activate your account.
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:32px auto;">
+                  <tr>
+                    <td style="border-radius:8px;background-color:#3B5BDB;">
+                      <a href="{{ .ConfirmationURL }}"
+                         style="display:inline-block;padding:14px 40px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">
+                        Confirm Email
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin:32px 0 12px 0;font-size:13px;color:#9ca3af;">
+                  Or copy and paste this URL into your browser:
+                </p>
+                <p style="margin:0;font-size:13px;color:#3B5BDB;word-break:break-all;">
+                  <a href="{{ .ConfirmationURL }}" style="color:#3B5BDB;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+                </p>
+
+                <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0;" />
+
+                <p style="margin:0;font-size:13px;color:#9ca3af;line-height:1.6;">
+                  If you didn't create a DeepTalent account, you can safely ignore this email. This link expires in 24 hours.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td style="background:#f9fafb;padding:24px 30px;text-align:center;border-top:1px solid #e5e7eb;">
+                <p style="margin:0 0 6px 0;font-size:13px;color:#6b7280;font-weight:500;">DeepTalent</p>
+                <p style="margin:0;font-size:12px;color:#9ca3af;">&copy; 2026 DeepTalent. All rights reserved.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+
+============================================================
+TEMPLATE 2: "Reset password" (Authentication → Email Templates → Reset Password)
+============================================================
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body style="margin:0;padding:0;background-color:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;line-height:1.6;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f9fafb;padding:40px 20px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.07);">
+            <tr>
+              <td style="background:linear-gradient(135deg,#3B5BDB 0%,#2d42a6 100%);padding:48px 30px;text-align:center;">
+                <div style="display:inline-block;width:64px;height:64px;background:#ffffff;border-radius:16px;line-height:64px;text-align:center;margin-bottom:16px;">
+                  <span style="font-size:32px;font-weight:800;color:#3B5BDB;letter-spacing:-1px;">DT</span>
+                </div>
+                <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px;">Reset Your Password</h1>
+                <p style="margin:8px 0 0 0;color:rgba(255,255,255,0.9);font-size:14px;">Securely create a new password</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:40px 30px;">
+                <p style="margin:0 0 20px 0;font-size:16px;color:#1f2937;font-weight:500;">Hi there,</p>
+                <p style="margin:0 0 28px 0;font-size:15px;color:#6b7280;line-height:1.8;">
+                  We received a request to reset your DeepTalent password. Click the button below to set a new one.
+                </p>
+
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:32px auto;">
+                  <tr>
+                    <td style="border-radius:8px;background-color:#3B5BDB;">
+                      <a href="{{ .ConfirmationURL }}"
+                         style="display:inline-block;padding:14px 40px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">
+                        Reset Password
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin:32px 0 12px 0;font-size:13px;color:#9ca3af;">Or paste this URL into your browser:</p>
+                <p style="margin:0;font-size:13px;color:#3B5BDB;word-break:break-all;">
+                  <a href="{{ .ConfirmationURL }}" style="color:#3B5BDB;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+                </p>
+
+                <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0;" />
+
+                <div style="background:#fef2f2;border-left:4px solid #dc2626;padding:14px 16px;border-radius:6px;font-size:13px;color:#7f1d1d;line-height:1.6;">
+                  <strong style="color:#991b1b;">Security notice:</strong> If you didn't request this, ignore this email — your password won't change. This link expires in 1 hour.
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="background:#f9fafb;padding:24px 30px;text-align:center;border-top:1px solid #e5e7eb;">
+                <p style="margin:0 0 6px 0;font-size:13px;color:#6b7280;font-weight:500;">DeepTalent</p>
+                <p style="margin:0;font-size:12px;color:#9ca3af;">&copy; 2026 DeepTalent. All rights reserved.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
+
+============================================================
+TEMPLATE 3: "Magic Link" (Authentication → Email Templates → Magic Link)
+============================================================
+
+<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8" /></head>
+  <body style="margin:0;padding:0;background-color:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#374151;line-height:1.6;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f9fafb;padding:40px 20px;">
+      <tr><td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.07);">
+          <tr>
+            <td style="background:linear-gradient(135deg,#3B5BDB 0%,#2d42a6 100%);padding:48px 30px;text-align:center;">
+              <div style="display:inline-block;width:64px;height:64px;background:#ffffff;border-radius:16px;line-height:64px;text-align:center;margin-bottom:16px;">
+                <span style="font-size:32px;font-weight:800;color:#3B5BDB;letter-spacing:-1px;">DT</span>
+              </div>
+              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;">Your Magic Link</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:40px 30px;">
+              <p style="margin:0 0 28px 0;font-size:15px;color:#6b7280;line-height:1.8;">Click the button below to sign in to DeepTalent. No password needed.</p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:32px auto;">
+                <tr>
+                  <td style="border-radius:8px;background-color:#3B5BDB;">
+                    <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:14px 40px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px;">Sign In</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:32px 0 0 0;font-size:13px;color:#9ca3af;line-height:1.6;">If you didn't request this link, you can safely ignore this email.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#f9fafb;padding:24px 30px;text-align:center;border-top:1px solid #e5e7eb;">
+              <p style="margin:0 0 6px 0;font-size:13px;color:#6b7280;font-weight:500;">DeepTalent</p>
+              <p style="margin:0;font-size:12px;color:#9ca3af;">&copy; 2026 DeepTalent. All rights reserved.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+  </body>
+</html>
