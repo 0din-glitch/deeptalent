@@ -13,7 +13,14 @@ export function PayButton({ inquiryId }: { inquiryId: string }) {
     setError(null);
     try {
       const url = await startHireCheckout(inquiryId);
-      window.location.href = url;
+      // Stripe Checkout cannot render inside an iframe (e.g. the v0 preview),
+      // so open it in a new tab when we're framed; otherwise navigate directly.
+      if (typeof window !== "undefined" && window.self !== window.top) {
+        window.open(url, "_blank", "noopener,noreferrer");
+        setLoading(false);
+      } else {
+        window.location.href = url;
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
       setLoading(false);

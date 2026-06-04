@@ -153,17 +153,80 @@ export async function startHireCheckout(inquiryId: string) {
         quantity: 1,
       },
     ],
-    success_url: `${origin}/companies/hire/pay/success?inquiry=${quote.inquiryId}`,
+    success_url: `${origin}/companies/hire/pay/success?inquiry=${quote.inquiryId}&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/companies/hire/pay?inquiry=${quote.inquiryId}`,
     metadata: {
       inquiry_id: quote.inquiryId,
       role: quote.roleLabel,
       level: quote.level,
     },
+    subscription_data: {
+      metadata: {
+        inquiry_id: quote.inquiryId,
+        role: quote.roleLabel,
+        level: quote.level,
+      },
+    },
   });
 
   if (!session.url) {
     throw new Error("Could not start checkout. Please try again.");
   }
+
+  // Record the pending checkout session on the inquiry so the admin can see a
+  // payment was started even before it completes.
+  const sb = adminClient();
+  await sb
+    .from("company_inquiries")
+    .update({ stripe_session_id: session.id })
+    .eq("id", quote.inquiryId);
+
   return session.url;
+}
+
+/**
+ * Verify a completed Stripe Checkout session and record the payment on the
+ * inquiry so it surfaces in the admin dashboard. Safe to call repeatedly — it
+ * only marks the inquiry paid once the session is genuinely complete and paid.
+ */
+export async function confirmHirePayment(
+  sessionId: string
+): Promise<{ paid: boolean; amountUsd?: number }> {
+  if (!sessionId) return { paid: false };
+
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  const inquiryId =
+    (session.metadata?.inquiry_id as string | undefined) || undefined;
+  const isPaid =
+    session.payment_status === "paid" || session.status === "complete";
+
+  if (!inquiryId || !isPaid) {
+    return { paid: false };
+  }
+
+  const amountCents =
+    session.amount_total ?? session.amount_subtotal ?? null;
+
+  const sb = adminClient();
+  await sb
+    .from("company_inquiries")
+    .update({
+      payment_status: "paid",
+      paid_at: new Date().toISOString(),
+      amount_paid_cents: amountCents,
+      stripe_session_id: session.id,
+      stripe_subscription_id:
+        typeof session.subscription === "string" ? session.subscription : null,
+      stripe_customer_id:
+        typeof session.customer === "string" ? session.customer : null,
+      // Move the inquiry forward so the admin sees it as an active client.
+      status: "qualified",
+    })
+    .eq("id", inquiryId);
+
+  return {
+    paid: true,
+    amountUsd: amountCents != null ? Math.round(amountCents / 100) : undefined,
+  };
 }
