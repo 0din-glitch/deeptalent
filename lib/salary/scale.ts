@@ -1,8 +1,8 @@
 /**
- * DeepTalent — 30% Discounted Monthly Local-Market Salary Scale by Role, Market & Seniority
+ * DeepTalent — Monthly Local-Market Salary Scale by Role, Market & Seniority
  * Source: internal salary scale (2026), USD monthly.
  *
- * Each quoted figure is a 30%-discounted monthly rate versus the equivalent onshore
+ * Each quoted figure represents up to 50% in savings versus the equivalent onshore
  * monthly salary in the relevant developed market — the savings clients capture by
  * hiring the same caliber of talent through DeepTalent.
  */
