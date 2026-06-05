@@ -65,7 +65,7 @@ function ApplyLanding() {
             <div className="grid grid-cols-3 gap-3">
               <Stat n="3%" label="Acceptance rate" />
               <Stat n="15+" label="Roles supported" />
-              <Stat n="50%" label="Of onshore rate" />
+              <Stat n="50%" label="Up to, below onshore" />
             </div>
           </div>
 

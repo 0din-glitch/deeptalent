@@ -138,7 +138,7 @@ function CompanyBenefits() {
   const benefits = [
     { title: "Faster Hiring", desc: "Find qualified candidates in 72 hours, not 3 months" },
     { title: "Vetted Quality", desc: "Only top 1% of candidates make it through our process" },
-    { title: "Lower Costs", desc: "Reduce hiring costs by up to 50% compared to traditional recruitment" },
+    { title: "Lower Costs", desc: "Reduce hiring costs by up to 50% compared to onshore market rates" },
     { title: "Zero Risk", desc: "Quality guarantee means we replace underperformers" },
   ];
 

@@ -8,6 +8,7 @@ import {
   CalendarClock,
   CheckCircle2,
   ChevronRight,
+  CreditCard,
   ExternalLink,
   FileText,
   Globe,
@@ -87,6 +88,10 @@ type CompanyRow = {
   decision_note: string | null;
   meeting_at: string | null;
   meeting_link: string | null;
+  payment_status: string | null;
+  paid_at: string | null;
+  amount_paid_cents: number | null;
+  stripe_subscription_id: string | null;
 };
 
 type Row = TalentRow | CompanyRow;
@@ -294,7 +299,11 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <StatusBadge status={r.status} />
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <StatusBadge status={r.status} />
+                      {kind === "company_inquiry" &&
+                        (r as CompanyRow).payment_status === "paid" && <PaidBadge />}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-gray-600">
                     {r.meeting_at ? (
@@ -472,7 +481,7 @@ function SalaryScalePanel({ row }: { row: TalentRow }) {
         })}
       </div>
       <p className="text-[11px] text-gray-500 mt-3 leading-relaxed">
-        Indicative DeepTalent monthly rate (50% local-market, May 2026). Seniority inferred from
+        Indicative DeepTalent monthly rate (up to 50% below onshore, 2026). Seniority inferred from
         {row.years_experience != null ? ` ${row.years_experience} yrs experience.` : " applicant title."}
       </p>
     </div>
@@ -524,6 +533,15 @@ function StatusBadge({ status }: { status: string }) {
       }`}
     >
       {status}
+    </span>
+  );
+}
+
+function PaidBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+      <CreditCard className="size-3" />
+      Paid
     </span>
   );
 }
@@ -646,6 +664,58 @@ function DetailDrawer({
               {c.notes && (
                 <div className="bg-gray-50 border border-gray-100 rounded-lg p-3 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {c.notes}
+                </div>
+              )}
+            </Section>
+          )}
+
+          {!isTalent && (
+            <Section title="Payment">
+              {c.payment_status === "paid" ? (
+                <div className="rounded-lg border border-emerald-100 bg-emerald-50/60 p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CreditCard className="size-4 text-emerald-600" />
+                    <span className="text-sm font-semibold text-emerald-800">
+                      Subscription active
+                    </span>
+                  </div>
+                  <dl className="text-sm space-y-1.5">
+                    {c.amount_paid_cents != null && (
+                      <div className="flex items-center justify-between">
+                        <dt className="text-gray-500">Monthly amount</dt>
+                        <dd className="font-semibold text-gray-900">
+                          ${(c.amount_paid_cents / 100).toLocaleString("en-US")}/mo
+                        </dd>
+                      </div>
+                    )}
+                    {c.paid_at && (
+                      <div className="flex items-center justify-between">
+                        <dt className="text-gray-500">Paid on</dt>
+                        <dd className="font-medium text-gray-900">
+                          {new Date(c.paid_at).toLocaleString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })}
+                        </dd>
+                      </div>
+                    )}
+                    {c.stripe_subscription_id && (
+                      <div className="flex items-center justify-between gap-4">
+                        <dt className="text-gray-500 shrink-0">Subscription</dt>
+                        <dd className="font-mono text-xs text-gray-600 truncate">
+                          {c.stripe_subscription_id}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <CreditCard className="size-4 text-gray-400" />
+                  No payment received yet.
                 </div>
               )}
             </Section>
