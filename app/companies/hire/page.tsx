@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { submitHireInquiry } from "@/app/actions/hire-checkout";
 import { SiteFooter } from "@/components/site/site-footer";
-import { SENIORITY_LEVELS, priceForRoleLevel, type Seniority } from "@/lib/salary/scale";
+import { SENIORITY_LEVELS, priceForRoleLevel, SALARY_SCALE, type Seniority } from "@/lib/salary/scale";
 import { Loader2, CheckCircle2, Wallet, ShieldCheck } from "lucide-react";
 
 const ROLE_CATEGORIES = [
@@ -207,9 +207,21 @@ export default function CompanyHirePage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-5">
-                  <Field label="Role category" required>
+                  <Field label="Role" required>
                     <select
                       required
+                      value={form.role_title}
+                      onChange={(e) => update("role_title", e.target.value)}
+                      className="form-input"
+                    >
+                      <option value="">Select a role</option>
+                      {SALARY_SCALE.map((r) => (
+                        <option key={r.id} value={r.label}>{r.label}</option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Role category">
+                    <select
                       value={form.role_category}
                       onChange={(e) => update("role_category", e.target.value)}
                       className="form-input"
@@ -219,14 +231,6 @@ export default function CompanyHirePage() {
                         <option key={cat} value={cat}>{cat}</option>
                       ))}
                     </select>
-                  </Field>
-                  <Field label="Role title">
-                    <input
-                      value={form.role_title}
-                      onChange={(e) => update("role_title", e.target.value)}
-                      className="form-input"
-                      placeholder="e.g. Senior Cloud Engineer"
-                    />
                   </Field>
                   <Field label="Hiring urgency">
                     <select
