@@ -645,10 +645,10 @@ function WhyChooseUs() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 md:max-w-3xl">
           <h2 className="text-4xl md:text-5xl font-extrabold text-[#3B5BDB] tracking-tight leading-[1.1] mb-6">
-            Why Businesses Choose DeepTalent
+            Why Businesses Choose DeepTalent Platform
           </h2>
           <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-            Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
+            Stop settling for generalists. DeepTalent platform delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
           </p>
         </div>
 
@@ -874,7 +874,7 @@ function StrategicAdvantages() {
             href="/companies/hire"
             className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-[#3B5BDB] text-white font-semibold hover:bg-[#2f4ab8] hover:scale-105 transition-all shadow-lg"
           >
-            Start Hiring Now
+            Start Hiring on DeepTalent Platform
           </Link>
           <Link
             href="/talents"
@@ -1367,7 +1367,7 @@ function Footer() {
                 />
               </div>
               <p className="text-gray-400 text-sm mb-6 max-w-xs">
-                Connecting top-tier professionals with global opportunities. Pre-vetted talent, transparent hiring.
+                DeepTalent platform connects top-tier professionals with global opportunities. Pre-vetted talent, transparent hiring.
               </p>
               <div className="flex gap-3">
                 <a
