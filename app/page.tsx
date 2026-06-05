@@ -648,7 +648,7 @@ function WhyChooseUs() {
             Why Businesses Choose DeepTalent
           </h2>
           <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-            Stop settling for generalists. Deep Talent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
+            Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
           </p>
         </div>
 
@@ -1188,8 +1188,8 @@ function IndustryInsights() {
 function FaqSection() {
   const faqs = [
     {
-      question: "What is Deep Talent?",
-      answer: "Deep Talent is a specialized talent marketplace connecting businesses with the top 1% of pre-vetted remote specialists. Unlike broad freelance platforms, we focus on deep expertise, transparency, and direct high-value contracts.",
+      question: "What is DeepTalent?",
+      answer: "DeepTalent is a specialized talent marketplace connecting businesses with the top 1% of pre-vetted remote specialists. Unlike broad freelance platforms, we focus on deep expertise, transparency, and direct high-value contracts.",
     },
     {
       question: "How does the vetting process work?",
@@ -1217,7 +1217,7 @@ function FaqSection() {
     },
     {
       question: "Do you support full-time hiring?",
-      answer: "Yes. While many engagements start as contracts, we offer a simple 'buy-out' clause if you wish to bring a Deep Talent specialist onto your internal payroll permanently.",
+      answer: "Yes. While many engagements start as contracts, we offer a simple 'buy-out' clause if you wish to bring a DeepTalent specialist onto your internal payroll permanently.",
     },
   ];
 
@@ -1330,7 +1330,7 @@ function Footer() {
             variants={fadeInUp()}
             className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto"
           >
-            Join hundreds of companies scaling with Deep Talent specialists. Get matched with vetted experts in under 72 hours.
+            Join hundreds of companies scaling with DeepTalent specialists. Get matched with vetted experts in under 72 hours.
           </motion.p>
           <motion.div
             variants={fadeInUp()}
@@ -1460,7 +1460,7 @@ function Footer() {
       <div className="py-6 px-4 md:px-8 lg:px-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm">
-            © 2026 Deep Talent. All rights reserved.
+            © 2026 DeepTalent. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link href="/privacy" className="text-gray-500 hover:text-white text-sm">Privacy Policy</Link>
