@@ -723,8 +723,8 @@ interface Advantage {
 function StrategicAdvantages() {
   const advantages: Advantage[] = [
     {
-      title: "Elite Talent. 50% Less Cost.",
-      description: "Access top-tier professionals from emerging markets. You get senior-level output for the price of a local junior hire, with zero compromise on communication.",
+      title: "Elite Talent. 30% Less Cost.",
+      description: "Access top-tier professionals from emerging markets at a 30% discount to onshore rates — senior-level output with zero compromise on communication.",
       image: "/images/upfront-compensation.png",
       accent: "bg-blue-500/10 text-blue-600",
     },

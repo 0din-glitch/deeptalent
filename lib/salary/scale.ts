@@ -1,10 +1,10 @@
 /**
- * DeepTalent — 50% Monthly Local-Market Salary Scale by Role, Market & Seniority
- * Source: internal salary scale (May 2026), USD monthly.
+ * DeepTalent — 30% Discounted Monthly Local-Market Salary Scale by Role, Market & Seniority
+ * Source: internal salary scale (2026), USD monthly.
  *
- * "50% local-market" means our quoted figure represents roughly half of the equivalent
- * onshore monthly salary in the relevant developed market — the savings clients capture
- * by hiring the same caliber of talent through DeepTalent.
+ * Each quoted figure is a 30%-discounted monthly rate versus the equivalent onshore
+ * monthly salary in the relevant developed market — the savings clients capture by
+ * hiring the same caliber of talent through DeepTalent.
  */
 
 export type Seniority = "junior" | "mid" | "senior";
@@ -27,7 +27,7 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "fpa-analyst",
     label: "Elite Finance Analyst (FP&A / Strategic Finance)",
     shortLabel: "Finance Analyst (FP&A)",
-    usd: { junior: 3500, mid: 4750, senior: 6750 },
+    usd: { junior: 4900, mid: 6650, senior: 9450 },
     aliases: [
       "fp&a", "fpa", "fp and a", "financial planning", "strategic finance",
       "finance analyst", "financial analyst", "elite finance",
@@ -37,7 +37,7 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "kyc-aml",
     label: "KYC / AML Analyst (Compliance Monitoring)",
     shortLabel: "KYC / AML Analyst",
-    usd: { junior: 2250, mid: 3000, senior: 4000 },
+    usd: { junior: 3150, mid: 4200, senior: 5600 },
     aliases: [
       "kyc", "aml", "anti money laundering", "anti-money laundering",
       "compliance monitoring", "compliance analyst", "kyc analyst", "aml analyst",
@@ -48,21 +48,21 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "product-manager",
     label: "Product Manager",
     shortLabel: "Product Manager",
-    usd: { junior: 4000, mid: 5750, senior: 8000 },
+    usd: { junior: 5600, mid: 8050, senior: 11200 },
     aliases: ["product manager", "product owner", "pm", "product lead", "senior pm"],
   },
   {
     id: "project-manager",
     label: "Project Manager",
     shortLabel: "Project Manager",
-    usd: { junior: 2900, mid: 3900, senior: 5250 },
+    usd: { junior: 4060, mid: 5460, senior: 7350 },
     aliases: ["project manager", "program manager", "scrum master", "delivery manager"],
   },
   {
     id: "accountant",
     label: "Accountant / Bookkeeper",
     shortLabel: "Accountant / Bookkeeper",
-    usd: { junior: 2100, mid: 2900, senior: 3750 },
+    usd: { junior: 2940, mid: 4060, senior: 5250 },
     aliases: [
       "accountant", "bookkeeper", "bookkeeping", "general ledger", "accounting",
       "accounting and bookkeeping", "accounting & bookkeeping",
@@ -72,7 +72,7 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "cybersecurity-analyst",
     label: "Cybersecurity Analyst",
     shortLabel: "Cybersecurity Analyst",
-    usd: { junior: 3250, mid: 4400, senior: 6000 },
+    usd: { junior: 4550, mid: 6160, senior: 8400 },
     aliases: [
       "cybersecurity", "cyber security", "security analyst", "soc analyst",
       "infosec", "information security", "security engineer",
@@ -82,14 +82,14 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "bi-analyst",
     label: "Business Intelligence (BI) Analyst",
     shortLabel: "BI Analyst",
-    usd: { junior: 2750, mid: 3750, senior: 5000 },
+    usd: { junior: 3850, mid: 5250, senior: 7000 },
     aliases: ["bi analyst", "business intelligence", "tableau", "power bi", "looker"],
   },
   {
     id: "full-stack-developer",
     label: "Full-Stack Developer",
     shortLabel: "Full-Stack Developer",
-    usd: { junior: 3400, mid: 4950, senior: 6750 },
+    usd: { junior: 4760, mid: 6930, senior: 9450 },
     aliases: [
       "full stack", "full-stack", "fullstack", "frontend", "backend", "front end",
       "back end", "software engineer", "web developer", "react developer",
@@ -100,21 +100,21 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "credit-analyst",
     label: "Credit Analyst",
     shortLabel: "Credit Analyst",
-    usd: { junior: 2400, mid: 3250, senior: 4400 },
+    usd: { junior: 3360, mid: 4550, senior: 6160 },
     aliases: ["credit analyst", "credit risk", "underwriting", "loan analyst"],
   },
   {
     id: "data-analyst",
     label: "Data Analyst",
     shortLabel: "Data Analyst",
-    usd: { junior: 2600, mid: 3600, senior: 4900 },
+    usd: { junior: 3640, mid: 5040, senior: 6860 },
     aliases: ["data analyst", "analytics", "sql analyst", "reporting analyst"],
   },
   {
     id: "devops-cloud",
     label: "DevOps / Cloud Engineer",
     shortLabel: "DevOps / Cloud",
-    usd: { junior: 3900, mid: 5400, senior: 7500 },
+    usd: { junior: 5460, mid: 7560, senior: 10500 },
     aliases: [
       "devops", "cloud engineer", "site reliability", "sre", "platform engineer",
       "aws engineer", "kubernetes", "infrastructure", "terraform",
@@ -124,7 +124,7 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "ux-ui-designer",
     label: "UX / UI Designer",
     shortLabel: "UX / UI Designer",
-    usd: { junior: 3000, mid: 4100, senior: 5750 },
+    usd: { junior: 4200, mid: 5740, senior: 8050 },
     aliases: [
       "ux designer", "ui designer", "ux/ui", "product designer",
       "interaction designer", "figma", "visual designer",
@@ -134,7 +134,7 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "ai-prompt-engineer",
     label: "AI Prompt Engineer / Specialist",
     shortLabel: "AI Prompt Engineer",
-    usd: { junior: 3750, mid: 5500, senior: 8250 },
+    usd: { junior: 5250, mid: 7700, senior: 11550 },
     aliases: [
       "ai prompt", "prompt engineer", "llm engineer", "ai specialist",
       "ai automation", "ai automation specialist", "automation specialist",
@@ -145,7 +145,7 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "executive-assistant",
     label: "Executive / Operations Assistant",
     shortLabel: "Executive Assistant",
-    usd: { junior: 1750, mid: 2400, senior: 3250 },
+    usd: { junior: 2450, mid: 3360, senior: 4550 },
     aliases: [
       "executive assistant", "ea", "operations assistant", "ops assistant",
       "operational assistant", "executive operational assistant",
@@ -157,7 +157,7 @@ export const SALARY_SCALE: SalaryRow[] = [
     id: "customer-service",
     label: "Customer Service Representative",
     shortLabel: "Customer Service Rep",
-    usd: { junior: 1400, mid: 1850, senior: 2400 },
+    usd: { junior: 1960, mid: 2590, senior: 3360 },
     aliases: [
       "customer service", "customer support", "cs rep", "customer success",
       "help desk", "support rep", "call centre", "call center",

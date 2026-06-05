@@ -481,7 +481,7 @@ function SalaryScalePanel({ row }: { row: TalentRow }) {
         })}
       </div>
       <p className="text-[11px] text-gray-500 mt-3 leading-relaxed">
-        Indicative DeepTalent monthly rate (50% local-market, May 2026). Seniority inferred from
+        Indicative DeepTalent monthly rate (30% discounted local-market, 2026). Seniority inferred from
         {row.years_experience != null ? ` ${row.years_experience} yrs experience.` : " applicant title."}
       </p>
     </div>
