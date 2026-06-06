@@ -1,26 +1,46 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutGrid, User, FileText, Award, Briefcase } from "lucide-react";
+import Link from "next/link";
+import {
+  LayoutGrid,
+  User,
+  FileText,
+  Award,
+  Briefcase,
+  LayoutDashboard,
+  TrendingUp,
+} from "lucide-react";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 import { ResumesPanel } from "@/components/dashboard/resumes-panel";
 import { CertificationsPanel } from "@/components/dashboard/certifications-panel";
+import { TalentOverview } from "@/components/dashboard/talent-overview";
+import { SALARY_SCALE } from "@/lib/salary/scale";
 
-type Tab = "overview" | "profile" | "resumes" | "certifications" | "applications";
+type Tab = "overview" | "profile" | "resumes" | "certifications" | "applications" | "openRoles";
+
+const NAV: { id: Tab; label: string; icon: any }[] = [
+  { id: "overview", label: "Overview", icon: LayoutGrid },
+  { id: "profile", label: "Profile", icon: User },
+  { id: "resumes", label: "Resumes", icon: FileText },
+  { id: "certifications", label: "Certifications", icon: Award },
+  { id: "applications", label: "Applications", icon: Briefcase },
+  { id: "openRoles", label: "Open Roles", icon: TrendingUp },
+];
 
 export function TalentDashboard({
+  email,
   profile,
   applications,
   resumes,
   certifications,
-  overview,
   actions,
 }: {
+  email: string;
   profile: any;
   applications: any[];
   resumes: any[];
   certifications: any[];
-  overview: React.ReactNode;
   actions: {
     updateProfile: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
     uploadResume: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
@@ -32,73 +52,149 @@ export function TalentDashboard({
   };
 }) {
   const [tab, setTab] = useState<Tab>("overview");
+  const counts: Partial<Record<Tab, number>> = {
+    resumes: resumes.length,
+    certifications: certifications.length,
+    applications: applications.length,
+  };
 
   return (
-    <div>
-      <div className="flex items-center gap-1 mb-6 border-b border-gray-200 overflow-x-auto">
-        <TabButton icon={LayoutGrid} label="Overview" active={tab === "overview"} onClick={() => setTab("overview")} />
-        <TabButton icon={User} label="Profile" active={tab === "profile"} onClick={() => setTab("profile")} />
-        <TabButton icon={FileText} label="Resumes" count={resumes.length} active={tab === "resumes"} onClick={() => setTab("resumes")} />
-        <TabButton icon={Award} label="Certifications" count={certifications.length} active={tab === "certifications"} onClick={() => setTab("certifications")} />
-        <TabButton icon={Briefcase} label="Applications" count={applications.length} active={tab === "applications"} onClick={() => setTab("applications")} />
-      </div>
+    <div className="flex flex-col lg:flex-row max-w-[1400px] mx-auto w-full">
+      {/* Sidebar */}
+      <aside className="lg:w-60 shrink-0 border-b lg:border-b-0 lg:border-r border-gray-100 bg-white">
+        <nav className="flex lg:flex-col gap-1 p-3 lg:p-4 overflow-x-auto lg:sticky lg:top-0">
+          <p className="hidden lg:flex items-center gap-2 px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+            <LayoutDashboard className="size-3.5" /> Dashboard
+          </p>
+          {NAV.map((item) => {
+            const active = tab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setTab(item.id)}
+                className={`flex items-center gap-3 rounded-xl px-3 h-11 text-sm font-medium whitespace-nowrap transition-colors ${
+                  active ? "bg-[#3B5BDB] text-white" : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <item.icon className="size-4 shrink-0" />
+                <span>{item.label}</span>
+                {counts[item.id] != null && (
+                  <span
+                    className={`ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-semibold ${
+                      active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {counts[item.id]}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+      </aside>
 
-      {tab === "overview" && overview}
-      {tab === "profile" && <ProfileForm profile={profile} action={actions.updateProfile} />}
-      {tab === "resumes" && (
-        <ResumesPanel
-          resumes={resumes}
-          uploadAction={actions.uploadResume}
-          deleteAction={actions.deleteResume}
-          setPrimaryAction={actions.setPrimaryResume}
-          signUrlAction={actions.getResumeDownloadUrl}
-        />
-      )}
-      {tab === "certifications" && (
-        <CertificationsPanel
-          certifications={certifications}
-          addAction={actions.addCertification}
-          deleteAction={actions.deleteCertification}
-          signUrlAction={actions.getResumeDownloadUrl}
-        />
-      )}
-      {tab === "applications" && <ApplicationsTable applications={applications} />}
+      {/* Content */}
+      <div className="flex-1 min-w-0 px-4 md:px-8 py-8">
+        {tab === "overview" && (
+          <TalentOverview
+            email={email}
+            profile={profile}
+            applications={applications}
+            resumes={resumes}
+            certifications={certifications}
+            onNavigate={(t) => setTab(t)}
+          />
+        )}
+        {tab === "profile" && (
+          <Section title="Profile" subtitle="Keep your details current so recruiters can find you.">
+            <ProfileForm profile={profile} action={actions.updateProfile} />
+          </Section>
+        )}
+        {tab === "resumes" && (
+          <Section title="Resumes" subtitle="Upload and manage the resumes you send to recruiters.">
+            <ResumesPanel
+              resumes={resumes}
+              uploadAction={actions.uploadResume}
+              deleteAction={actions.deleteResume}
+              setPrimaryAction={actions.setPrimaryResume}
+              signUrlAction={actions.getResumeDownloadUrl}
+            />
+          </Section>
+        )}
+        {tab === "certifications" && (
+          <Section title="Certifications" subtitle="Showcase verified credentials that set you apart.">
+            <CertificationsPanel
+              certifications={certifications}
+              addAction={actions.addCertification}
+              deleteAction={actions.deleteCertification}
+              signUrlAction={actions.getResumeDownloadUrl}
+            />
+          </Section>
+        )}
+        {tab === "applications" && (
+          <Section title="Applications" subtitle="Track the status of every role you've applied to.">
+            <ApplicationsTable applications={applications} />
+          </Section>
+        )}
+        {tab === "openRoles" && (
+          <Section title="Open Roles" subtitle="In-demand roles hiring through DeepTalent, with live monthly rates.">
+            <OpenRoles profile={profile} />
+          </Section>
+        )}
+      </div>
     </div>
   );
 }
 
-function TabButton({
-  icon: Icon,
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  count?: number;
-  active: boolean;
-  onClick: () => void;
-}) {
+function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <button
-      onClick={onClick}
-      className={`inline-flex items-center gap-2 h-11 px-4 -mb-px border-b-2 text-sm font-medium transition-colors whitespace-nowrap ${
-        active ? "border-[#3B5BDB] text-[#3B5BDB]" : "border-transparent text-gray-600 hover:text-gray-900"
-      }`}
-    >
-      <Icon className="size-4" />
-      {label}
-      {typeof count === "number" && (
-        <span
-          className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-semibold ${
-            active ? "bg-[#3B5BDB]/10 text-[#3B5BDB]" : "bg-gray-100 text-gray-600"
-          }`}
-        >
-          {count}
-        </span>
-      )}
-    </button>
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+        {subtitle && <p className="text-gray-500 mt-1 text-sm">{subtitle}</p>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function OpenRoles({ profile }: { profile: any }) {
+  const yrs = Number(profile?.years_experience ?? 0);
+  const seniority: "junior" | "mid" | "senior" = yrs >= 6 ? "senior" : yrs >= 3 ? "mid" : "junior";
+
+  return (
+    <div className="grid sm:grid-cols-2 gap-4">
+      {SALARY_SCALE.map((r) => (
+        <div key={r.id} className="bg-white border border-gray-100 rounded-2xl p-5 flex flex-col">
+          <div className="flex items-start gap-3">
+            <div className="size-10 rounded-xl bg-[#3B5BDB]/10 text-[#3B5BDB] flex items-center justify-center shrink-0">
+              <TrendingUp className="size-5" />
+            </div>
+            <div className="min-w-0">
+              <h3 className="font-semibold text-gray-900 leading-tight">{r.label}</h3>
+              <p className="text-xs text-gray-400 mt-0.5 capitalize">{seniority} • Remote</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-end justify-between">
+            <div>
+              <p className="text-2xl font-bold text-gray-900">
+                ${r.usd[seniority].toLocaleString()}
+                <span className="text-sm font-normal text-gray-400">/mo</span>
+              </p>
+              <p className="text-[11px] text-gray-400">
+                Range ${r.usd.junior.toLocaleString()}–${r.usd.senior.toLocaleString()}
+              </p>
+            </div>
+            <Link
+              href="/talents/apply"
+              className="inline-flex h-9 px-4 items-center justify-center rounded-full bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2f49b2] transition-colors"
+            >
+              Apply
+            </Link>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -111,7 +207,7 @@ function ApplicationsTable({ applications }: { applications: any[] }) {
     );
   }
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden overflow-x-auto">
       <table className="w-full">
         <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
           <tr>
