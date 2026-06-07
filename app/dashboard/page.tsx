@@ -14,7 +14,7 @@ import {
   deleteCertification,
   getResumeDownloadUrl,
 } from "@/lib/dashboard/actions";
-import { Briefcase, Building2, FileText, User, Award, ExternalLink, MapPin, Phone, Mail, Globe } from "lucide-react";
+import { Briefcase, Building2, FileText, User } from "lucide-react";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -53,22 +53,20 @@ export default async function DashboardPage() {
       <ChangePasswordModal mustChange={profile?.must_change_password === true} />
       <DashboardHeader email={userData.user.email ?? ""} fullName={profile?.full_name ?? ""} role={profile?.role ?? "talent"} />
 
-      <section className="flex-1 px-6 md:px-12 py-10 max-w-7xl mx-auto w-full">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 text-balance">
-            Welcome back{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}
-          </h1>
-          <p className="text-gray-600 mt-1">
-            {isCompany
-              ? "Track your hiring inquiries and account."
-              : "Manage your profile, resumes, certifications, and applications."}
-          </p>
-        </div>
-
+      <section className="flex-1 w-full">
         {isCompany ? (
-          <CompanyDashboard inquiries={inquiries} />
+          <div className="px-6 md:px-12 py-10 max-w-7xl mx-auto w-full">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 text-balance">
+                Welcome back{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}
+              </h1>
+              <p className="text-gray-600 mt-1">Track your hiring inquiries and account.</p>
+            </div>
+            <CompanyDashboard inquiries={inquiries} />
+          </div>
         ) : (
           <TalentDashboard
+            email={userData.user.email ?? ""}
             profile={profile ?? {}}
             applications={applications}
             resumes={resumes}
@@ -82,15 +80,6 @@ export default async function DashboardPage() {
               deleteCertification,
               getResumeDownloadUrl,
             }}
-            overview={
-              <TalentOverview
-                email={userData.user.email ?? ""}
-                profile={profile ?? {}}
-                applications={applications}
-                resumes={resumes}
-                certifications={certifications}
-              />
-            }
           />
         )}
       </section>
@@ -98,139 +87,6 @@ export default async function DashboardPage() {
       <SiteFooter />
     </main>
   );
-}
-
-function TalentOverview({
-  email,
-  profile,
-  applications,
-  resumes,
-  certifications,
-}: {
-  email: string;
-  profile: any;
-  applications: any[];
-  resumes: any[];
-  certifications: any[];
-}) {
-  const primaryResume = resumes.find((r) => r.is_primary) || resumes[0];
-  const completion = profileCompletion(profile);
-
-  return (
-    <div className="space-y-8">
-      <div className="grid md:grid-cols-4 gap-4">
-        <StatCard label="Applications" value={applications.length} icon={Briefcase} />
-        <StatCard label="Resumes" value={resumes.length} icon={FileText} />
-        <StatCard label="Certifications" value={certifications.length} icon={Award} />
-        <StatCard label="Profile completion" value={`${completion}%`} icon={User} />
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-white border border-gray-100 rounded-2xl p-6">
-          <div className="flex items-start gap-5 flex-wrap">
-            <div className="size-16 rounded-2xl bg-[#3B5BDB]/10 text-[#3B5BDB] flex items-center justify-center text-xl font-semibold">
-              {(profile?.full_name || email || "?")
-                .split(/[\s@]+/)
-                .filter(Boolean)
-                .slice(0, 2)
-                .map((s: string) => s[0]?.toUpperCase())
-                .join("")}
-            </div>
-            <div className="min-w-0 flex-1">
-              <h2 className="text-xl font-bold text-gray-900 truncate">{profile?.full_name || "Add your name"}</h2>
-              {profile?.headline && <p className="text-gray-600 mt-0.5">{profile.headline}</p>}
-              <div className="flex items-center gap-x-4 gap-y-1 flex-wrap text-sm text-gray-500 mt-3">
-                <Info icon={Mail}>{email}</Info>
-                {profile?.phone && <Info icon={Phone}>{profile.phone}</Info>}
-                {(profile?.city || profile?.country || profile?.location) && (
-                  <Info icon={MapPin}>
-                    {[profile.city, profile.country].filter(Boolean).join(", ") || profile.location}
-                  </Info>
-                )}
-                {profile?.website_url && (
-                  <a href={profile.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[#3B5BDB] hover:underline">
-                    <Globe className="size-4" />
-                    Website
-                  </a>
-                )}
-              </div>
-              {(profile?.linkedin_url || profile?.portfolio_url || profile?.github_url) && (
-                <div className="flex items-center gap-2 mt-4 flex-wrap">
-                  {profile?.linkedin_url && <LinkPill href={profile.linkedin_url}>LinkedIn</LinkPill>}
-                  {profile?.portfolio_url && <LinkPill href={profile.portfolio_url}>Portfolio</LinkPill>}
-                  {profile?.github_url && <LinkPill href={profile.github_url}>GitHub</LinkPill>}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {profile?.bio && <p className="text-sm text-gray-700 mt-5 whitespace-pre-wrap">{profile.bio}</p>}
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-100">
-            <KvCell label="Role" value={profile?.role_category || profile?.primary_skill} />
-            <KvCell label="Specialization" value={profile?.specialization} />
-            <KvCell label="Experience" value={profile?.years_experience != null ? `${profile.years_experience}+ years` : null} />
-            <KvCell label="Availability" value={profile?.availability} />
-            <KvCell
-              label="Hourly rate"
-              value={profile?.hourly_rate ? `${profile.currency || "USD"} ${profile.hourly_rate}` : null}
-            />
-            <KvCell label="Verification" value={profile?.verification_status} />
-          </div>
-
-          {(profile?.skills?.length || profile?.languages?.length || profile?.tools?.length || profile?.secondary_skills?.length) ? (
-            <div className="mt-6 pt-6 border-t border-gray-100 space-y-4">
-              {profile?.skills?.length ? <Tags label="Skills" items={profile.skills} /> : null}
-              {!profile?.skills?.length && profile?.secondary_skills?.length ? (
-                <Tags label="Skills" items={profile.secondary_skills} />
-              ) : null}
-              {profile?.tools?.length ? <Tags label="Tools" items={profile.tools} /> : null}
-              {profile?.languages?.length ? <Tags label="Languages" items={profile.languages} /> : null}
-            </div>
-          ) : null}
-        </div>
-
-        <div className="space-y-4">
-          <div className="bg-white border border-gray-100 rounded-2xl p-5">
-            <h3 className="font-semibold text-gray-900 text-sm">Primary resume</h3>
-            {primaryResume ? (
-              <div className="mt-3">
-                <p className="font-medium text-gray-900 truncate">{primaryResume.title}</p>
-                <p className="text-xs text-gray-500 truncate">{primaryResume.file_name}</p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500 mt-2">Upload a resume in the Resumes tab.</p>
-            )}
-          </div>
-
-          <Link
-            href="/talents/apply"
-            className="block bg-[#3B5BDB] text-white rounded-2xl p-5 hover:bg-[#2f49b2] transition-colors"
-          >
-            <p className="font-bold">Apply for a new role</p>
-            <p className="text-white/80 text-sm mt-1">Submit a tailored application.</p>
-          </Link>
-
-          <Link
-            href="/contact"
-            className="block bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-shadow"
-          >
-            <p className="font-bold text-gray-900">Contact support</p>
-            <p className="text-gray-600 text-sm mt-1">Get help with your account or applications.</p>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function profileCompletion(p: any): number {
-  const fields = ["full_name", "headline", "phone", "country", "city", "bio", "linkedin_url", "role_category", "specialization", "years_experience"];
-  const filled = fields.filter((f) => {
-    const v = p?.[f];
-    return v != null && String(v).trim() !== "";
-  }).length;
-  return Math.round((filled / fields.length) * 100);
 }
 
 function CompanyDashboard({ inquiries }: { inquiries: any[] }) {
@@ -309,53 +165,6 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: string |
       <div>
         <p className="text-sm text-gray-500">{label}</p>
         <p className="text-2xl font-bold text-gray-900">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-function Info({ icon: Icon, children }: { icon: any; children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <Icon className="size-4" />
-      {children}
-    </span>
-  );
-}
-
-function LinkPill({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 px-3 h-8 rounded-full bg-gray-100 text-gray-700 text-xs font-medium hover:bg-gray-200"
-    >
-      {children}
-      <ExternalLink className="size-3" />
-    </a>
-  );
-}
-
-function KvCell({ label, value }: { label: string; value: string | number | null | undefined }) {
-  return (
-    <div>
-      <p className="text-[11px] uppercase tracking-wide text-gray-400 font-medium">{label}</p>
-      <p className="text-sm text-gray-900 mt-0.5">{value || "—"}</p>
-    </div>
-  );
-}
-
-function Tags({ label, items }: { label: string; items: string[] }) {
-  return (
-    <div>
-      <p className="text-[11px] uppercase tracking-wide text-gray-400 font-medium mb-2">{label}</p>
-      <div className="flex flex-wrap gap-2">
-        {items.map((s) => (
-          <span key={s} className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-xs font-medium">
-            {s}
-          </span>
-        ))}
       </div>
     </div>
   );
