@@ -9,6 +9,7 @@ import { ApprovedTalentTab } from "@/components/admin/approved-talent-tab";
 import { ApprovalsTab } from "@/components/admin/approvals-tab";
 import { ActivityTab } from "@/components/admin/activity-tab";
 import { ContentTab } from "@/components/admin/content-tab";
+import { InterviewsTab } from "@/components/admin/interviews-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 
 type Message = {
@@ -33,7 +34,9 @@ type LegacyFile = {
   migrated_at: string;
 };
 
-type Tab = "users" | "applications" | "approved_talent" | "inquiries" | "messages" | "files" | "content" | "approvals" | "activity";
+type Tab = "users" | "applications" | "approved_talent" | "interviews" | "inquiries" | "messages" | "files" | "content" | "approvals" | "activity";
+
+const interviewFetcher = (url: string) => fetch(url).then((r) => r.json());
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -78,6 +81,13 @@ export function AdminTabs({
   const approvedCount =
     (appData?.rows ?? applications).filter((r: any) => r?.status === "approved").length;
 
+  const { data: interviewData } = useSWR<{ rows: any[] }>(
+    "/api/admin/interviews",
+    interviewFetcher,
+    { refreshInterval: 60_000 }
+  );
+  const interviewCount = interviewData?.rows?.length ?? 0;
+
   return (
     <div>
       <div className="flex items-center gap-1 mb-5 border-b border-gray-200 overflow-x-auto">
@@ -99,6 +109,9 @@ export function AdminTabs({
         </TabButton>
         <TabButton active={tab === "messages"} onClick={() => setTab("messages")} count={messages.length}>
           Contact messages
+        </TabButton>
+        <TabButton active={tab === "interviews"} onClick={() => setTab("interviews")} count={interviewCount}>
+          AI interviews
         </TabButton>
         <TabButton active={tab === "files"} onClick={() => setTab("files")} count={files.length}>
           Files
@@ -125,6 +138,7 @@ export function AdminTabs({
       {tab === "approved_talent" && <ApprovedTalentTab />}
       {tab === "inquiries" && <SubmissionsTab kind="company_inquiry" />}
       {tab === "content" && <ContentTab />}
+      {tab === "interviews" && <InterviewsTab />}
       {tab === "approvals" && <ApprovalsTab />}
       {tab === "activity" && <ActivityTab />}
       {tab === "messages" && (

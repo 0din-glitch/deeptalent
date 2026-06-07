@@ -11,6 +11,7 @@
     "@react-email/render": "^2.0.8",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
+    "ai": "^6.0.197",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
     "motion": "^12.38.0",
@@ -25,7 +26,8 @@
     "server-only": "^0.0.1",
     "stripe": "^18.5.0",
     "swr": "^2.4.1",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@neondatabase/serverless": "^1.1.0",
