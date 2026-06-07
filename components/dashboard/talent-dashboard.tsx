@@ -34,6 +34,7 @@ export function TalentDashboard({
   applications,
   resumes,
   certifications,
+  interview,
   actions,
 }: {
   email: string;
@@ -41,6 +42,7 @@ export function TalentDashboard({
   applications: any[];
   resumes: any[];
   certifications: any[];
+  interview: any | null;
   actions: {
     updateProfile: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
     uploadResume: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
@@ -102,6 +104,7 @@ export function TalentDashboard({
             applications={applications}
             resumes={resumes}
             certifications={certifications}
+            interview={interview}
             onNavigate={(t) => setTab(t)}
           />
         )}

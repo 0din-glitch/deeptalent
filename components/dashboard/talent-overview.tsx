@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   FileText,
   Lightbulb,
+  Mic,
   TrendingUp,
   User,
 } from "lucide-react";
@@ -33,6 +34,7 @@ type Props = {
   applications: any[];
   resumes: any[];
   certifications: any[];
+  interview: any | null;
   onNavigate: (tab: "profile" | "resumes" | "certifications" | "applications" | "openRoles") => void;
 };
 
@@ -63,6 +65,7 @@ export function TalentOverview({
   applications,
   resumes,
   certifications,
+  interview,
   onNavigate,
 }: Props) {
   const completion = profileCompletion(profile);
@@ -143,6 +146,8 @@ export function TalentOverview({
         </h1>
         <p className="text-gray-500 mt-1">Here&apos;s how your DeepTalent profile is performing.</p>
       </div>
+
+      <InterviewBanner interview={interview} />
 
       {/* Top row: profile strength + activity + application chart */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -407,6 +412,63 @@ function buildTips({
   });
 
   return tips.slice(0, 6);
+}
+
+function InterviewBanner({ interview }: { interview: any | null }) {
+  const completed = interview?.status === "completed";
+
+  if (completed) {
+    const score = interview.overall_score ?? null;
+    const band = interview.score_band ?? null;
+    const roles = Array.isArray(interview.qualified_roles) ? interview.qualified_roles.length : 0;
+    return (
+      <div className="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="size-11 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0">
+          <CheckCircle2 className="size-6" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold text-gray-900">AI interview completed</h3>
+          <p className="text-sm text-gray-600 mt-0.5">
+            {score != null ? (
+              <>
+                You scored <span className="font-semibold text-gray-900">{score}/100</span>
+                {band ? <span className="capitalize"> ({band})</span> : null}
+                {roles > 0 ? ` · qualified for ${roles} role${roles === 1 ? "" : "s"}` : ""}.
+              </>
+            ) : (
+              "Your interview has been recorded and is being reviewed."
+            )}
+          </p>
+        </div>
+        <Link
+          href="/interview"
+          className="inline-flex h-10 px-5 items-center justify-center rounded-full border border-emerald-300 bg-white text-emerald-700 text-sm font-semibold hover:bg-emerald-50 transition-colors shrink-0"
+        >
+          Retake interview
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl bg-[#3B5BDB] p-5 flex flex-col sm:flex-row sm:items-center gap-4 text-white">
+      <div className="size-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+        <Mic className="size-6" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <h3 className="font-semibold">Complete your AI interview</h3>
+        <p className="text-sm text-white/80 mt-0.5">
+          A short voice interview helps us match you to the right roles and seniority. Takes about 5 minutes.
+        </p>
+      </div>
+      <Link
+        href="/interview"
+        className="inline-flex h-10 px-5 items-center justify-center rounded-full bg-white text-[#3B5BDB] text-sm font-semibold hover:bg-white/90 transition-colors shrink-0"
+      >
+        Start interview
+      </Link>
+    </div>
+  );
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
