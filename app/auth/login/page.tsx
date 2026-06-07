@@ -69,8 +69,18 @@ function LoginForm() {
       } else if (next) {
         // Honor explicit return target (e.g. /talents/apply#apply)
         router.push(next);
-      } else {
+      } else if (profile?.role === "company") {
         router.push("/dashboard");
+      } else {
+        // Talent: send to the AI interview unless they've already completed one.
+        const { data: interview } = await supabase
+          .from("talent_interviews")
+          .select("id")
+          .eq("user_id", userData.user.id)
+          .eq("status", "completed")
+          .limit(1)
+          .maybeSingle();
+        router.push(interview ? "/dashboard" : "/interview");
       }
       router.refresh();
     }
