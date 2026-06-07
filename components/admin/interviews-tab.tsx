@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import useSWR from "swr";
 import {
   Loader2,
@@ -101,8 +101,8 @@ export function InterviewsTab() {
           {rows.map((r) => {
             const isOpen = expanded === r.id;
             return (
-              <>
-                <tr key={r.id} className="hover:bg-gray-50 align-top">
+              <Fragment key={r.id}>
+                <tr className="hover:bg-gray-50 align-top">
                   <td className="px-6 py-4">
                     <p className="font-medium text-gray-900">{r.candidate_name}</p>
                     <p className="text-xs text-gray-500">{r.email || "—"}</p>
@@ -168,7 +168,7 @@ export function InterviewsTab() {
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             );
           })}
         </tbody>
