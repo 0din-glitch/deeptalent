@@ -329,6 +329,19 @@ export function InterviewFlow({
     [cancelSpeak, interviewId, fullName, specialization, roleCategory, skills, years],
   );
 
+  // Attach the live camera stream to the <video> element once the interview
+  // UI is actually mounted. initCamera() runs during the "consent" phase, before
+  // the <video> exists, so we (re)bind the stream here whenever it's available.
+  useEffect(() => {
+    if (phase !== "interview") return;
+    const el = videoRef.current;
+    const stream = streamRef.current;
+    if (el && stream && el.srcObject !== stream) {
+      el.srcObject = stream;
+      el.play().catch(() => {});
+    }
+  }, [phase, cameraReady]);
+
   // Cleanup media on unmount.
   useEffect(() => {
     return () => {
