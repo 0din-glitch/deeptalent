@@ -36,17 +36,25 @@ export default async function DashboardPage() {
 
   const isCompany = profile?.role === "company";
 
-  const [appsRes, inqRes, resumesRes, certsRes] = await Promise.all([
+  const [appsRes, inqRes, resumesRes, certsRes, interviewRes] = await Promise.all([
     supabase.from("talent_applications").select("*").eq("user_id", userData.user.id).order("created_at", { ascending: false }),
     supabase.from("company_inquiries").select("*").eq("user_id", userData.user.id).order("created_at", { ascending: false }),
     supabase.from("talent_resumes").select("*").eq("user_id", userData.user.id).order("created_at", { ascending: false }),
     supabase.from("talent_certifications").select("*").eq("user_id", userData.user.id).order("created_at", { ascending: false }),
+    supabase
+      .from("talent_interviews")
+      .select("id, status, overall_score, score_band, qualified_roles, completed_at")
+      .eq("user_id", userData.user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const applications = appsRes.data ?? [];
   const inquiries = inqRes.data ?? [];
   const resumes = resumesRes.data ?? [];
   const certifications = certsRes.data ?? [];
+  const interview = interviewRes.data ?? null;
 
   return (
     <main className="bg-gray-50 min-h-screen flex flex-col">
@@ -71,6 +79,7 @@ export default async function DashboardPage() {
             applications={applications}
             resumes={resumes}
             certifications={certifications}
+            interview={interview}
             actions={{
               updateProfile,
               uploadResume,
