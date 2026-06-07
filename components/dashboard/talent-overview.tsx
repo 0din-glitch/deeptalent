@@ -205,7 +205,10 @@ export function TalentOverview({
                 <Tooltip
                   cursor={{ stroke: "#e5e7eb" }}
                   contentStyle={{ borderRadius: 12, border: "1px solid #eee", fontSize: 12 }}
-                  formatter={(v: number) => [`${v} application${v === 1 ? "" : "s"}`, ""]}
+                  formatter={(v) => {
+                    const n = Number(v);
+                    return [`${n} application${n === 1 ? "" : "s"}`, ""] as [string, string];
+                  }}
                 />
                 <Area type="monotone" dataKey="count" stroke={BRAND} strokeWidth={2.5} fill="url(#appFill)" />
               </AreaChart>
@@ -391,7 +394,7 @@ function buildTips({
     body:
       applications.length >= 3
         ? `You've submitted ${applications.length} applications${approved ? `, with ${approved} approved` : ""}. Applying regularly keeps you top of mind.`
-        : "Applying to 3–5 well-matched roles per week meaningfully increases interview odds.",
+        : "Applying to 3���5 well-matched roles per week meaningfully increases interview odds.",
     done: applications.length >= 3,
   });
 
