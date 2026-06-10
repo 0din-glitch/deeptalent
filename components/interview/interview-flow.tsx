@@ -246,18 +246,25 @@ export function InterviewFlow({
     startListening();
   }
 
-  function handleNext() {
+  function handleNext(answerText: string) {
     const finalTranscript = stopListening();
+    // Use speech transcript if available, otherwise use the manually typed text
+    const transcript = finalTranscript || answerText;
+    if (!transcript.trim()) {
+      setError("Please speak an answer or type one in the text field below.");
+      return;
+    }
     const q = questions[current];
     const draft: AnswerDraft = {
       questionId: q.id,
       question: q.question,
       focus: q.focus,
-      transcript: finalTranscript,
+      transcript,
     };
     const nextAnswers = [...answers, draft];
     setAnswers(nextAnswers);
     setStage("idle");
+    setError(null);
 
     if (current + 1 < questions.length) {
       const next = current + 1;
@@ -404,7 +411,7 @@ export function InterviewFlow({
             interim={interim}
             onReplay={() => askQuestion(questions[current])}
             onStartAnswer={handleStartAnswer}
-            onNext={handleNext}
+            onNext={(answerText) => handleNext(answerText)}
           />
         )}
 
@@ -715,14 +722,18 @@ function InterviewStep(props: {
   interim: string;
   onReplay: () => void;
   onStartAnswer: () => void;
-  onNext: () => void;
+  onNext: (answerText: string) => void;
 }) {
   const {
     videoRef, cameraReady, loadingQuestions, questions, current, stage,
     speaking, listening, transcript, interim, onReplay, onStartAnswer, onNext,
   } = props;
+  const [manualText, setManualText] = useState("");
   const q = questions[current];
   const isLast = current === questions.length - 1;
+  
+  // Use speech transcript if available, otherwise use manual text
+  const finalAnswer = transcript || manualText;
 
   return (
     <div className="space-y-5">
@@ -786,6 +797,21 @@ function InterviewStep(props: {
               </div>
             )}
 
+            {/* Manual text input for typing or editing answer */}
+            {stage === "answering" && (
+              <div className="mt-4 space-y-2">
+                <label className="block text-xs font-semibold text-muted-foreground">
+                  Or type/edit your answer:
+                </label>
+                <textarea
+                  value={manualText}
+                  onChange={(e) => setManualText(e.target.value)}
+                  placeholder="Type your answer here if speech recognition isn't working…"
+                  className="w-full form-input min-h-24 resize-none"
+                />
+              </div>
+            )}
+
             <div className="flex flex-wrap items-center gap-3 mt-5">
               <button
                 onClick={onReplay}
@@ -805,7 +831,7 @@ function InterviewStep(props: {
                 </button>
               ) : (
                 <button
-                  onClick={onNext}
+                  onClick={() => onNext(manualText)}
                   className="flex-1 min-w-40 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2"
                 >
                   {isLast ? (
