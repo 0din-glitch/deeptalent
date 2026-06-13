@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -60,35 +59,8 @@ export default function AboutPage() {
           </div>
 
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Image card */}
-            <aside className="lg:col-span-4 lg:sticky lg:top-28">
-              <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100">
-                <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
-                  <Image
-                    src="/images/founder.jpg"
-                    alt="Joshua Raymond Onifade, MD/CEO of DeepTalent"
-                    fill
-                    className="object-cover object-top"
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                  />
-                </div>
-                <div className="mt-5">
-                  <p className="font-bold text-gray-900 text-lg leading-tight">Joshua Raymond Onifade</p>
-                  <p className="text-[#3B5BDB] text-sm font-medium mt-0.5">MD/CEO DeepTalent Platform</p>
-                  <a
-                    href="https://www.linkedin.com/company/deeptalentplatform/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 mt-3 text-sm text-gray-500 hover:text-[#3B5BDB] transition-colors"
-                  >
-                    <Linkedin className="size-4" /> Connect on LinkedIn
-                  </a>
-                </div>
-              </div>
-            </aside>
-
-            {/* Speech */}
-            <div className="lg:col-span-8">
+            {/* Removed image card - now just showing text */}
+            <div className="lg:col-span-8 lg:col-start-1">
               <Quote className="size-10 text-[#3B5BDB]/20 mb-4" />
               <div className="space-y-5 text-gray-700 leading-relaxed text-pretty text-[17px]">
                 <p>
@@ -146,17 +118,6 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             {/* Joshua Raymond Onifade */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs mb-6">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-                  <Image
-                    src="/images/founder.jpg"
-                    alt="Joshua Raymond Onifade"
-                    fill
-                    className="object-cover object-top"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
               <h3 className="text-2xl font-bold text-gray-900">Joshua Raymond Onifade</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">MD/CEO</p>
               <p className="text-gray-600 text-sm mt-3 leading-relaxed">
@@ -174,17 +135,6 @@ export default function AboutPage() {
 
             {/* Adedayo Setro A. */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-full max-w-xs mb-6">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-                  <Image
-                    src="/images/leader-setro.jpg"
-                    alt="Adedayo Setro A., DMD of DeepTalent Platform"
-                    fill
-                    className="object-cover object-top"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
               <h3 className="text-2xl font-bold text-gray-900">Adedayo Setro A.</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">DMD, DeepTalent Platform</p>
               <p className="text-gray-600 text-sm mt-3 leading-relaxed">
