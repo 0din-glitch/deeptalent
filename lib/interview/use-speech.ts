@@ -104,6 +104,8 @@ export function useSpeechRecognition() {
   const [interim, setInterim] = useState("");
   const supported = getRecognitionCtor() != null;
 
+  const [sttError, setSttError] = useState<string | null>(null);
+
   const start = useCallback(() => {
     const Ctor = getRecognitionCtor();
     if (!Ctor) return;
@@ -111,6 +113,7 @@ export function useSpeechRecognition() {
     finalRef.current = "";
     setTranscript("");
     setInterim("");
+    setSttError(null);
 
     const rec = new Ctor();
     rec.lang = "en-US";
@@ -131,8 +134,11 @@ export function useSpeechRecognition() {
       setTranscript(finalRef.current.trim());
       setInterim(interimText);
     };
-    rec.onerror = () => {
-      /* swallow no-speech / aborted errors; UI handles empty transcripts */
+    rec.onerror = (e: SpeechRecognitionErrorEvent) => {
+      // "no-speech" and "aborted" are non-fatal — user just hasn't spoken yet
+      if (e.error !== "no-speech" && e.error !== "aborted") {
+        setSttError(`Microphone error: ${e.error}. Please type your answer instead.`);
+      }
     };
     rec.onend = () => {
       setListening(false);
@@ -177,5 +183,5 @@ export function useSpeechRecognition() {
     [],
   );
 
-  return { start, stop, listening, transcript, interim, supported };
+  return { start, stop, listening, transcript, interim, supported, sttError };
 }

@@ -106,9 +106,11 @@ export function InterviewFlow({
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<AnswerDraft[]>([]);
   const [stage, setStage] = useState<"idle" | "asking" | "answering">("idle");
+  // Persisted typed answer — lives in parent so it survives re-renders
+  const [typedAnswer, setTypedAnswer] = useState("");
 
   const { speak, cancel: cancelSpeak, speaking } = useTextToSpeech();
-  const { start: startListening, stop: stopListening, listening, transcript, interim } =
+  const { start: startListening, stop: stopListening, listening, transcript, interim, sttError } =
     useSpeechRecognition();
 
   // ---- media (camera + recording) ----
@@ -243,15 +245,16 @@ export function InterviewFlow({
   function handleStartAnswer() {
     cancelSpeak();
     setStage("answering");
+    setTypedAnswer(""); // clear typed field for fresh question
     startListening();
   }
 
-  function handleNext(answerText: string) {
-    const finalTranscript = stopListening();
-    // Use speech transcript if available, otherwise use the manually typed text
-    const transcript = finalTranscript || answerText;
-    if (!transcript.trim()) {
-      setError("Please speak an answer or type one in the text field below.");
+  function handleNext(manualText: string) {
+    const stoppedTranscript = stopListening();
+    // Use the best available text: stopped transcript > live transcript state > typed text
+    const finalText = (stoppedTranscript || transcript || manualText).trim();
+    if (!finalText) {
+      setError("Please speak or type your answer before continuing.");
       return;
     }
     const q = questions[current];
@@ -259,11 +262,12 @@ export function InterviewFlow({
       questionId: q.id,
       question: q.question,
       focus: q.focus,
-      transcript,
+      transcript: finalText,
     };
     const nextAnswers = [...answers, draft];
     setAnswers(nextAnswers);
     setStage("idle");
+    setTypedAnswer("");
     setError(null);
 
     if (current + 1 < questions.length) {
@@ -409,9 +413,12 @@ export function InterviewFlow({
             listening={listening}
             transcript={transcript}
             interim={interim}
+            sttError={sttError}
+            typedAnswer={typedAnswer}
+            onTypedAnswerChange={setTypedAnswer}
             onReplay={() => askQuestion(questions[current])}
             onStartAnswer={handleStartAnswer}
-            onNext={(answerText) => handleNext(answerText)}
+            onNext={handleNext}
           />
         )}
 
@@ -720,20 +727,21 @@ function InterviewStep(props: {
   listening: boolean;
   transcript: string;
   interim: string;
+  sttError: string | null;
+  typedAnswer: string;
+  onTypedAnswerChange: (v: string) => void;
   onReplay: () => void;
   onStartAnswer: () => void;
-  onNext: (answerText: string) => void;
+  onNext: (manualText: string) => void;
 }) {
   const {
     videoRef, cameraReady, loadingQuestions, questions, current, stage,
-    speaking, listening, transcript, interim, onReplay, onStartAnswer, onNext,
+    speaking, listening, transcript, interim, sttError, typedAnswer, onTypedAnswerChange,
+    onReplay, onStartAnswer, onNext,
   } = props;
-  const [manualText, setManualText] = useState("");
   const q = questions[current];
   const isLast = current === questions.length - 1;
-  
-  // Use speech transcript if available, otherwise use manual text
-  const finalAnswer = transcript || manualText;
+  const hasAnswer = !!(transcript || typedAnswer.trim());
 
   return (
     <div className="space-y-5">
@@ -773,42 +781,49 @@ function InterviewStep(props: {
               {q.question}
             </p>
 
-            {/* live transcript */}
-            {(stage === "answering" || transcript) && (
-              <div className="mt-4 bg-muted/60 rounded-xl p-4 min-h-20">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
-                  {listening ? (
-                    <>
-                      <Mic className="w-3.5 h-3.5 text-red-600 animate-pulse" /> Listening…
-                    </>
-                  ) : (
-                    <>
-                      <MicOff className="w-3.5 h-3.5" /> Your answer
-                    </>
-                  )}
-                </div>
-                <p className="text-sm text-foreground">
-                  {transcript}
-                  <span className="text-muted-foreground">{interim ? ` ${interim}` : ""}</span>
-                  {!transcript && !interim && (
-                    <span className="text-muted-foreground italic">Start speaking your answer…</span>
-                  )}
-                </p>
-              </div>
-            )}
+            {/* Answer area — shown once answering starts */}
+            {(stage === "answering" || hasAnswer) && (
+              <div className="mt-4 space-y-3">
+                {/* Live speech transcript preview */}
+                {(transcript || interim || stage === "answering") && (
+                  <div className="bg-muted/60 rounded-xl p-4 min-h-16">
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                      {listening ? (
+                        <><Mic className="w-3.5 h-3.5 text-red-600 animate-pulse" /> Listening — speak your answer…</>
+                      ) : (
+                        <><MicOff className="w-3.5 h-3.5" /> Speech captured</>
+                      )}
+                    </div>
+                    <p className="text-sm text-foreground">
+                      {transcript}
+                      <span className="text-muted-foreground">{interim ? ` ${interim}` : ""}</span>
+                      {!transcript && !interim && (
+                        <span className="text-muted-foreground italic">
+                          {listening ? "Say something…" : "Nothing captured yet."}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
 
-            {/* Manual text input for typing or editing answer */}
-            {stage === "answering" && (
-              <div className="mt-4 space-y-2">
-                <label className="block text-xs font-semibold text-muted-foreground">
-                  Or type/edit your answer:
-                </label>
-                <textarea
-                  value={manualText}
-                  onChange={(e) => setManualText(e.target.value)}
-                  placeholder="Type your answer here if speech recognition isn't working…"
-                  className="w-full form-input min-h-24 resize-none"
-                />
+                {/* Text input — always visible during answering so users can type */}
+                <div>
+                  {sttError && (
+                    <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-2 flex items-start gap-2">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {sttError}
+                    </p>
+                  )}
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+                    {transcript ? "Edit or add to your answer:" : "Type your answer (or speak above):"}
+                  </label>
+                  <textarea
+                    value={typedAnswer}
+                    onChange={(e) => onTypedAnswerChange(e.target.value)}
+                    placeholder="Type your answer here…"
+                    className="w-full form-input min-h-24 resize-none"
+                    autoFocus={!transcript}
+                  />
+                </div>
               </div>
             )}
 
@@ -831,8 +846,9 @@ function InterviewStep(props: {
                 </button>
               ) : (
                 <button
-                  onClick={() => onNext(manualText)}
-                  className="flex-1 min-w-40 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2"
+                  onClick={() => onNext(typedAnswer)}
+                  disabled={!hasAnswer}
+                  className="flex-1 min-w-40 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isLast ? (
                     <>Finish interview <CheckCircle2 className="w-4 h-4" /></>
