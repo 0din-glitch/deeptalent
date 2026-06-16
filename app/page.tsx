@@ -1442,11 +1442,20 @@ function Footer() {
                 </li>
                 <li className="flex items-center gap-2 text-gray-400 text-sm">
                   <Phone className="size-4" />
-                  +1 (555) 123-4567
+                  <a href="tel:+447367638151" className="hover:text-white transition-colors">
+                    +44 7367 638151
+                  </a>
                 </li>
                 <li className="flex items-start gap-2 text-gray-400 text-sm">
                   <MapPin className="size-4 mt-0.5" />
-                  <span>San Francisco, CA<br />United States</span>
+                  <a
+                    href="https://maps.google.com/?q=110+Ruscote+Avenue+Banbury+Oxfordshire+OX16+2NN"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    <span>110 Ruscote Avenue<br />Banbury, OX16 2NN<br />United Kingdom</span>
+                  </a>
                 </li>
               </ul>
             </div>
