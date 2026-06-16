@@ -92,8 +92,13 @@ export function SiteFooter() {
               <li><Link href="/about" className="hover:text-white transition-colors">About</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
               <li>
-                <a href="mailto:Mail@deeptalentplatform.com" className="hover:text-white transition-colors">
-                  Mail@deeptalentplatform.com
+                <a href="tel:+447367638151" className="hover:text-white transition-colors">
+                  +44 7367 638151
+                </a>
+              </li>
+              <li>
+                <a href="https://maps.google.com/?q=110+Ruscote+Avenue+Banbury+Oxfordshire+OX16+2NN" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  110 Ruscote Avenue, Banbury, OX16 2NN
                 </a>
               </li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>

@@ -59,8 +59,8 @@ export default function ContactPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1 flex flex-col gap-4">
               <ContactCard icon={Mail} title="Email" value="Mail@deeptalentplatform.com" href="mailto:Mail@deeptalentplatform.com" />
-              <ContactCard icon={Phone} title="Phone" value="+1 (555) 010-2030" href="tel:+15550102030" />
-              <ContactCard icon={MapPin} title="Office" value="Global. Remote-first." />
+              <ContactCard icon={Phone} title="Phone" value="+44 7367 638151" href="tel:+447367638151" />
+              <ContactCard icon={MapPin} title="Office" value="110 Ruscote Avenue, Banbury, OX16 2NN" href="https://maps.google.com/?q=110+Ruscote+Avenue+Banbury+Oxfordshire+OX16+2NN" />
             </div>
 
             <div className="lg:col-span-2">
@@ -162,7 +162,7 @@ function ContactCard({ icon: Icon, title, value, href }: { icon: any; title: str
       </div>
     </div>
   );
-  return href ? <a href={href}>{content}</a> : content;
+  return href ? <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noopener noreferrer" : undefined}>{content}</a> : content;
 }
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
