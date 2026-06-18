@@ -14,7 +14,7 @@ import {
   deleteCertification,
   getResumeDownloadUrl,
 } from "@/lib/dashboard/actions";
-import { Briefcase, Building2, FileText, User } from "lucide-react";
+import { CompanyDashboard } from "@/components/dashboard/company-dashboard";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -36,7 +36,7 @@ export default async function DashboardPage() {
 
   const isCompany = profile?.role === "company";
 
-  const [appsRes, inqRes, resumesRes, certsRes, interviewRes] = await Promise.all([
+  const [appsRes, inqRes, resumesRes, certsRes, interviewRes, placementsRes] = await Promise.all([
     supabase.from("talent_applications").select("*").eq("user_id", userData.user.id).order("created_at", { ascending: false }),
     supabase.from("company_inquiries").select("*").eq("user_id", userData.user.id).order("created_at", { ascending: false }),
     supabase.from("talent_resumes").select("*").eq("user_id", userData.user.id).order("created_at", { ascending: false }),
@@ -48,6 +48,9 @@ export default async function DashboardPage() {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    isCompany
+      ? supabase.from("placements").select("*").eq("company_user_id", userData.user.id).order("created_at", { ascending: false })
+      : supabase.from("placements").select("*").eq("talent_user_id", userData.user.id).order("created_at", { ascending: false }),
   ]);
 
   const applications = appsRes.data ?? [];
@@ -55,6 +58,7 @@ export default async function DashboardPage() {
   const resumes = resumesRes.data ?? [];
   const certifications = certsRes.data ?? [];
   const interview = interviewRes.data ?? null;
+  const placements = placementsRes.data ?? [];
 
   return (
     <main className="bg-gray-50 min-h-screen flex flex-col">
@@ -70,7 +74,7 @@ export default async function DashboardPage() {
               </h1>
               <p className="text-gray-600 mt-1">Track your hiring inquiries and account.</p>
             </div>
-            <CompanyDashboard inquiries={inquiries} />
+            <CompanyDashboard inquiries={inquiries} placements={placements} />
           </div>
         ) : (
           <TalentDashboard
@@ -80,6 +84,7 @@ export default async function DashboardPage() {
             resumes={resumes}
             certifications={certifications}
             interview={interview}
+            placements={placements}
             actions={{
               updateProfile,
               uploadResume,
@@ -98,101 +103,6 @@ export default async function DashboardPage() {
   );
 }
 
-function CompanyDashboard({ inquiries }: { inquiries: any[] }) {
-  return (
-    <div className="space-y-8">
-      <div className="grid md:grid-cols-3 gap-6">
-        <StatCard label="Open inquiries" value={inquiries.length} icon={FileText} />
-        <StatCard label="Account role" value="Company" icon={User} />
-        <StatCard label="Member since" value={inquiries[0]?.created_at ? new Date(inquiries[0].created_at).toLocaleDateString() : "—"} icon={Briefcase} />
-      </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <Link href="/companies/hire" className="bg-[#3B5BDB] text-white rounded-2xl p-6 hover:bg-[#2f49b2] transition-colors flex items-start gap-4">
-          <Building2 className="size-8 shrink-0" />
-          <div>
-            <h3 className="font-bold text-lg">Submit new inquiry</h3>
-            <p className="text-white/80 text-sm mt-1">Tell us about another role and we&apos;ll match candidates within 48 hours.</p>
-          </div>
-        </Link>
 
-        <Link href="/contact" className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow flex items-start gap-4">
-          <FileText className="size-8 shrink-0 text-[#3B5BDB]" />
-          <div>
-            <h3 className="font-bold text-lg text-gray-900">Contact support</h3>
-            <p className="text-gray-600 text-sm mt-1">Reach our team for any account or hiring questions.</p>
-          </div>
-        </Link>
-      </div>
 
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Your inquiries</h2>
-        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
-          {inquiries.length > 0 ? (
-            <table className="w-full">
-              <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <tr>
-                  <th className="px-6 py-3">Role</th>
-                  <th className="px-6 py-3">Urgency</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Submitted</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {inquiries.map((i) => (
-                  <tr key={i.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-gray-900 font-medium">{i.role_title || i.role_category || "—"}</td>
-                    <td className="px-6 py-4 text-gray-600">{i.urgency || "—"}</td>
-                    <td className="px-6 py-4">
-                      <StatusBadge status={i.status} />
-                    </td>
-                    <td className="px-6 py-4 text-gray-500">{new Date(i.created_at).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="p-12 text-center">
-              <p className="text-gray-500 mb-4">No inquiries yet.</p>
-              <Link href="/companies/hire" className="inline-flex h-10 px-5 items-center justify-center rounded-full bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2f49b2] transition-colors">
-                Submit inquiry
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value, icon: Icon }: { label: string; value: string | number; icon: any }) {
-  return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-6 flex items-center gap-4">
-      <div className="size-12 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center text-[#3B5BDB]">
-        <Icon className="size-5" />
-      </div>
-      <div>
-        <p className="text-sm text-gray-500">{label}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    pending: "bg-amber-50 text-amber-700",
-    reviewing: "bg-blue-50 text-blue-700",
-    approved: "bg-emerald-50 text-emerald-700",
-    rejected: "bg-red-50 text-red-700",
-    new: "bg-amber-50 text-amber-700",
-    contacted: "bg-blue-50 text-blue-700",
-    qualified: "bg-emerald-50 text-emerald-700",
-    closed: "bg-gray-100 text-gray-700",
-  };
-  return (
-    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${colors[status] || "bg-gray-100 text-gray-700"}`}>
-      {status || "—"}
-    </span>
-  );
-}

@@ -10,7 +10,22 @@ import { ApprovalsTab } from "@/components/admin/approvals-tab";
 import { ActivityTab } from "@/components/admin/activity-tab";
 import { ContentTab } from "@/components/admin/content-tab";
 import { InterviewsTab } from "@/components/admin/interviews-tab";
+import { PlacementsTab } from "@/components/admin/placements-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
+import {
+  Activity,
+  Briefcase,
+  CheckSquare,
+  FileText,
+  Folder,
+  LayoutDashboard,
+  Mail,
+  Mic,
+  Settings,
+  Users,
+  UserCheck,
+  Building2,
+} from "lucide-react";
 
 type Message = {
   id: string;
@@ -34,9 +49,18 @@ type LegacyFile = {
   migrated_at: string;
 };
 
-type Tab = "users" | "applications" | "approved_talent" | "interviews" | "inquiries" | "messages" | "files" | "content" | "approvals" | "activity";
-
-const interviewFetcher = (url: string) => fetch(url).then((r) => r.json());
+type Tab =
+  | "users"
+  | "applications"
+  | "approved_talent"
+  | "interviews"
+  | "inquiries"
+  | "messages"
+  | "files"
+  | "content"
+  | "approvals"
+  | "activity"
+  | "placements";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -56,7 +80,6 @@ export function AdminTabs({
   const [tab, setTab] = useState<Tab>("users");
   const { me } = useAdminMe();
 
-  // Pending deletion requests count (badge on Approvals tab)
   const { data: pendingData } = useSWR<{ requests: any[] }>(
     "/api/admin/deletion-requests?status=pending",
     fetcher,
@@ -64,7 +87,6 @@ export function AdminTabs({
   );
   const pendingApprovals = pendingData?.requests?.length ?? 0;
 
-  // Live counts so badges stay in sync after admin actions
   const { data: appData } = useSWR<{ rows: any[] }>(
     "/api/admin/submissions?kind=talent_application",
     fetcher,
@@ -78,112 +100,131 @@ export function AdminTabs({
 
   const appCount = appData?.rows?.length ?? applications.length;
   const inqCount = inqData?.rows?.length ?? inquiries.length;
-  const approvedCount =
-    (appData?.rows ?? applications).filter((r: any) => r?.status === "approved").length;
+  const approvedCount = (appData?.rows ?? applications).filter(
+    (r: any) => r?.status === "approved"
+  ).length;
 
   const { data: interviewData } = useSWR<{ rows: any[] }>(
     "/api/admin/interviews",
-    interviewFetcher,
+    fetcher,
     { refreshInterval: 60_000 }
   );
   const interviewCount = interviewData?.rows?.length ?? 0;
 
-  return (
-    <div>
-      <div className="flex items-center gap-1 mb-5 border-b border-gray-200 overflow-x-auto">
-        <TabButton active={tab === "users"} onClick={() => setTab("users")} count={userCount}>
-          Users
-        </TabButton>
-        <TabButton active={tab === "applications"} onClick={() => setTab("applications")} count={appCount}>
-          Talent applications
-        </TabButton>
-        <TabButton
-          active={tab === "approved_talent"}
-          onClick={() => setTab("approved_talent")}
-          count={approvedCount}
-        >
-          Approved talent
-        </TabButton>
-        <TabButton active={tab === "inquiries"} onClick={() => setTab("inquiries")} count={inqCount}>
-          Company inquiries
-        </TabButton>
-        <TabButton active={tab === "messages"} onClick={() => setTab("messages")} count={messages.length}>
-          Contact messages
-        </TabButton>
-        <TabButton active={tab === "interviews"} onClick={() => setTab("interviews")} count={interviewCount}>
-          AI interviews
-        </TabButton>
-        <TabButton active={tab === "files"} onClick={() => setTab("files")} count={files.length}>
-          Files
-        </TabButton>
-        <TabButton active={tab === "content"} onClick={() => setTab("content")} count={0} hideCount>
-          Content
-        </TabButton>
-        <TabButton
-          active={tab === "approvals"}
-          onClick={() => setTab("approvals")}
-          count={pendingApprovals}
-          tone={pendingApprovals > 0 ? "amber" : undefined}
-        >
-          {me?.is_super_admin ? "Approvals" : "My requests"}
-        </TabButton>
-        <TabButton active={tab === "activity"} onClick={() => setTab("activity")} count={0} hideCount>
-          Activity
-        </TabButton>
-      </div>
+  const navGroups = [
+    {
+      label: "People",
+      items: [
+        { id: "users" as Tab, label: "Users", icon: Users, count: userCount },
+        { id: "applications" as Tab, label: "Talent Applications", icon: FileText, count: appCount },
+        { id: "approved_talent" as Tab, label: "Approved Talent", icon: UserCheck, count: approvedCount },
+        { id: "inquiries" as Tab, label: "Company Inquiries", icon: Building2, count: inqCount },
+        { id: "placements" as Tab, label: "Placements", icon: Briefcase, count: null },
+      ],
+    },
+    {
+      label: "Comms",
+      items: [
+        { id: "messages" as Tab, label: "Contact Messages", icon: Mail, count: messages.length },
+        { id: "interviews" as Tab, label: "AI Interviews", icon: Mic, count: interviewCount },
+      ],
+    },
+    {
+      label: "System",
+      items: [
+        { id: "files" as Tab, label: "Files", icon: Folder, count: files.length },
+        { id: "content" as Tab, label: "Content", icon: LayoutDashboard, count: null },
+        {
+          id: "approvals" as Tab,
+          label: me?.is_super_admin ? "Approvals" : "My Requests",
+          icon: CheckSquare,
+          count: pendingApprovals > 0 ? pendingApprovals : null,
+          tone: pendingApprovals > 0 ? ("amber" as const) : undefined,
+        },
+        { id: "activity" as Tab, label: "Activity", icon: Activity, count: null },
+      ],
+    },
+  ];
 
-      {tab === "users" && <UsersTab />}
-      {tab === "files" && <FilesTab initialFiles={files} />}
-      {tab === "applications" && <SubmissionsTab kind="talent_application" />}
-      {tab === "approved_talent" && <ApprovedTalentTab />}
-      {tab === "inquiries" && <SubmissionsTab kind="company_inquiry" />}
-      {tab === "content" && <ContentTab />}
-      {tab === "interviews" && <InterviewsTab />}
-      {tab === "approvals" && <ApprovalsTab />}
-      {tab === "activity" && <ActivityTab />}
-      {tab === "messages" && (
-        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
-          <MessagesTable rows={messages} />
+  // Current tab label for mobile header
+  const currentLabel =
+    navGroups.flatMap((g) => g.items).find((i) => i.id === tab)?.label ?? "Dashboard";
+
+  return (
+    <div className="flex gap-0 min-h-[calc(100vh-220px)]">
+      {/* ── Sidebar ── */}
+      <aside className="w-56 shrink-0 bg-[#0F1629] rounded-2xl mr-6 p-3 flex flex-col gap-1 self-start sticky top-6">
+        {/* Logo mark */}
+        <div className="px-3 py-3 mb-1 border-b border-white/10">
+          <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+            Admin Panel
+          </p>
         </div>
-      )}
-    </div>
-  );
-}
 
-function TabButton({
-  active,
-  onClick,
-  children,
-  count,
-  tone,
-  hideCount,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-  count: number;
-  tone?: "amber";
-  hideCount?: boolean;
-}) {
-  const countCls = active
-    ? "bg-[#3B5BDB]/10 text-[#3B5BDB]"
-    : tone === "amber"
-      ? "bg-amber-100 text-amber-700"
-      : "bg-gray-100 text-gray-600";
-  return (
-    <button
-      onClick={onClick}
-      className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
-        active
-          ? "border-[#3B5BDB] text-[#3B5BDB]"
-          : "border-transparent text-gray-500 hover:text-gray-900"
-      }`}
-    >
-      {children}
-      {!hideCount && (
-        <span className={`text-xs px-2 py-0.5 rounded-full ${countCls}`}>{count}</span>
-      )}
-    </button>
+        {navGroups.map((group) => (
+          <div key={group.label} className="mt-3 first:mt-0">
+            <p className="px-3 mb-1 text-[10px] font-bold uppercase tracking-widest text-white/30">
+              {group.label}
+            </p>
+            {group.items.map((item) => {
+              const active = tab === item.id;
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setTab(item.id)}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    active
+                      ? "bg-[#3B5BDB] text-white shadow-md shadow-[#3B5BDB]/30"
+                      : "text-white/55 hover:text-white hover:bg-white/8"
+                  }`}
+                >
+                  <Icon className="size-3.5 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                  {item.count !== null && item.count > 0 && (
+                    <span
+                      className={`ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums ${
+                        active
+                          ? "bg-white/20 text-white"
+                          : item.tone === "amber"
+                            ? "bg-amber-400/20 text-amber-300"
+                            : "bg-white/12 text-white/60"
+                      }`}
+                    >
+                      {item.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </aside>
+
+      {/* ── Content ── */}
+      <div className="flex-1 min-w-0">
+        {/* Section header */}
+        <div className="mb-5 pb-4 border-b border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900">{currentLabel}</h2>
+        </div>
+
+        {tab === "users" && <UsersTab />}
+        {tab === "placements" && <PlacementsTab />}
+        {tab === "files" && <FilesTab initialFiles={files} />}
+        {tab === "applications" && <SubmissionsTab kind="talent_application" />}
+        {tab === "approved_talent" && <ApprovedTalentTab />}
+        {tab === "inquiries" && <SubmissionsTab kind="company_inquiry" />}
+        {tab === "content" && <ContentTab />}
+        {tab === "interviews" && <InterviewsTab />}
+        {tab === "approvals" && <ApprovalsTab />}
+        {tab === "activity" && <ActivityTab />}
+        {tab === "messages" && (
+          <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+            <MessagesTable rows={messages} />
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -195,14 +236,21 @@ function StatusBadge({ status }: { status: string }) {
     archived: "bg-gray-100 text-gray-700",
   };
   return (
-    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${colors[status] || "bg-gray-100 text-gray-700"}`}>
+    <span
+      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
+        colors[status] || "bg-gray-100 text-gray-700"
+      }`}
+    >
       {status}
     </span>
   );
 }
 
 function MessagesTable({ rows }: { rows: Message[] }) {
-  if (rows.length === 0) return <div className="p-12 text-center text-gray-500">No messages yet.</div>;
+  if (rows.length === 0)
+    return (
+      <div className="p-12 text-center text-gray-500">No messages yet.</div>
+    );
   return (
     <table className="w-full">
       <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -229,7 +277,9 @@ function MessagesTable({ rows }: { rows: Message[] }) {
             <td className="px-6 py-4">
               <StatusBadge status={r.status} />
             </td>
-            <td className="px-6 py-4 text-gray-500">{new Date(r.created_at).toLocaleDateString()}</td>
+            <td className="px-6 py-4 text-gray-500">
+              {new Date(r.created_at).toLocaleDateString()}
+            </td>
           </tr>
         ))}
       </tbody>

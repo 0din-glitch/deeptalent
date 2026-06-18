@@ -22,7 +22,7 @@ export async function GET() {
 
   // Pull profiles + counts of related rows + auth users (for verification status)
   const [{ data: profiles }, { data: apps }, { data: inquiries }, authResult] = await Promise.all([
-    sb.from("profiles").select("id,email,full_name,role,created_at,is_super_admin,suspended_at,suspension_reason").order("created_at", { ascending: false }).limit(2000),
+    sb.from("profiles").select("id,email,full_name,role,company_name,created_at,is_super_admin,suspended_at,suspension_reason").order("created_at", { ascending: false }).limit(2000),
     sb.from("talent_applications").select("user_id").not("user_id", "is", null),
     sb.from("company_inquiries").select("user_id").not("user_id", "is", null),
     sb.auth.admin.listUsers({ page: 1, perPage: 2000 }),
@@ -51,6 +51,7 @@ export async function GET() {
       email: p.email || auth?.auth_email || null,
       full_name: p.full_name,
       role: p.role,
+      company_name: (p as any).company_name ?? null,
       created_at: p.created_at,
       application_count: appCounts.get(p.id) || 0,
       inquiry_count: inqCounts.get(p.id) || 0,
@@ -70,6 +71,7 @@ export async function GET() {
         email: u.email ?? null,
         full_name: (u.user_metadata as any)?.full_name || null,
         role: (u.user_metadata as any)?.role || null,
+        company_name: null,
         created_at: u.created_at,
         application_count: 0,
         inquiry_count: 0,
