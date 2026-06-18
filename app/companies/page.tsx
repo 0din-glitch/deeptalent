@@ -136,7 +136,7 @@ function CompanyHero() {
 
 function CompanyBenefits() {
   const benefits = [
-    { title: "Faster Hiring", desc: "Find qualified candidates in 72 hours, not 3 months" },
+    { title: "Faster Hiring", desc: "Find qualified candidates within 21 days, not 3 months" },
     { title: "Vetted Quality", desc: "Only top 1% of candidates make it through our process" },
     { title: "Lower Costs", desc: "Reduce hiring costs by up to 50% compared to onshore market rates" },
     { title: "Zero Risk", desc: "Quality guarantee means we replace underperformers" },
@@ -161,7 +161,7 @@ function CompanyBenefits() {
 function HiringProcess() {
   const steps = [
     { num: "01", title: "Define Your Needs", desc: "Tell us about the role, skills, and team culture" },
-    { num: "02", title: "Get Matches", desc: "Receive 3-5 pre-vetted candidates within 72 hours" },
+    { num: "02", title: "Get Matches", desc: "Receive 3-5 pre-vetted candidates within 21 days" },
     { num: "03", title: "Interview & Hire", desc: "Our team handles all contracts and compliance" },
   ];
 

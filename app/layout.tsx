@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "DeepTalent — Elite talent, up to 50% less cost",
-  description: "Connect with vetted experts and discover reliable work opportunities. Pre-vetted, role-ready specialists matched to your exact needs in under 72 hours.",
+  description: "Connect with vetted experts and discover reliable work opportunities. Pre-vetted, role-ready specialists matched to your exact needs within 21 days.",
 };
 
 export const viewport = {
