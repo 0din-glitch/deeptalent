@@ -1,15 +1,12 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { AdminTabs } from "@/components/admin/admin-tabs";
+import { AdminShell } from "@/components/admin/admin-shell";
 
 export default async function AdminPage() {
   const supabase = await createClient();
   const { data: userData } = await supabase.auth.getUser();
 
-  if (!userData.user) {
-    redirect("/auth/login");
-  }
+  if (!userData.user) redirect("/auth/login");
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -17,9 +14,7 @@ export default async function AdminPage() {
     .eq("id", userData.user.id)
     .single();
 
-  if (profile?.role !== "admin") {
-    redirect("/dashboard");
-  }
+  if (profile?.role !== "admin") redirect("/dashboard");
 
   const isSuperAdmin = !!profile?.is_super_admin;
 
@@ -38,34 +33,15 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <main className="bg-gray-50 min-h-screen flex flex-col">
-      <DashboardHeader
-        email={userData.user.email ?? ""}
-        fullName={profile?.full_name ?? ""}
-        role="admin"
-        isSuperAdmin={isSuperAdmin}
-      />
-
-      <section className="flex-1 px-6 md:px-12 py-10 max-w-7xl mx-auto w-full">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 text-balance">Admin dashboard</h1>
-          <p className="text-gray-500 mt-1 text-sm">
-            {isSuperAdmin
-              ? "Super admin — full access including suspend, delete, and approval queue."
-              : "View and edit submissions, schedule meetings, and request deletions for super-admin approval."}
-          </p>
-        </div>
-
-        <AdminTabs
-          applications={applications ?? []}
-          inquiries={inquiries ?? []}
-          messages={messages ?? []}
-          files={(files ?? []) as any}
-          userCount={profileCount ?? 0}
-        />
-      </section>
-    </main>
+    <AdminShell
+      email={userData.user.email ?? ""}
+      fullName={profile?.full_name ?? ""}
+      isSuperAdmin={isSuperAdmin}
+      applications={applications ?? []}
+      inquiries={inquiries ?? []}
+      messages={messages ?? []}
+      files={(files ?? []) as any}
+      userCount={profileCount ?? 0}
+    />
   );
 }
-
-
