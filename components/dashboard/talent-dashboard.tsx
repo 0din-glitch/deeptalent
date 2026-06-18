@@ -10,22 +10,28 @@ import {
   Briefcase,
   LayoutDashboard,
   TrendingUp,
+  MessageSquare,
+  PenTool,
 } from "lucide-react";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 import { ResumesPanel } from "@/components/dashboard/resumes-panel";
 import { CertificationsPanel } from "@/components/dashboard/certifications-panel";
 import { TalentOverview } from "@/components/dashboard/talent-overview";
+import { CareerChat } from "@/components/dashboard/career-chat";
+import { ResumeBuilder } from "@/components/dashboard/resume-builder";
 import { SALARY_SCALE } from "@/lib/salary/scale";
 
-type Tab = "overview" | "profile" | "resumes" | "certifications" | "applications" | "openRoles";
+type Tab = "overview" | "profile" | "resumes" | "certifications" | "applications" | "openRoles" | "chat" | "resumeBuilder";
 
-const NAV: { id: Tab; label: string; icon: any }[] = [
+const NAV: { id: Tab; label: string; icon: any; group?: string }[] = [
   { id: "overview", label: "Overview", icon: LayoutGrid },
   { id: "profile", label: "Profile", icon: User },
   { id: "resumes", label: "Resumes", icon: FileText },
   { id: "certifications", label: "Certifications", icon: Award },
   { id: "applications", label: "Applications", icon: Briefcase },
   { id: "openRoles", label: "Open Roles", icon: TrendingUp },
+  { id: "chat", label: "Career Assistant", icon: MessageSquare, group: "AI Tools" },
+  { id: "resumeBuilder", label: "Resume Builder", icon: PenTool, group: "AI Tools" },
 ];
 
 export function TalentDashboard({
@@ -66,32 +72,47 @@ export function TalentDashboard({
     <div className="flex flex-col lg:flex-row max-w-[1400px] mx-auto w-full">
       {/* Sidebar */}
       <aside className="lg:w-60 shrink-0 border-b lg:border-b-0 lg:border-r border-gray-100 bg-white">
-        <nav className="flex lg:flex-col gap-1 p-3 lg:p-4 overflow-x-auto lg:sticky lg:top-0">
+        <nav className="flex lg:flex-col gap-1 p-3 lg:p-4 overflow-x-auto lg:overflow-x-visible lg:sticky lg:top-0">
           <p className="hidden lg:flex items-center gap-2 px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
             <LayoutDashboard className="size-3.5" /> Dashboard
           </p>
-          {NAV.map((item) => {
+          {NAV.map((item, i) => {
             const active = tab === item.id;
+            const prevGroup = NAV[i - 1]?.group;
+            const showGroupLabel = item.group && item.group !== prevGroup;
             return (
-              <button
-                key={item.id}
-                onClick={() => setTab(item.id)}
-                className={`flex items-center gap-3 rounded-xl px-3 h-11 text-sm font-medium whitespace-nowrap transition-colors ${
-                  active ? "bg-[#3B5BDB] text-white" : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <item.icon className="size-4 shrink-0" />
-                <span>{item.label}</span>
-                {counts[item.id] != null && (
-                  <span
-                    className={`ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-semibold ${
-                      active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {counts[item.id]}
-                  </span>
+              <div key={item.id}>
+                {showGroupLabel && (
+                  <p className="hidden lg:block px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-[#3B5BDB]">
+                    {item.group}
+                  </p>
                 )}
-              </button>
+                <button
+                  onClick={() => setTab(item.id)}
+                  className={`w-full flex items-center gap-3 rounded-xl px-3 h-11 text-sm font-medium whitespace-nowrap transition-all ${
+                    active
+                      ? "bg-[#3B5BDB] text-white shadow-sm shadow-[#3B5BDB]/30"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  <item.icon className="size-4 shrink-0" />
+                  <span>{item.label}</span>
+                  {counts[item.id] != null && (
+                    <span
+                      className={`ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-semibold ${
+                        active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {counts[item.id]}
+                    </span>
+                  )}
+                  {(item.id === "chat" || item.id === "resumeBuilder") && !active && (
+                    <span className="ml-auto inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#3B5BDB]/10 text-[#3B5BDB]">
+                      AI
+                    </span>
+                  )}
+                </button>
+              </div>
             );
           })}
         </nav>
@@ -146,6 +167,12 @@ export function TalentDashboard({
           <Section title="Open Roles" subtitle="In-demand roles hiring through DeepTalent, with live monthly rates.">
             <OpenRoles profile={profile} />
           </Section>
+        )}
+        {tab === "chat" && (
+          <CareerChat profile={profile} />
+        )}
+        {tab === "resumeBuilder" && (
+          <ResumeBuilder profile={profile} />
         )}
       </div>
     </div>
