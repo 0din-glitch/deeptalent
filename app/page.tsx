@@ -145,8 +145,7 @@ function Hero() {
             variants={fadeInUp()}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.1] text-balance" style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", letterSpacing: "-0.01em" }}
           >
-            Cross-Border Talent Infrastructure, <br />
-            <span>for your Next Hire</span>
+            Cross-Border Talent Infrastructure
           </motion.h1>
 
           <motion.p
