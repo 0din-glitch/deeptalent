@@ -18,6 +18,7 @@ import {
   Award,
   Briefcase,
   CheckCircle2,
+  DollarSign,
   FileText,
   Lightbulb,
   Mic,
@@ -35,6 +36,7 @@ type Props = {
   resumes: any[];
   certifications: any[];
   interview: any | null;
+  placements: any[];
   onNavigate: (tab: "profile" | "resumes" | "certifications" | "applications" | "openRoles") => void;
 };
 
@@ -66,6 +68,7 @@ export function TalentOverview({
   resumes,
   certifications,
   interview,
+  placements,
   onNavigate,
 }: Props) {
   const completion = profileCompletion(profile);
@@ -148,6 +151,9 @@ export function TalentOverview({
       </div>
 
       <InterviewBanner interview={interview} />
+
+      {/* Earnings tracker */}
+      <EarningsTracker placements={placements} />
 
       {/* Top row: profile strength + activity + application chart */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -493,6 +499,74 @@ function MiniStat({ icon: Icon, label, value }: { icon: any; label: string; valu
       <Icon className="size-4 text-[#3B5BDB]" />
       <p className="text-xl font-bold text-gray-900 mt-2">{value}</p>
       <p className="text-[11px] text-gray-500">{label}</p>
+    </div>
+  );
+}
+
+function EarningsTracker({ placements }: { placements: any[] }) {
+  const active = placements.filter((p) => p.status === "active");
+  const ended = placements.filter((p) => p.status === "ended");
+
+  // Current monthly rate from active placements
+  const currentMonthlyUSD = active.reduce(
+    (sum, p) => sum + (Number(p.monthly_rate_usd) || 0),
+    0
+  );
+
+  // Estimated total earned from ended placements (start_date → end_date)
+  const historicalEarnings = ended.reduce((sum, p) => {
+    if (!p.start_date || !p.end_date || !p.monthly_rate_usd) return sum;
+    const months =
+      (new Date(p.end_date).getFullYear() - new Date(p.start_date).getFullYear()) * 12 +
+      (new Date(p.end_date).getMonth() - new Date(p.start_date).getMonth());
+    return sum + Math.max(0, months) * Number(p.monthly_rate_usd);
+  }, 0);
+
+  const hasPlacement = placements.length > 0;
+  const currency = active[0]?.currency || ended[0]?.currency || "USD";
+
+  return (
+    <div className={`rounded-2xl border p-5 flex flex-col sm:flex-row sm:items-center gap-5 ${hasPlacement ? "border-emerald-100 bg-emerald-50/60" : "border-gray-100 bg-white"}`}>
+      <div className={`size-12 rounded-xl flex items-center justify-center shrink-0 ${hasPlacement ? "bg-emerald-500/15 text-emerald-600" : "bg-gray-100 text-gray-400"}`}>
+        <DollarSign className="size-6" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Earnings</p>
+        <div className="flex flex-wrap gap-6">
+          <div>
+            <p className="text-2xl font-bold text-gray-900">
+              {currentMonthlyUSD > 0
+                ? `${currency} ${currentMonthlyUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : `${currency} 0.00`}
+            </p>
+            <p className="text-xs text-gray-500 mt-0.5">Current monthly rate</p>
+          </div>
+          {historicalEarnings > 0 && (
+            <div>
+              <p className="text-2xl font-bold text-gray-900">
+                {currency} {historicalEarnings.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">Estimated total earned</p>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="shrink-0">
+        {!hasPlacement ? (
+          <p className="text-xs text-gray-400 max-w-[180px] leading-relaxed">
+            Your earnings will appear here once you&apos;re placed at a company through DeepTalent.
+          </p>
+        ) : (
+          <div className="text-right">
+            <p className={`text-sm font-semibold capitalize ${active.length > 0 ? "text-emerald-600" : "text-gray-500"}`}>
+              {active.length > 0 ? `${active.length} active placement${active.length > 1 ? "s" : ""}` : "No active placements"}
+            </p>
+            {active[0]?.company_name && (
+              <p className="text-xs text-gray-500 mt-0.5">{active[0].company_name}</p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { ApprovalsTab } from "@/components/admin/approvals-tab";
 import { ActivityTab } from "@/components/admin/activity-tab";
 import { ContentTab } from "@/components/admin/content-tab";
 import { InterviewsTab } from "@/components/admin/interviews-tab";
+import { PlacementsTab } from "@/components/admin/placements-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 
 type Message = {
@@ -34,7 +35,7 @@ type LegacyFile = {
   migrated_at: string;
 };
 
-type Tab = "users" | "applications" | "approved_talent" | "interviews" | "inquiries" | "messages" | "files" | "content" | "approvals" | "activity";
+type Tab = "users" | "applications" | "approved_talent" | "interviews" | "inquiries" | "messages" | "files" | "content" | "approvals" | "activity" | "placements";
 
 const interviewFetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -113,6 +114,9 @@ export function AdminTabs({
         <TabButton active={tab === "interviews"} onClick={() => setTab("interviews")} count={interviewCount}>
           AI interviews
         </TabButton>
+        <TabButton active={tab === "placements"} onClick={() => setTab("placements")} count={0} hideCount>
+          Placements
+        </TabButton>
         <TabButton active={tab === "files"} onClick={() => setTab("files")} count={files.length}>
           Files
         </TabButton>
@@ -133,6 +137,7 @@ export function AdminTabs({
       </div>
 
       {tab === "users" && <UsersTab />}
+      {tab === "placements" && <PlacementsTab />}
       {tab === "files" && <FilesTab initialFiles={files} />}
       {tab === "applications" && <SubmissionsTab kind="talent_application" />}
       {tab === "approved_talent" && <ApprovedTalentTab />}
