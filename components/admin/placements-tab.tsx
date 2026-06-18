@@ -191,10 +191,27 @@ export function PlacementsTab() {
     e.preventDefault();
     setError(null);
     setSaving(true);
+
+    // Coerce empty-string UUIDs to null so FK constraints are satisfied
+    const toUuid = (v: string) => v.trim().length > 0 ? v.trim() : null;
+
     try {
       const payload = {
-        ...form,
+        talent_user_id: toUuid(form.talent_user_id),
+        talent_name: form.talent_name,
+        talent_email: form.talent_email,
+        talent_role: form.talent_role || null,
+        talent_seniority: form.talent_seniority || null,
+        company_user_id: toUuid(form.company_user_id),
+        company_name: form.company_name,
+        company_contact: form.company_contact || null,
+        company_email: form.company_email || null,
+        start_date: form.start_date || null,
+        end_date: form.end_date || null,
+        status: form.status,
         monthly_rate_usd: form.monthly_rate_usd ? Number(form.monthly_rate_usd) : null,
+        currency: form.currency || "USD",
+        notes: form.notes || null,
         ...(editId ? { id: editId } : {}),
       };
       const res = await fetch("/api/admin/placements", {
