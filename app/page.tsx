@@ -143,9 +143,9 @@ function Hero() {
         <div className="flex flex-col gap-5 md:gap-6 max-w-2xl">
           <motion.h1
             variants={fadeInUp()}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.05] text-balance"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.1] text-balance" style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", letterSpacing: "-0.01em" }}
           >
-            Smart Talent Platform, <br />
+            Cross-Border Talent Infrastructure, <br />
             <span>for your Next Hire</span>
           </motion.h1>
 
@@ -465,7 +465,7 @@ function HowItWorks() {
     {
       id: "step-2",
       title: "Get AI-Matched Talent",
-      description: "Our system sorts, screens, and presents the top 1% of vetted professionals in under 72 hours.",
+      description: "Our system sorts, screens, and presents the top 1% of vetted professionals within 21 days.",
       detail: "Receive a curated shortlist of 3-5 specialists, each with verified skills, work history, and culture fit signals — ready to interview.",
       icon: Users,
     },
@@ -623,7 +623,7 @@ function WhyChooseUs() {
     {
       id: "2",
       title: "Speed to Strategic Impact",
-      description: "Eliminate recruiting delays. Receive a curated shortlist of 3-5 experts within just 72 hours.",
+      description: "Eliminate recruiting delays. Receive a curated shortlist of 3-5 experts within 21 days.",
       image: "/images/speed-impact.png",
     },
     {
@@ -1330,7 +1330,7 @@ function Footer() {
             variants={fadeInUp()}
             className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto"
           >
-            Join hundreds of companies scaling with DeepTalent specialists. Get matched with vetted experts in under 72 hours.
+            Join hundreds of companies scaling with DeepTalent specialists. Get matched with vetted experts within 21 days.
           </motion.p>
           <motion.div
             variants={fadeInUp()}
