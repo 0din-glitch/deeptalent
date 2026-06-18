@@ -60,16 +60,20 @@ export async function POST(request: Request) {
     );
   }
 
+  // Validate UUIDs — empty strings must become null to avoid FK constraint errors
+  const toUuid = (v: unknown) =>
+    typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
+
   const sb = serviceClient();
   const { data, error } = await sb
     .from("placements")
     .insert({
-      talent_user_id: talent_user_id || null,
+      talent_user_id: toUuid(talent_user_id),
       talent_name,
       talent_email,
       talent_role: talent_role || null,
       talent_seniority: talent_seniority || null,
-      company_user_id: company_user_id || null,
+      company_user_id: toUuid(company_user_id),
       company_name,
       company_contact: company_contact || null,
       company_email: company_email || null,
@@ -95,8 +99,17 @@ export async function PATCH(request: Request) {
   if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await request.json();
-  const { id, ...updates } = body;
+  const { id, ...rawUpdates } = body;
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
+
+  // Coerce empty-string UUID fields to null
+  const toUuid = (v: unknown) =>
+    typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
+  const updates = {
+    ...rawUpdates,
+    ...(rawUpdates.talent_user_id !== undefined && { talent_user_id: toUuid(rawUpdates.talent_user_id) }),
+    ...(rawUpdates.company_user_id !== undefined && { company_user_id: toUuid(rawUpdates.company_user_id) }),
+  };
 
   const sb = serviceClient();
   const { data, error } = await sb
