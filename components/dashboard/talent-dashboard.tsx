@@ -10,18 +10,17 @@ import {
   Briefcase,
   LayoutDashboard,
   TrendingUp,
-  MessageSquare,
   PenTool,
 } from "lucide-react";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 import { ResumesPanel } from "@/components/dashboard/resumes-panel";
 import { CertificationsPanel } from "@/components/dashboard/certifications-panel";
 import { TalentOverview } from "@/components/dashboard/talent-overview";
-import { CareerChat } from "@/components/dashboard/career-chat";
+import { FloatingCareerChat } from "@/components/dashboard/floating-career-chat";
 import { ResumeBuilder } from "@/components/dashboard/resume-builder";
 import { SALARY_SCALE } from "@/lib/salary/scale";
 
-type Tab = "overview" | "profile" | "resumes" | "certifications" | "applications" | "openRoles" | "chat" | "resumeBuilder";
+type Tab = "overview" | "profile" | "resumes" | "certifications" | "applications" | "openRoles" | "resumeBuilder";
 
 const NAV: { id: Tab; label: string; icon: any; group?: string }[] = [
   { id: "overview", label: "Overview", icon: LayoutGrid },
@@ -30,8 +29,7 @@ const NAV: { id: Tab; label: string; icon: any; group?: string }[] = [
   { id: "certifications", label: "Certifications", icon: Award },
   { id: "applications", label: "Applications", icon: Briefcase },
   { id: "openRoles", label: "Open Roles", icon: TrendingUp },
-  { id: "chat", label: "Career Assistant", icon: MessageSquare, group: "AI Tools" },
-  { id: "resumeBuilder", label: "Resume Builder", icon: PenTool, group: "AI Tools" },
+  { id: "resumeBuilder", label: "AI Resume Builder", icon: PenTool, group: "AI Tools" },
 ];
 
 export function TalentDashboard({
@@ -69,7 +67,7 @@ export function TalentDashboard({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row max-w-[1400px] mx-auto w-full">
+    <div className="flex flex-col lg:flex-row max-w-[1400px] mx-auto w-full relative">
       {/* Sidebar */}
       <aside className="lg:w-60 shrink-0 border-b lg:border-b-0 lg:border-r border-gray-100 bg-white">
         <nav className="flex lg:flex-col gap-1 p-3 lg:p-4 overflow-x-auto lg:overflow-x-visible lg:sticky lg:top-0">
@@ -106,7 +104,7 @@ export function TalentDashboard({
                       {counts[item.id]}
                     </span>
                   )}
-                  {(item.id === "chat" || item.id === "resumeBuilder") && !active && (
+                  {item.id === "resumeBuilder" && !active && (
                     <span className="ml-auto inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#3B5BDB]/10 text-[#3B5BDB]">
                       AI
                     </span>
@@ -139,6 +137,25 @@ export function TalentDashboard({
         )}
         {tab === "resumes" && (
           <Section title="Resumes" subtitle="Upload and manage the resumes you send to recruiters.">
+            {/* AI Resume Builder CTA */}
+            <div className="mb-5 flex items-center justify-between gap-4 p-4 rounded-2xl bg-gradient-to-r from-[#3B5BDB]/5 to-[#5c7cfa]/5 border border-[#3B5BDB]/15">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center text-[#3B5BDB]">
+                  <PenTool className="size-4" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Build your resume with AI</p>
+                  <p className="text-xs text-gray-500">Generate a polished resume in minutes, tailored to your experience.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setTab("resumeBuilder")}
+                className="shrink-0 inline-flex items-center gap-2 h-9 px-4 rounded-full bg-[#3B5BDB] text-white text-xs font-semibold hover:bg-[#2f49b2] transition-colors"
+              >
+                <PenTool className="size-3.5" />
+                Build with AI
+              </button>
+            </div>
             <ResumesPanel
               resumes={resumes}
               uploadAction={actions.uploadResume}
@@ -168,13 +185,13 @@ export function TalentDashboard({
             <OpenRoles profile={profile} />
           </Section>
         )}
-        {tab === "chat" && (
-          <CareerChat profile={profile} />
-        )}
         {tab === "resumeBuilder" && (
           <ResumeBuilder profile={profile} />
         )}
       </div>
+
+      {/* Floating career assistant — visible on all dashboard tabs */}
+      <FloatingCareerChat profile={profile} />
     </div>
   );
 }
