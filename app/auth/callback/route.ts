@@ -45,14 +45,28 @@ export async function GET(request: NextRequest) {
     console.error('[v0] exchangeCodeForSession failed:', error.message)
   }
 
-  // Flow 2: Email OTP / token_hash — used by admin.generateLink and the
-  // built-in confirmation email template
+  // Flow 2: Email OTP / token_hash — used by admin.generateLink (invite, magiclink)
+  // and the built-in confirmation email template
   if (token_hash && type) {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash })
     if (!error) {
       return NextResponse.redirect(`${origin}${await destinationAfterAuth()}`)
     }
     console.error('[v0] verifyOtp failed:', error.message)
+  }
+
+  // Flow 3: Supabase redirects with ?token_hash but no type for invite links
+  // Try verifying as 'invite' if we have a token_hash and nothing else matched
+  if (token_hash && !type) {
+    const { error } = await supabase.auth.verifyOtp({ type: 'invite', token_hash })
+    if (!error) {
+      return NextResponse.redirect(`${origin}${await destinationAfterAuth()}`)
+    }
+    // Also try magiclink
+    const { error: e2 } = await supabase.auth.verifyOtp({ type: 'magiclink', token_hash })
+    if (!e2) {
+      return NextResponse.redirect(`${origin}${await destinationAfterAuth()}`)
+    }
   }
 
   return NextResponse.redirect(`${origin}/auth/error`)
