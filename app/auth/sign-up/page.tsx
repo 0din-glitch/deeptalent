@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { SocialAuthButtons } from "@/components/auth/social-auth-buttons";
 import { signUpWithResendConfirmation } from "@/app/auth/actions";
 import { Loader2 } from "lucide-react";
 
@@ -54,6 +55,7 @@ function SignUpForm() {
           >
             Log in
           </Link>
+          <SocialAuthButtons />
         </>
       }
     >

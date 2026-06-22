@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AuthShell } from "@/components/auth/auth-shell";
+import { SocialAuthButtons } from "@/components/auth/social-auth-buttons";
 import { Loader2 } from "lucide-react";
 
 function LoginForm() {
@@ -99,6 +100,7 @@ function LoginForm() {
           >
             Sign up
           </Link>
+          <SocialAuthButtons />
         </>
       }
     >
