@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import useSWR from "swr";
 import { FilesTab } from "@/components/admin/files-tab";
 import { UsersTab } from "@/components/admin/users-tab";
@@ -155,19 +153,9 @@ export function AdminTabs({
     <div className="flex gap-0 min-h-[calc(100vh-220px)]">
       {/* ── Sidebar ── */}
       <aside className="w-56 shrink-0 bg-[#0F1629] rounded-2xl mr-6 p-3 flex flex-col gap-1 self-start sticky top-6">
-        {/* Logo */}
+        {/* Header */}
         <div className="px-3 pt-3 pb-3 mb-1 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/images/logo-wordmark.png"
-              alt="DeepTalent"
-              width={120}
-              height={28}
-              className="brightness-0 invert"
-              priority
-            />
-          </Link>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/35 mt-1.5">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-white/50">
             Admin Panel
           </p>
         </div>

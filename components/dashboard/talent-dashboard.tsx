@@ -18,18 +18,34 @@ import { CertificationsPanel } from "@/components/dashboard/certifications-panel
 import { TalentOverview } from "@/components/dashboard/talent-overview";
 import { FloatingCareerChat } from "@/components/dashboard/floating-career-chat";
 import { ResumeBuilder } from "@/components/dashboard/resume-builder";
+import { AIToolUnderConstruction, CreditsBadge } from "@/components/dashboard/ai-tool-page";
 import { SALARY_SCALE } from "@/lib/salary/scale";
 
-type Tab = "overview" | "profile" | "resumes" | "certifications" | "applications" | "openRoles" | "resumeBuilder";
+type Tab =
+  | "overview"
+  | "profile"
+  | "resumes"
+  | "certifications"
+  | "applications"
+  | "openRoles"
+  | "resumeBuilder"
+  | "coverLetter"
+  | "linkedinReview"
+  | "emailWriter"
+  | "interviewPrep";
 
 const NAV: { id: Tab; label: string; icon: any; group?: string }[] = [
-  { id: "overview", label: "Overview", icon: LayoutGrid },
-  { id: "profile", label: "Profile", icon: User },
-  { id: "resumes", label: "Resumes", icon: FileText },
-  { id: "certifications", label: "Certifications", icon: Award },
-  { id: "applications", label: "Applications", icon: Briefcase },
-  { id: "openRoles", label: "Open Roles", icon: TrendingUp },
-  { id: "resumeBuilder", label: "AI Resume Builder", icon: PenTool, group: "AI Tools" },
+  { id: "overview",       label: "Overview",                icon: LayoutGrid },
+  { id: "profile",        label: "Profile",                 icon: User },
+  { id: "resumes",        label: "Resumes",                 icon: FileText },
+  { id: "certifications", label: "Certifications",          icon: Award },
+  { id: "applications",   label: "Applications",            icon: Briefcase },
+  { id: "openRoles",      label: "Open Roles",              icon: TrendingUp },
+  { id: "resumeBuilder",  label: "AI Resume Builder",       icon: PenTool,          group: "AI Tools" },
+  { id: "coverLetter",    label: "Cover Letter",            icon: FileText,         group: "AI Tools" },
+  { id: "linkedinReview", label: "LinkedIn Review",         icon: LayoutDashboard,  group: "AI Tools" },
+  { id: "emailWriter",    label: "Email Writer",            icon: Briefcase,        group: "AI Tools" },
+  { id: "interviewPrep",  label: "Interview Prep",          icon: Award,            group: "AI Tools" },
 ];
 
 export function TalentDashboard({
@@ -71,9 +87,12 @@ export function TalentDashboard({
       {/* Sidebar */}
       <aside className="lg:w-60 shrink-0 border-b lg:border-b-0 lg:border-r border-gray-100 bg-white">
         <nav className="flex lg:flex-col gap-1 p-3 lg:p-4 overflow-x-auto lg:overflow-x-visible lg:sticky lg:top-0">
-          <p className="hidden lg:flex items-center gap-2 px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-            <LayoutDashboard className="size-3.5" /> Dashboard
-          </p>
+          <div className="hidden lg:flex items-center justify-between px-3 pb-2">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
+              <LayoutDashboard className="size-3.5" /> Dashboard
+            </p>
+            <CreditsBadge />
+          </div>
           {NAV.map((item, i) => {
             const active = tab === item.id;
             const prevGroup = NAV[i - 1]?.group;
@@ -104,7 +123,7 @@ export function TalentDashboard({
                       {counts[item.id]}
                     </span>
                   )}
-                  {item.id === "resumeBuilder" && !active && (
+                  {item.group === "AI Tools" && !active && (
                     <span className="ml-auto inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#3B5BDB]/10 text-[#3B5BDB]">
                       AI
                     </span>
@@ -187,6 +206,18 @@ export function TalentDashboard({
         )}
         {tab === "resumeBuilder" && (
           <ResumeBuilder profile={profile} />
+        )}
+        {tab === "coverLetter" && (
+          <AIToolUnderConstruction toolId="coverLetter" />
+        )}
+        {tab === "linkedinReview" && (
+          <AIToolUnderConstruction toolId="linkedinReview" />
+        )}
+        {tab === "emailWriter" && (
+          <AIToolUnderConstruction toolId="emailWriter" />
+        )}
+        {tab === "interviewPrep" && (
+          <AIToolUnderConstruction toolId="interviewPrep" />
         )}
       </div>
 
