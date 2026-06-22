@@ -40,6 +40,7 @@ export async function POST(req: Request) {
     skills = [],
     yearsExperience = null,
     answers = [],
+    tabSwitchCount = 0,
   } = body as {
     interviewId?: string;
     fullName?: string;
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
     skills?: string[];
     yearsExperience?: number | null;
     answers?: IncomingAnswer[];
+    tabSwitchCount?: number;
   };
 
   if (!Array.isArray(answers) || answers.length === 0) {
@@ -146,6 +148,7 @@ export async function POST(req: Request) {
         strengths: scored.strengths ?? [],
         improvements: scored.improvements ?? [],
         qualified_roles: qualifiedRoles,
+        tab_switch_count: typeof tabSwitchCount === "number" ? tabSwitchCount : 0,
         status: "completed",
         completed_at: new Date().toISOString(),
       })

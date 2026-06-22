@@ -212,5 +212,25 @@ export async function GET(request: Request) {
     });
   }
 
+  // Enrich decided_by UUIDs → admin name/email for all rows
+  const deciderIds = Array.from(
+    new Set(rows.map((r) => r.decided_by).filter(Boolean))
+  ) as string[];
+  const deciderMap = new Map<string, { name: string | null; email: string | null }>();
+  if (deciderIds.length) {
+    const { data: deciders } = await sb
+      .from("profiles")
+      .select("id, full_name, email")
+      .in("id", deciderIds);
+    for (const d of deciders ?? []) {
+      deciderMap.set(d.id, { name: d.full_name || null, email: d.email || null });
+    }
+  }
+  rows = rows.map((r) => ({
+    ...r,
+    decided_by_name: r.decided_by ? (deciderMap.get(r.decided_by)?.name ?? null) : null,
+    decided_by_email: r.decided_by ? (deciderMap.get(r.decided_by)?.email ?? null) : null,
+  }));
+
   return NextResponse.json({ rows });
 }

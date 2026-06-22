@@ -22,6 +22,7 @@ import {
   Search,
   Send,
   Sparkles,
+  UserCheck as UserCheck2,
   Wallet,
   X,
   XCircle,
@@ -60,6 +61,9 @@ type TalentRow = {
   created_at: string;
   decision_at: string | null;
   decision_note: string | null;
+  decided_by?: string | null;
+  decided_by_name?: string | null;
+  decided_by_email?: string | null;
   meeting_at: string | null;
   meeting_link: string | null;
   // Enrichments from /api/admin/submissions
@@ -86,6 +90,9 @@ type CompanyRow = {
   created_at: string;
   decision_at: string | null;
   decision_note: string | null;
+  decided_by?: string | null;
+  decided_by_name?: string | null;
+  decided_by_email?: string | null;
   meeting_at: string | null;
   meeting_link: string | null;
   payment_status: string | null;
@@ -299,10 +306,18 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <StatusBadge status={r.status} />
-                      {kind === "company_inquiry" &&
-                        (r as CompanyRow).payment_status === "paid" && <PaidBadge />}
+                    <div className="flex flex-col gap-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <StatusBadge status={r.status} />
+                        {kind === "company_inquiry" &&
+                          (r as CompanyRow).payment_status === "paid" && <PaidBadge />}
+                      </div>
+                      {r.decision_at && (r as any).decided_by_name && (
+                        <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
+                          <UserCheck2 className="size-3 text-emerald-500" />
+                          {(r as any).decided_by_name}
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4 text-gray-600">
@@ -615,12 +630,41 @@ function DetailDrawer({
         </header>
 
         <div className="px-6 py-5 space-y-5">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={row.status} />
             <span className="text-xs text-gray-400">
               · Submitted {new Date(row.created_at).toLocaleDateString()}
             </span>
           </div>
+
+          {/* Approval traceability */}
+          {row.decision_at && (
+            <div className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 flex items-start gap-2.5">
+              <UserCheck2 className="size-4 text-emerald-600 mt-0.5 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-gray-700">
+                  {row.status === "rejected" ? "Rejected" : "Approved"} by{" "}
+                  {(row as any).decided_by_name || (row as any).decided_by_email || "Admin"}
+                </p>
+                {(row as any).decided_by_email && (row as any).decided_by_name && (
+                  <p className="text-[11px] text-gray-400">{(row as any).decided_by_email}</p>
+                )}
+                <p className="text-[11px] text-gray-400 mt-0.5">
+                  {new Date(row.decision_at).toLocaleString(undefined, {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                </p>
+                {row.decision_note && (
+                  <p className="text-xs text-gray-600 mt-1 italic">&ldquo;{row.decision_note}&rdquo;</p>
+                )}
+              </div>
+            </div>
+          )}
 
           <Section title="Contact">
             <Field icon={Mail} label="Email" value={row.email} href={`mailto:${row.email}`} />

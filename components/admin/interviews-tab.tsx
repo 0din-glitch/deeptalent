@@ -11,6 +11,7 @@ import {
   Trophy,
   Briefcase,
   Clock,
+  AlertTriangle,
 } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -51,6 +52,7 @@ type Interview = {
   answers: AnswerRow[] | null;
   video_path: string | null;
   video_duration_seconds: number | null;
+  tab_switch_count: number | null;
   status: string;
   created_at: string;
   completed_at: string | null;
@@ -113,15 +115,26 @@ export function InterviewsTab() {
                   </td>
                   <td className="px-6 py-4">
                     {r.overall_score != null ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold text-gray-900">{r.overall_score}</span>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-full capitalize ${
-                            bandStyles[r.score_band ?? ""] || "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          {r.score_band || "—"}
-                        </span>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-gray-900">{r.overall_score}</span>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full capitalize ${
+                              bandStyles[r.score_band ?? ""] || "bg-gray-100 text-gray-600"
+                            }`}
+                          >
+                            {r.score_band || "—"}
+                          </span>
+                        </div>
+                        {r.tab_switch_count != null && r.tab_switch_count > 0 && (
+                          <span
+                            title={`Candidate switched tabs ${r.tab_switch_count} time(s) during interview`}
+                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full"
+                          >
+                            <AlertTriangle className="size-3" />
+                            {r.tab_switch_count} tab switch{r.tab_switch_count > 1 ? "es" : ""}
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <span className="text-gray-400 text-sm">—</span>
