@@ -26,8 +26,13 @@ export async function POST(request: Request) {
   }
 
   const sb = ctx.service;
+  // Prefer the canonical site URL; fall back to the request origin.
+  // VERCEL_PROJECT_PRODUCTION_URL is the stable production domain (no preview suffix).
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : null) ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
     new URL(request.url).origin;
 
@@ -67,10 +72,11 @@ export async function POST(request: Request) {
     );
   }
 
-  // Generate a magic link so the invitee can confirm + set their password
+  // Generate an invite link — type "invite" lets the user set a password on first sign-in
+  // redirectTo must be the FULL absolute URL of our callback route
   const redirectTo = `${baseUrl}/auth/callback?next=/admin`;
   const { data: linkData, error: linkErr } = await sb.auth.admin.generateLink({
-    type: "magiclink",
+    type: "invite",
     email: email.trim().toLowerCase(),
     options: { redirectTo },
   });
