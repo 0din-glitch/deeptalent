@@ -125,6 +125,10 @@ export function InterviewFlow({
   const [result, setResult] = useState<ScoreResult | null>(null);
   const [processingMsg, setProcessingMsg] = useState("Analyzing your answers…");
 
+  // ---- tab-switch integrity ----
+  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+  const [tabSwitchWarning, setTabSwitchWarning] = useState(false);
+
   /* --------------------------- skills --------------------------- */
   const addSkill = useCallback(() => {
     const v = skillInput.trim();
@@ -327,6 +331,7 @@ export function InterviewFlow({
             skills,
             yearsExperience: years ? Number(years) : null,
             answers: allAnswers,
+            tabSwitchCount,
           }),
         });
         const data = (await res.json()) as ScoreResult;
@@ -359,6 +364,26 @@ export function InterviewFlow({
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
   }, []);
+
+  // Tab-switch / window-blur integrity check during interview phase only.
+  useEffect(() => {
+    if (phase !== "interview") return;
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        // Candidate switched away — stop speech and flag it
+        cancelSpeak();
+        stopListening();
+        setStage("idle");
+        setTabSwitchCount((n) => n + 1);
+        setTabSwitchWarning(true);
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, cancelSpeak, stopListening]);
 
   /* =========================== RENDER =========================== */
   return (
@@ -419,6 +444,9 @@ export function InterviewFlow({
             onReplay={() => askQuestion(questions[current])}
             onStartAnswer={handleStartAnswer}
             onNext={handleNext}
+            tabSwitchWarning={tabSwitchWarning}
+            tabSwitchCount={tabSwitchCount}
+            onDismissTabWarning={() => setTabSwitchWarning(false)}
           />
         )}
 
@@ -733,11 +761,14 @@ function InterviewStep(props: {
   onReplay: () => void;
   onStartAnswer: () => void;
   onNext: (manualText: string) => void;
+  tabSwitchWarning: boolean;
+  tabSwitchCount: number;
+  onDismissTabWarning: () => void;
 }) {
   const {
     videoRef, cameraReady, loadingQuestions, questions, current, stage,
     speaking, listening, transcript, interim, sttError, typedAnswer, onTypedAnswerChange,
-    onReplay, onStartAnswer, onNext,
+    onReplay, onStartAnswer, onNext, tabSwitchWarning, tabSwitchCount, onDismissTabWarning,
   } = props;
   const q = questions[current];
   const isLast = current === questions.length - 1;
@@ -745,6 +776,36 @@ function InterviewStep(props: {
 
   return (
     <div className="space-y-5">
+      {/* Tab-switch warning overlay */}
+      {tabSwitchWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center">
+            <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-7 h-7 text-amber-600" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-1">Tab switch detected</h3>
+            <p className="text-sm text-gray-600 leading-relaxed mb-2">
+              You left this tab during your interview. This has been noted.
+            </p>
+            {tabSwitchCount > 1 && (
+              <p className="text-xs font-semibold text-rose-600 bg-rose-50 rounded-lg px-3 py-2 mb-3">
+                This is your {tabSwitchCount === 2 ? "2nd" : tabSwitchCount === 3 ? "3rd" : `${tabSwitchCount}th`} tab switch.
+                Repeated violations may affect your interview result.
+              </p>
+            )}
+            <p className="text-xs text-gray-400 mb-5">
+              Please keep this tab active and visible for the duration of the interview.
+            </p>
+            <button
+              onClick={onDismissTabWarning}
+              className="w-full py-2.5 rounded-lg bg-[#3B5BDB] text-white font-semibold text-sm hover:bg-[#2d42a6] transition-colors"
+            >
+              I understand — resume interview
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Camera preview */}
       <div className="relative bg-foreground/95 rounded-2xl overflow-hidden aspect-video">
         <video ref={videoRef} muted playsInline className="w-full h-full object-cover" />

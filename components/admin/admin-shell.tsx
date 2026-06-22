@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useSWR from "swr";
+import { AdminInviteModal } from "@/components/admin/admin-invite-modal";
 import { FilesTab } from "@/components/admin/files-tab";
 import { UsersTab } from "@/components/admin/users-tab";
 import { SubmissionsTab } from "@/components/admin/submissions-tab";
@@ -27,6 +28,7 @@ import {
   Mic,
   Users,
   UserCheck,
+  UserPlus,
   Building2,
 } from "lucide-react";
 
@@ -87,6 +89,7 @@ export function AdminShell({
   userCount: number;
 }) {
   const [tab, setTab] = useState<Tab>("users");
+  const [showInvite, setShowInvite] = useState(false);
   const { me } = useAdminMe();
 
   const { data: pendingData } = useSWR<{ requests: any[] }>(
@@ -225,6 +228,19 @@ export function AdminShell({
           ))}
         </nav>
 
+        {/* Invite admin button — super admin only */}
+        {isSuperAdmin && (
+          <div className="px-3 pb-3">
+            <button
+              onClick={() => setShowInvite(true)}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-white/50 hover:text-white hover:bg-white/[0.06] transition-all"
+            >
+              <UserPlus className="size-4 shrink-0 text-white/40" />
+              <span>Invite Admin</span>
+            </button>
+          </div>
+        )}
+
         {/* User footer */}
         <div className="border-t border-white/[0.07] p-4">
           <div className="flex items-center gap-3">
@@ -244,6 +260,8 @@ export function AdminShell({
             </Link>
           </div>
         </div>
+
+        {showInvite && <AdminInviteModal onClose={() => setShowInvite(false)} />}
       </aside>
 
       {/* ── Main content ── */}
