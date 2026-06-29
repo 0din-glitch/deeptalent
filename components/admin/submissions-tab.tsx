@@ -298,11 +298,26 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4">
                     {kind === "talent_application" ? (
                       <RoleAndRateCell row={r as TalentRow} />
                     ) : (
-                      (r as CompanyRow).role_title || (r as CompanyRow).role_category || "—"
+                      <div className="flex flex-col gap-1.5">
+                        {(r as CompanyRow).role_title && (
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#3B5BDB]/8 border border-[#3B5BDB]/20">
+                            <Briefcase className="size-3.5 text-[#3B5BDB]" />
+                            <span className="text-sm font-medium text-gray-900">{(r as CompanyRow).role_title}</span>
+                          </div>
+                        )}
+                        {(r as CompanyRow).role_category && (
+                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/50">
+                            <span className="text-xs font-medium text-amber-900">{(r as CompanyRow).role_category}</span>
+                          </div>
+                        )}
+                        {!(r as CompanyRow).role_title && !(r as CompanyRow).role_category && (
+                          <span className="text-gray-400 text-sm">—</span>
+                        )}
+                      </div>
                     )}
                   </td>
                   <td className="px-6 py-4">
