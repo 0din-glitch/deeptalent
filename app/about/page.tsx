@@ -75,10 +75,7 @@ export default function AboutPage() {
 
                 {/* Chapter Two — DeepTalent Platform sub-section */}
                 <div className="mt-8 mb-2 rounded-2xl border border-[#3B5BDB]/15 bg-[#3B5BDB]/[0.04] p-6 md:p-7">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-[11px] font-semibold uppercase tracking-wide">
-                      Chapter Two
-                    </span>
+                  <div className="mb-3">
                     <h3 className="text-lg md:text-xl font-bold text-gray-900 leading-tight">
                       DeepTalent Platform
                     </h3>
