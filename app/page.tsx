@@ -734,8 +734,8 @@ function StrategicAdvantages() {
       accent: "bg-purple-500/10 text-purple-600",
     },
     {
-      title: "72-Hour Turnaround",
-      description: "Speed wins. We deliver a curated shortlist of pre-vetted, interview-ready candidates within 3 days. Move from 'Open Role' to 'Offer Sent' in under a week.",
+      title: "Follow-the-Sun Coverage",
+      description: "Lagos is GMT+1. Sydney is GMT+10/11. That nine-hour gap is not a problem — it is your competitive edge. DeepTalent specialists in Africa cover your European and US business hours, while our APAC-aligned talent keeps work moving overnight. Your product never sleeps.",
       image: "/images/illustration-72-hrs.png",
       accent: "bg-amber-500/10 text-amber-600",
     },
@@ -746,10 +746,16 @@ function StrategicAdvantages() {
       accent: "bg-emerald-500/10 text-emerald-600",
     },
     {
-      title: "Global Compliance handled",
+      title: "Global Compliance Handled",
       description: "Hire across Nigeria, Kenya, Ghana, South Africa, and the Philippines without a legal team. We handle payroll, taxes, and local compliance entirely.",
       image: "/images/global-talent-mapping.png",
       accent: "bg-indigo-500/10 text-indigo-600",
+    },
+    {
+      title: "Invoice in Your Currency",
+      description: "Pay in USD, GBP, EUR, AUD, CAD, and more. We consolidate all your talent into one monthly invoice in your preferred currency and absorb the foreign exchange complexity so your finance team never has to think about it.",
+      image: "/images/global-compliance.png",
+      accent: "bg-rose-500/10 text-rose-600",
     },
   ];
 
@@ -1188,7 +1194,7 @@ function FaqSection() {
   const faqs = [
     {
       question: "What is DeepTalent?",
-      answer: "DeepTalent is a specialized talent marketplace connecting businesses with the top 1% of pre-vetted remote specialists. Unlike broad freelance platforms, we focus on deep expertise, transparency, and direct high-value contracts.",
+      answer: "DeepTalent is a fully managed talent partner — not a marketplace. We handle sourcing, vetting, contracting, payroll, and ongoing management so you get a dedicated specialist without the overhead of a recruitment agency or the unpredictability of a freelance platform.",
     },
     {
       question: "How does the vetting process work?",
@@ -1208,7 +1214,7 @@ function FaqSection() {
     },
     {
       question: "How are payments handled?",
-      answer: "We act as the merchant of record. You receive one consolidated monthly invoice for all your talent, and we handle the complex global payouts, currency conversion, and compliance.",
+      answer: "We act as the merchant of record. You receive one consolidated monthly invoice for all your talent in your preferred currency — USD, GBP, EUR, AUD, CAD, and more. We handle global payouts, currency conversion, and compliance so you never touch a foreign payroll.",
     },
     {
       question: "What if a match isn't the right fit?",
