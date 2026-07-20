@@ -101,7 +101,7 @@ export default async function HirePayPage({
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 mt-2 leading-relaxed">
-                    Billed every month in USD until cancelled. Cancel anytime by contacting your DeepTalent partner.
+                    Billed every month until cancelled. Invoices are issued in USD; we support GBP, EUR, AUD, and CAD on request — contact your DeepTalent partner to switch.
                   </p>
 
                   <div className="mt-5 flex items-center gap-2 text-xs text-gray-500">
