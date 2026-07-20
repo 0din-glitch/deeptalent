@@ -1,5 +1,82 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Instagram, Linkedin, Mail } from "lucide-react";
+import { ChevronDown, Instagram, Linkedin, Mail } from "lucide-react";
+
+const FAQ_ITEMS = [
+  {
+    question: "What is DeepTalent?",
+    answer: "DeepTalent is a fully managed talent partner — not a marketplace. We handle sourcing, vetting, contracting, payroll, and ongoing management so you get a dedicated specialist without the overhead of a recruitment agency or the unpredictability of a freelance platform.",
+  },
+  {
+    question: "How does the vetting process work?",
+    answer: "We use a proprietary mix of AI analysis and human expert review. Every candidate undergoes technical assessments, communication screening, and a past-performance audit before entering our network.",
+  },
+  {
+    question: "How are payments handled?",
+    answer: "We act as the merchant of record. You receive one consolidated monthly invoice in your preferred currency — USD, GBP, EUR, AUD, CAD, and more. We handle global payouts, currency conversion, and compliance so you never touch foreign payroll.",
+  },
+  {
+    question: "What if a match isn't the right fit?",
+    answer: "We offer a risk-free 14-day trial period. If a talent doesn't meet your expectations within the first two weeks, you pay nothing and we immediately match you with a replacement.",
+  },
+  {
+    question: "Do you support full-time hiring?",
+    answer: "Yes. While many engagements start as contracts, we offer a simple buy-out clause if you wish to bring a DeepTalent specialist onto your internal payroll permanently.",
+  },
+];
+
+function FooterFAQ() {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div className="border-t border-white/10 mt-12 pt-10 mb-2">
+      <div className="flex flex-col md:flex-row md:items-start gap-8">
+        <div className="md:w-64 shrink-0">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-white/40 mb-1">FAQ</p>
+          <h3 className="text-lg font-semibold text-white leading-snug">Common questions</h3>
+          <p className="text-sm text-white/50 mt-1.5">
+            Everything you need to know about working with DeepTalent.
+          </p>
+          <Link
+            href="/#faq"
+            className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-[#7b9ef8] hover:text-white transition-colors"
+          >
+            View all FAQs
+            <ChevronDown className="size-3.5 -rotate-90" />
+          </Link>
+        </div>
+
+        <div className="flex-1 divide-y divide-white/10">
+          {FAQ_ITEMS.map((item, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={i}>
+                <button
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                  className="w-full flex items-center justify-between gap-4 py-4 text-left group"
+                >
+                  <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">
+                    {item.question}
+                  </span>
+                  <ChevronDown
+                    className={`size-4 shrink-0 text-white/40 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {isOpen && (
+                  <p className="pb-4 text-sm text-white/55 leading-relaxed">
+                    {item.answer}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -107,7 +184,9 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
+        <FooterFAQ />
+
+        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
           <p>© {new Date().getFullYear()} DeepTalent. All rights reserved.</p>
           <p>Built for the future of work.</p>
         </div>
