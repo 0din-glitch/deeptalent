@@ -19,6 +19,7 @@ import { TalentOverview } from "@/components/dashboard/talent-overview";
 import { FloatingCareerChat } from "@/components/dashboard/floating-career-chat";
 import { ResumeBuilder } from "@/components/dashboard/resume-builder";
 import { AIToolUnderConstruction, CreditsBadge } from "@/components/dashboard/ai-tool-page";
+import { CoverLetterGenerator } from "@/components/dashboard/cover-letter-generator";
 import { SALARY_SCALE } from "@/lib/salary/scale";
 
 type Tab =
@@ -208,7 +209,9 @@ export function TalentDashboard({
           <ResumeBuilder profile={profile} />
         )}
         {tab === "coverLetter" && (
-          <AIToolUnderConstruction toolId="coverLetter" />
+          <Section title="Cover Letter Generator" subtitle="AI-crafted cover letters tailored to each job description.">
+            <CoverLetterGenerator profile={profile} />
+          </Section>
         )}
         {tab === "linkedinReview" && (
           <AIToolUnderConstruction toolId="linkedinReview" />
