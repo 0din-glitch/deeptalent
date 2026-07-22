@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import {
   Sparkles,
@@ -11,16 +11,11 @@ import {
   FileText,
   Mail,
   Linkedin,
-  MessageSquare,
   Mic,
+  Plus,
+  Loader2,
 } from "lucide-react";
-
-// Credit packages available for purchase
-const CREDIT_PACKAGES = [
-  { id: "starter", label: "Starter", credits: 20, price: 5, popular: false },
-  { id: "pro", label: "Pro", credits: 60, price: 12, popular: true },
-  { id: "power", label: "Power", credits: 150, price: 25, popular: false },
-];
+import { CREDIT_PACKAGES, packageTotalCredits, type CreditPackage } from "@/lib/credits/packages";
 
 // Per-tool credit cost
 export const TOOL_COSTS: Record<string, number> = {
@@ -41,44 +36,91 @@ const TOOL_META: Record<string, { icon: React.ElementType; color: string; label:
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-// ─── Credits display widget ────────────────────────────────────────────────
+// ─── Credits display bubble ─────────────────────────────────────────────────
 export function CreditsBadge() {
   const { data } = useSWR<{ credits: number }>("/api/credits", fetcher, { refreshInterval: 30_000 });
-  const credits = data?.credits ?? "—";
+  const [showPurchase, setShowPurchase] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const credits = data?.credits;
+  const low = typeof credits === "number" && credits < 5;
+
+  // When returning from Stripe Checkout, verify the session and grant credits once.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("credits_session");
+    if (!sessionId) return;
+
+    setVerifying(true);
+    fetch("/api/credits/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
+    })
+      .then((r) => r.json())
+      .then(() => mutate("/api/credits"))
+      .finally(() => {
+        setVerifying(false);
+        // Clean the query params so a refresh doesn't re-trigger
+        params.delete("credits_session");
+        params.delete("credits_cancelled");
+        const clean = `${window.location.pathname}${params.toString() ? `?${params}` : ""}`;
+        window.history.replaceState({}, "", clean);
+      });
+  }, []);
 
   return (
-    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#3B5BDB]/8 border border-[#3B5BDB]/15">
-      <Zap className="size-3.5 text-[#3B5BDB]" />
-      <span className="text-xs font-semibold text-[#3B5BDB]">{credits} credits</span>
-    </div>
+    <>
+      {showPurchase && <PurchaseModal onClose={() => setShowPurchase(false)} />}
+      <button
+        onClick={() => setShowPurchase(true)}
+        title="Buy more AI credits"
+        className={`group inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-full border transition-all ${
+          low
+            ? "bg-amber-50 border-amber-200 hover:border-amber-300"
+            : "bg-[#3B5BDB]/8 border-[#3B5BDB]/15 hover:border-[#3B5BDB]/30"
+        }`}
+      >
+        <Zap className={`size-3.5 ${low ? "text-amber-500" : "text-[#3B5BDB]"} ${verifying ? "animate-pulse" : ""}`} />
+        <span className={`text-xs font-bold tabular-nums ${low ? "text-amber-700" : "text-[#3B5BDB]"}`}>
+          {verifying ? "…" : credits ?? "—"}
+        </span>
+        <span className={`text-[10px] font-medium ${low ? "text-amber-600/70" : "text-[#3B5BDB]/60"}`}>credits</span>
+        <span
+          className={`ml-0.5 grid place-items-center size-5 rounded-full transition-colors ${
+            low ? "bg-amber-500 text-white" : "bg-[#3B5BDB] text-white group-hover:bg-[#2f49b2]"
+          }`}
+        >
+          <Plus className="size-3" />
+        </span>
+      </button>
+    </>
   );
 }
 
-// ─── Purchase modal ────────────────────────────────────────────────────────
-function PurchaseModal({ onClose }: { onClose: () => void }) {
+// ─── Purchase modal (real Stripe Checkout) ──────────────────────────────────
+export function PurchaseModal({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function handlePurchase(pkg: typeof CREDIT_PACKAGES[number]) {
+  async function handlePurchase(pkg: CreditPackage) {
     setLoading(pkg.id);
+    setError(null);
     try {
-      // In production this would go through Stripe checkout.
-      // For now we grant directly (demo / development mode).
-      const res = await fetch("/api/credits", {
+      const res = await fetch("/api/credits/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "grant",
-          amount: pkg.credits,
-          description: `Purchased ${pkg.credits} credits (${pkg.label} pack)`,
-        }),
+        body: JSON.stringify({ packageId: pkg.id }),
       });
-      if (res.ok) {
-        mutate("/api/credits");
-        setSuccess(pkg.id);
-        setTimeout(onClose, 1500);
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        setError(data.error || "Could not start checkout.");
+        setLoading(null);
+        return;
       }
-    } finally {
+      // Redirect to Stripe hosted checkout
+      window.location.href = data.url;
+    } catch {
+      setError("Something went wrong. Please try again.");
       setLoading(null);
     }
   }
@@ -92,53 +134,66 @@ function PurchaseModal({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <h3 className="text-base font-bold text-gray-900">Buy AI Credits</h3>
-            <p className="text-xs text-gray-500">Credits are used across all AI tools</p>
+            <p className="text-xs text-gray-500">One balance, used across every AI tool</p>
           </div>
         </div>
 
+        {error && (
+          <div className="mb-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">{error}</div>
+        )}
+
         <div className="space-y-3">
-          {CREDIT_PACKAGES.map((pkg) => (
-            <button
-              key={pkg.id}
-              onClick={() => handlePurchase(pkg)}
-              disabled={!!loading || !!success}
-              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 transition-all text-left ${
-                pkg.popular
-                  ? "border-[#3B5BDB] bg-[#3B5BDB]/[0.03]"
-                  : "border-gray-100 hover:border-gray-200"
-              } disabled:opacity-60`}
-            >
-              <div className="flex items-center gap-3">
-                {success === pkg.id ? (
-                  <CheckCircle2 className="size-5 text-emerald-500" />
-                ) : (
-                  <div className={`size-8 rounded-lg flex items-center justify-center ${pkg.popular ? "bg-[#3B5BDB] text-white" : "bg-gray-100 text-gray-600"}`}>
-                    <Zap className="size-4" />
+          {CREDIT_PACKAGES.map((pkg) => {
+            const total = packageTotalCredits(pkg);
+            const price = pkg.priceInCents / 100;
+            return (
+              <button
+                key={pkg.id}
+                onClick={() => handlePurchase(pkg)}
+                disabled={!!loading}
+                className={`relative w-full flex items-center justify-between px-4 py-3.5 rounded-xl border-2 transition-all text-left ${
+                  pkg.popular ? "border-[#3B5BDB] bg-[#3B5BDB]/[0.03]" : "border-gray-100 hover:border-gray-200"
+                } disabled:opacity-60`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`size-9 rounded-lg flex items-center justify-center ${
+                      pkg.popular ? "bg-[#3B5BDB] text-white" : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {loading === pkg.id ? <Loader2 className="size-4 animate-spin" /> : <Zap className="size-4" />}
                   </div>
-                )}
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">
-                    {pkg.label}
-                    {pkg.popular && (
-                      <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-[#3B5BDB] bg-[#3B5BDB]/10 px-1.5 py-0.5 rounded">Popular</span>
-                    )}
-                  </p>
-                  <p className="text-xs text-gray-500">{pkg.credits} credits</p>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                      {pkg.label}
+                      {pkg.popular && (
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-[#3B5BDB] bg-[#3B5BDB]/10 px-1.5 py-0.5 rounded">
+                          Best value
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {total} credits{pkg.bonus ? <span className="text-emerald-600 font-medium"> · +{pkg.bonus} bonus</span> : null}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-bold text-gray-900">${pkg.price}</p>
-                <p className="text-[11px] text-gray-400">${(pkg.price / pkg.credits).toFixed(2)}/credit</p>
-              </div>
-            </button>
-          ))}
+                <div className="text-right">
+                  <p className="text-sm font-bold text-gray-900">${price.toFixed(2)}</p>
+                  <p className="text-[11px] text-gray-400">${(price / total).toFixed(2)}/credit</p>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
-        <p className="text-[11px] text-gray-400 text-center mt-4">
-          Credits never expire. Stripe checkout coming soon — credits granted immediately in demo mode.
+        <p className="text-[11px] text-gray-400 text-center mt-4 flex items-center justify-center gap-1">
+          <Lock className="size-3" /> Secure checkout by Stripe · Credits never expire
         </p>
 
-        <button onClick={onClose} className="mt-4 w-full py-2 rounded-lg text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors">
+        <button
+          onClick={onClose}
+          className="mt-3 w-full py-2 rounded-lg text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+        >
           Cancel
         </button>
       </div>
