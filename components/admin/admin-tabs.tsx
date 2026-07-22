@@ -12,6 +12,7 @@ import { ContentTab } from "@/components/admin/content-tab";
 import { InterviewsTab } from "@/components/admin/interviews-tab";
 import { PlacementsTab } from "@/components/admin/placements-tab";
 import { MassEmailTab } from "@/components/admin/mass-email-tab";
+import { TasksTab } from "@/components/admin/tasks-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 import {
   Activity,
@@ -20,6 +21,7 @@ import {
   FileText,
   Folder,
   LayoutDashboard,
+  ListChecks,
   Mail,
   Megaphone,
   Mic,
@@ -62,6 +64,7 @@ type Tab =
   | "content"
   | "approvals"
   | "activity"
+  | "tasks"
   | "placements";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -130,6 +133,12 @@ export function AdminTabs({
         { id: "messages" as Tab, label: "Contact Messages", icon: Mail, count: messages.length },
         { id: "mass_email" as Tab, label: "Mass Email", icon: Megaphone, count: null },
         { id: "interviews" as Tab, label: "AI Interviews", icon: Mic, count: interviewCount },
+      ],
+    },
+    {
+      label: "Operations",
+      items: [
+        { id: "tasks" as Tab, label: "Tasks", icon: ListChecks, count: null },
       ],
     },
     {
@@ -220,6 +229,7 @@ export function AdminTabs({
         {tab === "content" && <ContentTab />}
         {tab === "interviews" && <InterviewsTab />}
         {tab === "mass_email" && <MassEmailTab />}
+        {tab === "tasks" && <TasksTab />}
         {tab === "approvals" && <ApprovalsTab />}
         {tab === "activity" && <ActivityTab />}
         {tab === "messages" && (
