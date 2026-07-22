@@ -20,6 +20,7 @@ import { FloatingCareerChat } from "@/components/dashboard/floating-career-chat"
 import { ResumeBuilder } from "@/components/dashboard/resume-builder";
 import { AIToolUnderConstruction, CreditsBadge } from "@/components/dashboard/ai-tool-page";
 import { CoverLetterGenerator } from "@/components/dashboard/cover-letter-generator";
+import { LinkedInReview } from "@/components/dashboard/linkedin-review";
 import { SALARY_SCALE } from "@/lib/salary/scale";
 
 type Tab =
@@ -214,7 +215,9 @@ export function TalentDashboard({
           </Section>
         )}
         {tab === "linkedinReview" && (
-          <AIToolUnderConstruction toolId="linkedinReview" />
+          <Section title="LinkedIn Profile Review" subtitle="AI audit of your LinkedIn profile to help you land global roles.">
+            <LinkedInReview profile={profile} />
+          </Section>
         )}
         {tab === "emailWriter" && (
           <AIToolUnderConstruction toolId="emailWriter" />
