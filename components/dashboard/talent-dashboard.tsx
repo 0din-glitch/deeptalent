@@ -18,10 +18,11 @@ import { CertificationsPanel } from "@/components/dashboard/certifications-panel
 import { TalentOverview } from "@/components/dashboard/talent-overview";
 import { FloatingCareerChat } from "@/components/dashboard/floating-career-chat";
 import { ResumeBuilder } from "@/components/dashboard/resume-builder";
-import { AIToolUnderConstruction, CreditsBadge } from "@/components/dashboard/ai-tool-page";
+import { CreditsBadge } from "@/components/dashboard/ai-tool-page";
 import { CoverLetterGenerator } from "@/components/dashboard/cover-letter-generator";
 import { LinkedInReview } from "@/components/dashboard/linkedin-review";
 import { EmailWriter } from "@/components/dashboard/email-writer";
+import { InterviewPrep } from "@/components/dashboard/interview-prep";
 import { SALARY_SCALE } from "@/lib/salary/scale";
 
 type Tab =
@@ -226,7 +227,9 @@ export function TalentDashboard({
           </Section>
         )}
         {tab === "interviewPrep" && (
-          <AIToolUnderConstruction toolId="interviewPrep" />
+          <Section title="Interview Prep" subtitle="Role-specific question bank plus AI practice feedback using the STAR method.">
+            <InterviewPrep profile={profile} />
+          </Section>
         )}
       </div>
 
