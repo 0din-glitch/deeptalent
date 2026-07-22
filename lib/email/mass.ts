@@ -139,6 +139,135 @@ export function parseManualEmails(raw: string): Recipient[] {
   return dedupeByEmail(parts.map((email) => ({ email, name: null })));
 }
 
+// ── CSV parsing ───────────────────────────────────────────────────────────
+/**
+ * Parses CSV text into recipients. Detects an `email` and (optional) `name`
+ * column from a header row; falls back to positional columns (email,name) when
+ * no recognizable header is present. Handles quoted fields and commas inside quotes.
+ */
+export function parseCsv(text: string): Recipient[] {
+  if (!text) return [];
+  const rows = splitCsvRows(text);
+  if (rows.length === 0) return [];
+
+  const header = rows[0].map((h) => h.trim().toLowerCase());
+  const emailKeys = ["email", "email address", "e-mail", "mail"];
+  const nameKeys = ["name", "full name", "full_name", "contact", "contact name", "first name"];
+
+  let emailIdx = header.findIndex((h) => emailKeys.includes(h));
+  let nameIdx = header.findIndex((h) => nameKeys.includes(h));
+  let dataRows = rows;
+
+  if (emailIdx !== -1) {
+    // Header row detected → skip it
+    dataRows = rows.slice(1);
+  } else {
+    // No header: assume col0 = email, col1 = name (unless col0 isn't an email)
+    emailIdx = 0;
+    nameIdx = 1;
+    // If the very first cell looks like a header word, drop it
+    if (rows[0][0] && !rows[0][0].includes("@")) dataRows = rows.slice(1);
+  }
+
+  const out: Recipient[] = [];
+  for (const cols of dataRows) {
+    const email = (cols[emailIdx] || "").trim();
+    if (!email) continue;
+    const name = nameIdx !== -1 ? (cols[nameIdx] || "").trim() || null : null;
+    out.push({ email, name });
+  }
+  return dedupeByEmail(out);
+}
+
+function splitCsvRows(text: string): string[][] {
+  const rows: string[][] = [];
+  let field = "";
+  let row: string[] = [];
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += ch;
+    } else if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ",") {
+      row.push(field); field = "";
+    } else if (ch === "\n" || ch === "\r") {
+      if (ch === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = "";
+      if (row.some((c) => c.trim() !== "")) rows.push(row);
+      row = [];
+    } else field += ch;
+  }
+  if (field !== "" || row.length) {
+    row.push(field);
+    if (row.some((c) => c.trim() !== "")) rows.push(row);
+  }
+  return rows;
+}
+
+// ── Meeting / calendar invites ──────────────────────────────────────────────
+export type MeetingDetails = {
+  title: string;
+  start: string; // ISO string (local) e.g. 2026-08-01T14:00
+  durationMinutes: number;
+  location?: string; // physical location or video link
+  description?: string;
+};
+
+/** Formats a Date to the Google Calendar UTC basic format: YYYYMMDDTHHMMSSZ */
+function gcalStamp(d: Date): string {
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+/** Builds a public "add to Google Calendar" link that opens a pre-filled event. */
+export function buildGoogleCalendarLink(m: MeetingDetails): string {
+  const start = new Date(m.start);
+  const end = new Date(start.getTime() + (m.durationMinutes || 30) * 60_000);
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: m.title,
+    dates: `${gcalStamp(start)}/${gcalStamp(end)}`,
+  });
+  if (m.description) params.set("details", m.description);
+  if (m.location) params.set("location", m.location);
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/** Renders the meeting block appended to a campaign email body. */
+export function renderMeetingSection(m: MeetingDetails): string {
+  const start = new Date(m.start);
+  const dateStr = start.toLocaleString("en-US", {
+    weekday: "long", month: "long", day: "numeric", year: "numeric",
+    hour: "numeric", minute: "2-digit",
+  });
+  const gcal = buildGoogleCalendarLink(m);
+  const locationRow = m.location
+    ? `<tr><td style="padding:4px 0;color:#6b7280;font-size:13px;">Location</td><td style="padding:4px 0;color:#111827;font-size:13px;font-weight:600;">${escapeHtml(m.location)}</td></tr>`
+    : "";
+  return `
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
+<tr><td style="background:#3B5BDB;padding:14px 20px;">
+<span style="color:#ffffff;font-size:15px;font-weight:700;">📅 ${escapeHtml(m.title)}</span>
+</td></tr>
+<tr><td style="padding:16px 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><td style="padding:4px 0;color:#6b7280;font-size:13px;width:90px;">When</td><td style="padding:4px 0;color:#111827;font-size:13px;font-weight:600;">${dateStr} (${m.durationMinutes} min)</td></tr>
+${locationRow}
+</table>
+<a href="${gcal}" style="display:inline-block;margin-top:14px;background:#3B5BDB;color:#ffffff;text-decoration:none;font-size:14px;font-weight:600;padding:10px 20px;border-radius:8px;">Add to Google Calendar</a>
+</td></tr>
+</table>`;
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 // ── Rate-limit usage ─────────────────────────────────────────────────────────
 export type RateUsage = {
   sentToday: number;

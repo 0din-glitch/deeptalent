@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
 import {
   Send,
@@ -16,7 +16,12 @@ import {
   Clock,
   Ban,
   ChevronRight,
+  Upload,
+  FileSpreadsheet,
+  CalendarPlus,
+  Trash2,
 } from "lucide-react";
+import { parseCsv, type Recipient } from "@/lib/email/mass";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -132,23 +137,68 @@ function Compose({
   const [result, setResult] = useState<{ sent: number; failed: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // CSV upload
+  const [csv, setCsv] = useState<Recipient[]>([]);
+  const [csvName, setCsvName] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // Meeting invite
+  const [meetingOn, setMeetingOn] = useState(false);
+  const [mTitle, setMTitle] = useState("");
+  const [mStart, setMStart] = useState("");
+  const [mDuration, setMDuration] = useState(30);
+  const [mLocation, setMLocation] = useState("");
+
+  function handleCsvFile(file: File) {
+    setError(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = parseCsv(String(reader.result || ""));
+        if (parsed.length === 0) {
+          setError("No valid emails found in that CSV.");
+          return;
+        }
+        setCsv(parsed);
+        setCsvName(file.name);
+      } catch {
+        setError("Could not read that CSV file.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
   const manualCount = useMemo(
     () => manual.split(/[\s,;]+/).map((s) => s.trim()).filter((s) => s.includes("@")).length,
     [manual]
   );
   const segmentCount = segments.find((s) => s.key === segment)?.count ?? 0;
   // Rough upper bound (may overlap); real de-dupe happens server-side.
-  const estRecipients = (segment ? segmentCount : 0) + manualCount;
+  const estRecipients = (segment ? segmentCount : 0) + manualCount + csv.length;
 
   async function handleSend() {
     setSending(true);
     setError(null);
     setResult(null);
     try {
+      const meeting =
+        meetingOn && mTitle.trim() && mStart
+          ? { title: mTitle.trim(), start: mStart, durationMinutes: mDuration, location: mLocation.trim() || undefined }
+          : null;
+
       const res = await fetch("/api/admin/mass-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fromKey, segment: segment || null, manualEmails: manual, subject, previewText: preview, bodyHtml }),
+        body: JSON.stringify({
+          fromKey,
+          segment: segment || null,
+          manualEmails: manual,
+          csvRecipients: csv,
+          subject,
+          previewText: preview,
+          bodyHtml,
+          meeting,
+        }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -161,6 +211,12 @@ function Compose({
       setBodyHtml("");
       setManual("");
       setSegment("");
+      setCsv([]);
+      setCsvName(null);
+      setMeetingOn(false);
+      setMTitle("");
+      setMStart("");
+      setMLocation("");
       mutate("/api/admin/mass-email");
     } catch {
       setError("Something went wrong. Please try again.");
@@ -224,6 +280,45 @@ function Compose({
             Content is wrapped in a branded DeepTalent template with header and reply footer automatically.
           </p>
         </div>
+
+        {/* Meeting invite */}
+        <div className="border border-gray-100 rounded-2xl p-4">
+          <label className="flex items-center gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={meetingOn}
+              onChange={(e) => setMeetingOn(e.target.checked)}
+              className="size-4 rounded border-gray-300 text-[#3B5BDB] focus:ring-[#3B5BDB]"
+            />
+            <span className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+              <CalendarPlus className="size-4 text-[#3B5BDB]" /> Attach a meeting invite
+            </span>
+          </label>
+          <p className="text-xs text-gray-400 mt-1 ml-6">
+            Adds a scheduled meeting block with an “Add to Google Calendar” button to the email.
+          </p>
+
+          {meetingOn && (
+            <div className="mt-4 grid sm:grid-cols-2 gap-3">
+              <div className="sm:col-span-2">
+                <label className="text-xs font-medium text-gray-500 block mb-1">Meeting title</label>
+                <input value={mTitle} onChange={(e) => setMTitle(e.target.value)} className="form-input" placeholder="Intro call with DeepTalent" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 block mb-1">Date &amp; time</label>
+                <input type="datetime-local" value={mStart} onChange={(e) => setMStart(e.target.value)} className="form-input" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 block mb-1">Duration (minutes)</label>
+                <input type="number" min={15} step={15} value={mDuration} onChange={(e) => setMDuration(Number(e.target.value))} className="form-input" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="text-xs font-medium text-gray-500 block mb-1">Location or video link</label>
+                <input value={mLocation} onChange={(e) => setMLocation(e.target.value)} className="form-input" placeholder="https://meet.google.com/... or an address" />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Recipients / send panel */}
@@ -252,6 +347,46 @@ function Compose({
             placeholder="jane@acme.com, john@corp.com"
           />
           {manualCount > 0 && <p className="text-[11px] text-gray-400 mt-1">{manualCount} manual email(s)</p>}
+
+          {/* CSV upload */}
+          <label className="text-xs font-medium text-gray-500 block mt-3 mb-1.5">Import from CSV</label>
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleCsvFile(f);
+              e.target.value = "";
+            }}
+          />
+          {csv.length === 0 ? (
+            <button
+              onClick={() => fileRef.current?.click()}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-gray-200 text-sm font-medium text-gray-500 hover:border-[#3B5BDB]/40 hover:text-[#3B5BDB] transition-colors"
+            >
+              <Upload className="size-4" /> Upload CSV
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#3B5BDB]/[0.04] border border-[#3B5BDB]/15">
+              <FileSpreadsheet className="size-4 text-[#3B5BDB] shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-gray-900 truncate">{csvName}</p>
+                <p className="text-[11px] text-gray-500">{csv.length} recipient(s)</p>
+              </div>
+              <button
+                onClick={() => { setCsv([]); setCsvName(null); }}
+                className="p-1 rounded-lg hover:bg-white text-gray-400 hover:text-red-500"
+                title="Remove CSV"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
+          )}
+          <p className="text-[11px] text-gray-400 mt-1">
+            Columns: <code className="text-gray-500">email</code>, <code className="text-gray-500">name</code> (optional). Works for internal &amp; external contacts.
+          </p>
 
           <div className="mt-4 p-3 rounded-xl bg-gray-50 flex items-center justify-between">
             <span className="text-xs text-gray-500">Est. recipients</span>

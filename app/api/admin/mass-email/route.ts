@@ -8,11 +8,13 @@ import {
   parseManualEmails,
   getRateUsage,
   renderCampaignHtml,
+  renderMeetingSection,
   SEGMENTS,
   DAILY_LIMIT,
   MONTHLY_LIMIT,
   type Recipient,
   type SegmentKey,
+  type MeetingDetails,
 } from "@/lib/email/mass";
 
 export const runtime = "nodejs";
@@ -91,23 +93,49 @@ export async function POST(request: Request) {
   }
 
   const subject = String(body.subject || "").trim();
-  const bodyHtml = String(body.bodyHtml || "").trim();
+  let bodyHtml = String(body.bodyHtml || "").trim();
   const fromKey = String(body.fromKey || "noreply");
   const segment = body.segment ? (String(body.segment) as SegmentKey) : null;
   const manualRaw = String(body.manualEmails || "");
   const previewText = body.previewText ? String(body.previewText).trim() : undefined;
 
+  // CSV-parsed recipients arrive as an array of { email, name } from the client
+  const csvRecipients: Recipient[] = Array.isArray(body.csvRecipients)
+    ? body.csvRecipients
+        .map((r: any) => ({ email: String(r?.email || "").trim(), name: r?.name ? String(r.name) : null }))
+        .filter((r: Recipient) => r.email.includes("@"))
+    : [];
+
+  // Optional meeting invite block
+  const meeting: MeetingDetails | null =
+    body.meeting && body.meeting.title && body.meeting.start
+      ? {
+          title: String(body.meeting.title).trim(),
+          start: String(body.meeting.start),
+          durationMinutes: Number(body.meeting.durationMinutes) || 30,
+          location: body.meeting.location ? String(body.meeting.location).trim() : undefined,
+          description: body.meeting.description ? String(body.meeting.description).trim() : undefined,
+        }
+      : null;
+
   if (!subject) return NextResponse.json({ error: "Subject is required." }, { status: 400 });
   if (!bodyHtml || bodyHtml.length < 10)
     return NextResponse.json({ error: "Email body is required." }, { status: 400 });
 
-  // Build recipient list from segment + manual list
+  // Append the meeting block (with Google Calendar link) to the body when present
+  if (meeting) bodyHtml += renderMeetingSection(meeting);
+
+  // Build recipient list from segment + manual list + CSV upload
   const recipientMap = new Map<string, Recipient>();
   if (segment) {
     for (const r of await resolveSegment(service, segment)) recipientMap.set(r.email, r);
   }
   for (const r of parseManualEmails(manualRaw)) {
     if (!recipientMap.has(r.email)) recipientMap.set(r.email, r);
+  }
+  for (const r of csvRecipients) {
+    const email = r.email.toLowerCase();
+    if (!recipientMap.has(email)) recipientMap.set(email, { email, name: r.name });
   }
   const recipients = Array.from(recipientMap.values());
 
