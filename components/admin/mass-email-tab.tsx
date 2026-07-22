@@ -22,6 +22,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { parseCsv, type Recipient } from "@/lib/email/mass";
+import { EmailAutomationsView } from "@/components/admin/email-automations-view";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -62,7 +63,7 @@ export function MassEmailTab() {
     senders: Sender[];
   }>("/api/admin/mass-email", fetcher, { refreshInterval: 20_000 });
 
-  const [view, setView] = useState<"compose" | "campaigns">("compose");
+  const [view, setView] = useState<"compose" | "campaigns" | "automations">("compose");
 
   const usage = data?.usage;
   const totals = data?.totals;
@@ -105,12 +106,17 @@ export function MassEmailTab() {
         <SubTab active={view === "campaigns"} onClick={() => setView("campaigns")}>
           Campaigns {data?.campaigns?.length ? `(${data.campaigns.length})` : ""}
         </SubTab>
+        <SubTab active={view === "automations"} onClick={() => setView("automations")}>
+          Automations
+        </SubTab>
       </div>
 
-      {view === "compose" ? (
+      {view === "compose" && (
         <Compose senders={data?.senders ?? []} segments={data?.segments ?? []} usage={usage} />
-      ) : (
-        <CampaignHistory campaigns={data?.campaigns ?? []} />
+      )}
+      {view === "campaigns" && <CampaignHistory campaigns={data?.campaigns ?? []} />}
+      {view === "automations" && (
+        <EmailAutomationsView senders={data?.senders ?? []} segments={data?.segments ?? []} />
       )}
     </div>
   );

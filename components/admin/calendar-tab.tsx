@@ -4,10 +4,14 @@ import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import {
   Calendar,
+  CalendarDays,
   CalendarPlus,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   Link2,
+  List,
   Loader2,
   MapPin,
   Plus,
@@ -44,7 +48,10 @@ export function CalendarTab() {
     fetcher
   );
   const [showCreate, setShowCreate] = useState(false);
+  const [createStart, setCreateStart] = useState<string>("");
   const [disconnecting, setDisconnecting] = useState(false);
+  const [view, setView] = useState<"month" | "list">("month");
+  const [cursor, setCursor] = useState(() => new Date());
 
   const events = eventsData?.events || [];
 
@@ -59,15 +66,20 @@ export function CalendarTab() {
     }
   }
 
+  function openCreate(prefill?: string) {
+    setCreateStart(prefill || "");
+    setShowCreate(true);
+  }
+
   return (
     <div className="space-y-6">
       {/* Connection banner */}
       <ConnectionBanner status={status} onDisconnect={disconnect} disconnecting={disconnecting} />
 
       {/* Header + create */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Upcoming meetings</h3>
+          <h3 className="text-lg font-bold text-gray-900">Meetings &amp; schedule</h3>
           <p className="text-sm text-gray-500">
             {eventsData?.source === "google"
               ? "Live from your connected Google Calendar."
@@ -75,6 +87,25 @@ export function CalendarTab() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {/* View toggle */}
+          <div className="flex items-center rounded-lg border border-gray-200 p-0.5">
+            <button
+              onClick={() => setView("month")}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                view === "month" ? "bg-[#3B5BDB] text-white" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <CalendarDays className="size-3.5" /> Month
+            </button>
+            <button
+              onClick={() => setView("list")}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                view === "list" ? "bg-[#3B5BDB] text-white" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <List className="size-3.5" /> List
+            </button>
+          </div>
           <button
             onClick={() => mutate("/api/admin/calendar/events")}
             className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"
@@ -83,7 +114,7 @@ export function CalendarTab() {
             <RefreshCw className="size-4" />
           </button>
           <button
-            onClick={() => setShowCreate(true)}
+            onClick={() => openCreate()}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2f49b2] transition-colors"
           >
             <Plus className="size-4" /> Schedule meeting
@@ -91,11 +122,19 @@ export function CalendarTab() {
         </div>
       </div>
 
-      {/* Events list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-16 text-gray-400">
           <Loader2 className="size-5 animate-spin" />
         </div>
+      ) : view === "month" ? (
+        <MonthCalendar
+          events={events}
+          cursor={cursor}
+          onPrev={() => setCursor((c) => new Date(c.getFullYear(), c.getMonth() - 1, 1))}
+          onNext={() => setCursor((c) => new Date(c.getFullYear(), c.getMonth() + 1, 1))}
+          onToday={() => setCursor(new Date())}
+          onSelectDay={(d) => openCreate(toLocalInput(d))}
+        />
       ) : events.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-gray-200 rounded-2xl">
           <Calendar className="size-8 text-gray-300 mx-auto mb-3" />
@@ -110,7 +149,143 @@ export function CalendarTab() {
         </div>
       )}
 
-      {showCreate && <CreateMeetingModal onClose={() => setShowCreate(false)} connected={!!status?.connected} />}
+      {showCreate && (
+        <CreateMeetingModal
+          onClose={() => setShowCreate(false)}
+          connected={!!status?.connected}
+          defaultStart={createStart}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Formats a Date to a `yyyy-MM-ddTHH:mm` value for datetime-local inputs (local tz). */
+function toLocalInput(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function MonthCalendar({
+  events,
+  cursor,
+  onPrev,
+  onNext,
+  onToday,
+  onSelectDay,
+}: {
+  events: EventItem[];
+  cursor: Date;
+  onPrev: () => void;
+  onNext: () => void;
+  onToday: () => void;
+  onSelectDay: (d: Date) => void;
+}) {
+  const year = cursor.getFullYear();
+  const month = cursor.getMonth();
+  const firstOfMonth = new Date(year, month, 1);
+  const gridStart = new Date(year, month, 1 - firstOfMonth.getDay()); // back up to Sunday
+
+  // 6 weeks × 7 days = 42 cells for a stable grid
+  const days: Date[] = [];
+  for (let i = 0; i < 42; i++) {
+    days.push(new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i));
+  }
+
+  // Group events by local yyyy-mm-dd
+  const byDay = new Map<string, EventItem[]>();
+  for (const e of events) {
+    const d = new Date(e.start);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (!byDay.has(key)) byDay.set(key, []);
+    byDay.get(key)!.push(e);
+  }
+  for (const list of byDay.values()) list.sort((a, b) => +new Date(a.start) - +new Date(b.start));
+
+  const today = new Date();
+  const isToday = (d: Date) =>
+    d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+
+  return (
+    <div className="border border-gray-100 rounded-2xl overflow-hidden">
+      {/* Month nav */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <h4 className="text-base font-bold text-gray-900">
+          {cursor.toLocaleString("en-US", { month: "long", year: "numeric" })}
+        </h4>
+        <div className="flex items-center gap-1">
+          <button onClick={onToday} className="px-2.5 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50">
+            Today
+          </button>
+          <button onClick={onPrev} className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50" title="Previous month">
+            <ChevronLeft className="size-4" />
+          </button>
+          <button onClick={onNext} className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50" title="Next month">
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Weekday header */}
+      <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-100">
+        {WEEKDAYS.map((w) => (
+          <div key={w} className="px-2 py-2 text-center text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+            {w}
+          </div>
+        ))}
+      </div>
+
+      {/* Day grid */}
+      <div className="grid grid-cols-7">
+        {days.map((d, i) => {
+          const inMonth = d.getMonth() === month;
+          const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+          const dayEvents = byDay.get(key) ?? [];
+          return (
+            <button
+              key={i}
+              onClick={() => onSelectDay(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 9, 0))}
+              className={`group text-left min-h-[92px] p-1.5 border-b border-r border-gray-100 last:border-r-0 transition-colors hover:bg-[#3B5BDB]/[0.03] ${
+                inMonth ? "bg-white" : "bg-gray-50/50"
+              } ${i % 7 === 6 ? "border-r-0" : ""}`}
+            >
+              <div className="flex items-center justify-between">
+                <span
+                  className={`inline-flex items-center justify-center size-6 rounded-full text-xs font-semibold ${
+                    isToday(d)
+                      ? "bg-[#3B5BDB] text-white"
+                      : inMonth
+                      ? "text-gray-700"
+                      : "text-gray-300"
+                  }`}
+                >
+                  {d.getDate()}
+                </span>
+                <Plus className="size-3.5 text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <div className="mt-1 space-y-1">
+                {dayEvents.slice(0, 3).map((e) => (
+                  <div
+                    key={e.id}
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#3B5BDB]/10 text-[#3B5BDB] text-[10px] font-medium truncate"
+                    title={e.title}
+                  >
+                    <span className="tabular-nums opacity-70">
+                      {new Date(e.start).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                    </span>
+                    <span className="truncate">{e.title}</span>
+                  </div>
+                ))}
+                {dayEvents.length > 3 && (
+                  <div className="px-1.5 text-[10px] font-medium text-gray-400">+{dayEvents.length - 3} more</div>
+                )}
+              </div>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -236,9 +411,17 @@ function EventRow({ event }: { event: EventItem }) {
   );
 }
 
-function CreateMeetingModal({ onClose, connected }: { onClose: () => void; connected: boolean }) {
+function CreateMeetingModal({
+  onClose,
+  connected,
+  defaultStart,
+}: {
+  onClose: () => void;
+  connected: boolean;
+  defaultStart?: string;
+}) {
   const [title, setTitle] = useState("");
-  const [start, setStart] = useState("");
+  const [start, setStart] = useState(defaultStart || "");
   const [duration, setDuration] = useState(30);
   const [location, setLocation] = useState("");
   const [attendees, setAttendees] = useState("");
