@@ -11,6 +11,7 @@ import { ActivityTab } from "@/components/admin/activity-tab";
 import { ContentTab } from "@/components/admin/content-tab";
 import { InterviewsTab } from "@/components/admin/interviews-tab";
 import { PlacementsTab } from "@/components/admin/placements-tab";
+import { MassEmailTab } from "@/components/admin/mass-email-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 import {
   Activity,
@@ -20,6 +21,7 @@ import {
   Folder,
   LayoutDashboard,
   Mail,
+  Megaphone,
   Mic,
   Users,
   UserCheck,
@@ -55,6 +57,7 @@ type Tab =
   | "interviews"
   | "inquiries"
   | "messages"
+  | "mass_email"
   | "files"
   | "content"
   | "approvals"
@@ -125,6 +128,7 @@ export function AdminTabs({
       label: "Comms",
       items: [
         { id: "messages" as Tab, label: "Contact Messages", icon: Mail, count: messages.length },
+        { id: "mass_email" as Tab, label: "Mass Email", icon: Megaphone, count: null },
         { id: "interviews" as Tab, label: "AI Interviews", icon: Mic, count: interviewCount },
       ],
     },
@@ -215,6 +219,7 @@ export function AdminTabs({
         {tab === "inquiries" && <SubmissionsTab kind="company_inquiry" />}
         {tab === "content" && <ContentTab />}
         {tab === "interviews" && <InterviewsTab />}
+        {tab === "mass_email" && <MassEmailTab />}
         {tab === "approvals" && <ApprovalsTab />}
         {tab === "activity" && <ActivityTab />}
         {tab === "messages" && (
