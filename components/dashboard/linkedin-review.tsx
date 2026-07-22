@@ -158,6 +158,10 @@ export function LinkedInReview({ profile }: { profile: any }) {
   const { data: creditsData } = useSWR<{ credits: number }>("/api/credits", fetcher, { refreshInterval: 30_000 });
   const credits = creditsData?.credits ?? 0;
 
+  const [url, setUrl] = useState("");
+  const [manual, setManual] = useState(false);
+  const [manualNotice, setManualNotice] = useState<string | null>(null);
+
   const [headline, setHeadline] = useState(profile?.headline || "");
   const [about, setAbout] = useState(profile?.bio || "");
   const [experience, setExperience] = useState("");
@@ -168,19 +172,36 @@ export function LinkedInReview({ profile }: { profile: any }) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ReviewOutput | null>(null);
 
-  const canReview = credits >= CREDIT_COST && (headline.trim() || about.trim());
+  const canReview =
+    credits >= CREDIT_COST &&
+    (manual ? headline.trim() || about.trim() : url.trim().length > 3);
 
   async function handleReview() {
     setLoading(true);
     setError(null);
     try {
+      const payload = manual
+        ? { headline, about, experience, skills, target_role: targetRole }
+        : { url, target_role: targetRole };
+
       const res = await fetch("/api/tools/linkedin-review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ headline, about, experience, skills, target_role: targetRole }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error || "Generation failed."); return; }
+
+      // Scrape failed — switch to manual paste, no credits charged
+      if (data.needsManual) {
+        setManual(true);
+        setManualNotice(data.message || "We couldn't read that page. Paste your details below instead.");
+        return;
+      }
+
+      if (!res.ok) {
+        setError(data.error || "Generation failed.");
+        return;
+      }
       setResult(data.review);
       mutate("/api/credits");
     } catch {
@@ -224,59 +245,108 @@ export function LinkedInReview({ profile }: { profile: any }) {
             />
           </div>
 
-          {/* Headline */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1.5">
-              LinkedIn Headline <span className="text-red-500">*</span>
-            </label>
-            <input
-              value={headline}
-              onChange={(e) => setHeadline(e.target.value)}
-              className="form-input"
-              placeholder='e.g. "Senior DevOps Engineer | AWS | Kubernetes | Helping startups ship faster"'
-            />
-          </div>
+          {/* URL mode */}
+          {!manual && (
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1.5">
+                Profile URL <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Linkedin className="size-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="form-input pl-9"
+                  placeholder="https://linkedin.com/in/you  ·  or your portfolio / personal site"
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-1.5">
+                We&apos;ll read the page and grade it automatically. Works best with public portfolios and personal
+                sites — LinkedIn often blocks automated access, in which case we&apos;ll ask you to paste your details.
+              </p>
+              <button
+                type="button"
+                onClick={() => { setManual(true); setManualNotice(null); }}
+                className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] transition-colors mt-2"
+              >
+                Or paste my profile details manually instead
+              </button>
+            </div>
+          )}
 
-          {/* About */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1.5">
-              About section <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              rows={5}
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-              className="form-input"
-              placeholder="Paste your LinkedIn About / Summary section here..."
-            />
-          </div>
+          {/* Manual mode */}
+          {manual && (
+            <>
+              {manualNotice && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+                  <AlertCircle className="size-4 shrink-0 mt-0.5" />
+                  {manualNotice}
+                </div>
+              )}
 
-          {/* Experience */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1.5">
-              Experience highlights <span className="text-gray-400 font-normal">(optional — improves accuracy)</span>
-            </label>
-            <textarea
-              rows={4}
-              value={experience}
-              onChange={(e) => setExperience(e.target.value)}
-              className="form-input"
-              placeholder="Paste your top 2–3 job descriptions or bullet points from your experience section..."
-            />
-          </div>
+              {/* Headline */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">
+                  LinkedIn Headline <span className="text-red-500">*</span>
+                </label>
+                <input
+                  value={headline}
+                  onChange={(e) => setHeadline(e.target.value)}
+                  className="form-input"
+                  placeholder='e.g. "Senior DevOps Engineer | AWS | Kubernetes | Helping startups ship faster"'
+                />
+              </div>
 
-          {/* Skills */}
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1.5">
-              Skills listed on your profile <span className="text-gray-400 font-normal">(optional)</span>
-            </label>
-            <input
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-              className="form-input"
-              placeholder="e.g. Python, React, AWS, Agile, Financial Modelling..."
-            />
-          </div>
+              {/* About */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">
+                  About section <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  rows={5}
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                  className="form-input"
+                  placeholder="Paste your LinkedIn About / Summary section here..."
+                />
+              </div>
+
+              {/* Experience */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">
+                  Experience highlights <span className="text-gray-400 font-normal">(optional — improves accuracy)</span>
+                </label>
+                <textarea
+                  rows={4}
+                  value={experience}
+                  onChange={(e) => setExperience(e.target.value)}
+                  className="form-input"
+                  placeholder="Paste your top 2–3 job descriptions or bullet points from your experience section..."
+                />
+              </div>
+
+              {/* Skills */}
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1.5">
+                  Skills listed on your profile <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  value={skills}
+                  onChange={(e) => setSkills(e.target.value)}
+                  className="form-input"
+                  placeholder="e.g. Python, React, AWS, Agile, Financial Modelling..."
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setManual(false)}
+                className="text-xs font-semibold text-[#0a66c2] hover:text-[#004182] transition-colors"
+              >
+                ← Back to reviewing by URL
+              </button>
+            </>
+          )}
 
           {error && (
             <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 border border-red-100 text-sm text-red-700">
@@ -297,7 +367,7 @@ export function LinkedInReview({ profile }: { profile: any }) {
             >
               {loading ? (
                 <>
-                  <Sparkles className="size-4 animate-pulse" /> Analysing...
+                  <Sparkles className="size-4 animate-pulse" /> {manual ? "Analysing..." : "Reading page..."}
                 </>
               ) : (
                 <>
@@ -391,7 +461,7 @@ export function LinkedInReview({ profile }: { profile: any }) {
 
           {/* Reset */}
           <button
-            onClick={() => setResult(null)}
+            onClick={() => { setResult(null); setUrl(""); setManualNotice(null); }}
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
           >
             <RotateCcw className="size-4" /> Review a different profile
