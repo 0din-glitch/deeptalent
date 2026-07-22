@@ -14,17 +14,25 @@ import { ActivityTab } from "@/components/admin/activity-tab";
 import { ContentTab } from "@/components/admin/content-tab";
 import { InterviewsTab } from "@/components/admin/interviews-tab";
 import { PlacementsTab } from "@/components/admin/placements-tab";
+import { MassEmailTab } from "@/components/admin/mass-email-tab";
+import { TasksTab } from "@/components/admin/tasks-tab";
+import { CalendarTab } from "@/components/admin/calendar-tab";
+import { SocialTab } from "@/components/admin/social-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 import {
   Activity,
+  BarChart3,
   Briefcase,
+  CalendarDays,
   CheckSquare,
   ChevronRight,
   FileText,
   Folder,
   LayoutDashboard,
+  ListChecks,
   LogOut,
   Mail,
+  Megaphone,
   Mic,
   Users,
   UserCheck,
@@ -61,10 +69,14 @@ type Tab =
   | "interviews"
   | "inquiries"
   | "messages"
+  | "mass_email"
   | "files"
   | "content"
   | "approvals"
   | "activity"
+  | "tasks"
+  | "calendar"
+  | "social"
   | "placements";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -137,7 +149,16 @@ export function AdminShell({
       label: "Comms",
       items: [
         { id: "messages" as Tab, label: "Messages", icon: Mail, count: messages.length },
+        { id: "mass_email" as Tab, label: "Mass Email", icon: Megaphone, count: null },
         { id: "interviews" as Tab, label: "AI Interviews", icon: Mic, count: interviewCount },
+      ],
+    },
+    {
+      label: "Operations",
+      items: [
+        { id: "tasks" as Tab, label: "Tasks", icon: ListChecks, count: null },
+        { id: "calendar" as Tab, label: "Calendar", icon: CalendarDays, count: null },
+        { id: "social" as Tab, label: "Social Analytics", icon: BarChart3, count: null },
       ],
     },
     {
@@ -291,6 +312,10 @@ export function AdminShell({
             {tab === "inquiries" && <SubmissionsTab kind="company_inquiry" />}
             {tab === "content" && <ContentTab />}
             {tab === "interviews" && <InterviewsTab />}
+            {tab === "mass_email" && <MassEmailTab />}
+            {tab === "tasks" && <TasksTab />}
+            {tab === "calendar" && <CalendarTab />}
+            {tab === "social" && <SocialTab />}
             {tab === "approvals" && <ApprovalsTab />}
             {tab === "activity" && <ActivityTab />}
             {tab === "messages" && (
