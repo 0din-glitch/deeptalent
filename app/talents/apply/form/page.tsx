@@ -59,6 +59,7 @@ type FormState = {
   portfolio_url: string;
   github_url: string;
   bio: string;
+  cv_url: string;
   hear_from: string;
   agree_terms: boolean;
 };
@@ -103,6 +104,7 @@ function FormContent() {
     portfolio_url: "",
     github_url: "",
     bio: "",
+    cv_url: "",
     hear_from: "",
     agree_terms: false,
   });
@@ -215,7 +217,7 @@ function FormContent() {
       form.role_category.trim().length > 0 &&
       form.specialization.trim().length > 1 &&
       form.seniority.trim().length > 0;
-    const v2 = form.bio.trim().length >= 40;
+    const v2 = form.bio.trim().length >= 40 && form.cv_url.trim().length > 5;
     const v3 = form.agree_terms === true;
     return [v0, v1, v2, v3];
   }, [form]);
@@ -231,6 +233,22 @@ function FormContent() {
       persistDraft(form);
       setLoading(false);
       setAuthPrompt(true);
+      return;
+    }
+
+    // Block if the user already has an active / pending application
+    const { data: existing } = await supabase
+      .from("talent_applications")
+      .select("id, status")
+      .eq("user_id", userData.user.id)
+      .not("status", "in", '("rejected","withdrawn")')
+      .maybeSingle();
+
+    if (existing) {
+      setError(
+        "You already have an active application under review. You can only have one application at a time. Please wait for a decision before re-applying."
+      );
+      setLoading(false);
       return;
     }
 
@@ -272,6 +290,7 @@ function FormContent() {
       years_experience: form.years_experience ? Number(form.years_experience) : null,
       linkedin_url: form.linkedin_url || null,
       portfolio_url: form.portfolio_url || null,
+      cv_url: form.cv_url || null,
       bio: fullBio || null,
     });
 
@@ -758,6 +777,42 @@ function StepDetails({ form, update }: StepProps) {
   return (
     <div>
       <SectionHeader icon={Sparkles} title="The details that win" desc="The richer this is, the faster we can match you." />
+
+      {/* CV / Resume — required */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-sm font-medium text-gray-700">
+            CV / Resume URL <span className="text-red-500">*</span>
+          </span>
+          <Link
+            href="/dashboard?tab=resumeBuilder"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#3B5BDB] hover:text-[#2f49b2] transition-colors"
+          >
+            <Sparkles className="size-3.5" />
+            Build your CV with AI
+          </Link>
+        </div>
+        <div className="relative">
+          <FileText className="size-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            value={form.cv_url}
+            onChange={(e) => update("cv_url", e.target.value)}
+            className="form-input pl-9"
+            placeholder="https://drive.google.com/... or deeptalent.com/cv/..."
+            required
+          />
+        </div>
+        <p className="text-xs text-gray-400 mt-1.5">
+          Paste a link to your CV/resume (Google Drive, Dropbox, or any shareable URL). Don&apos;t have one?{" "}
+          <Link href="/dashboard?tab=resumeBuilder" target="_blank" className="text-[#3B5BDB] underline underline-offset-2 hover:no-underline">
+            Use our free AI Resume Builder
+          </Link>{" "}
+          to create one in minutes.
+        </p>
+      </div>
+
       <div className="grid md:grid-cols-2 gap-5">
         <Field label="Expected monthly comp (USD)" hint="Optional. Helps us match faster.">
           <div className="relative">
@@ -857,6 +912,7 @@ function StepReview({ form, update }: StepProps) {
     ["English", form.english_level],
     ["Expected (USD/mo)", form.expected_monthly_usd ? `$${form.expected_monthly_usd}` : ""],
     ["Open to relocation", form.willing_to_relocate],
+    ["CV / Resume", form.cv_url],
     ["LinkedIn", form.linkedin_url],
     ["Portfolio", form.portfolio_url],
     ["GitHub", form.github_url],
