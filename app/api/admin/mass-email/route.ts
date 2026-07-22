@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { requireAdmin, logAuditEntry } from "@/lib/admin/access";
+import { createAndSendCampaign } from "@/lib/email/send";
 import {
   senderOptions,
   resolveSender,
   resolveSegment,
   parseManualEmails,
   getRateUsage,
-  renderCampaignHtml,
   renderMeetingSection,
   SEGMENTS,
   DAILY_LIMIT,
@@ -162,116 +161,33 @@ export async function POST(request: Request) {
   }
 
   const sender = resolveSender(fromKey);
-  const html = renderCampaignHtml({ subject, bodyHtml, replyTo: sender.replyTo, previewText });
 
-  // Create the campaign row
-  const { data: campaign, error: campErr } = await service
-    .from("email_campaigns")
-    .insert({
-      subject,
-      from_key: sender.key,
-      from_email: sender.from,
-      reply_to: sender.replyTo,
-      preview_text: previewText || null,
-      body_html: bodyHtml,
-      segment,
-      manual_emails: parseManualEmails(manualRaw).map((r) => r.email),
-      status: "sending",
-      total_recipients: recipients.length,
-      created_by: ctx.userId,
-      created_by_email: ctx.email,
-    })
-    .select()
-    .single();
+  const result = await createAndSendCampaign({
+    service,
+    fromKey: sender.key,
+    subject,
+    bodyHtml,
+    previewText,
+    recipients,
+    segment,
+    manualEmails: parseManualEmails(manualRaw).map((r) => r.email),
+    createdBy: ctx.userId,
+    createdByEmail: ctx.email,
+  });
 
-  if (campErr || !campaign)
-    return NextResponse.json({ error: campErr?.message || "Could not create campaign." }, { status: 500 });
-
-  // Insert queued send rows
-  const { data: sendRows } = await service
-    .from("email_sends")
-    .insert(
-      recipients.map((r) => ({
-        campaign_id: campaign.id,
-        email: r.email,
-        name: r.name,
-        status: "queued",
-      }))
-    )
-    .select();
-
-  // Send via Resend in batches of 100
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const rowByEmail = new Map<string, string>();
-  for (const row of sendRows ?? []) rowByEmail.set(row.email, row.id);
-
-  let sent = 0;
-  let failed = 0;
-  const BATCH = 100;
-  for (let i = 0; i < recipients.length; i += BATCH) {
-    const slice = recipients.slice(i, i + BATCH);
-    try {
-      const { data, error } = await resend.batch.send(
-        slice.map((r) => ({
-          from: sender.from,
-          to: r.email,
-          replyTo: sender.replyTo,
-          subject,
-          html,
-          headers: { "X-Campaign-Id": campaign.id },
-          tags: [{ name: "campaign_id", value: campaign.id }],
-        }))
-      );
-
-      if (error) throw new Error(error.message);
-
-      const ids = (data as any)?.data ?? [];
-      for (let j = 0; j < slice.length; j++) {
-        const email = slice[j].email;
-        const rowId = rowByEmail.get(email);
-        const resendId = ids[j]?.id ?? null;
-        if (rowId) {
-          await service
-            .from("email_sends")
-            .update({ status: "sent", resend_id: resendId, sent_at: new Date().toISOString() })
-            .eq("id", rowId);
-        }
-        sent += 1;
-      }
-    } catch (err: any) {
-      for (const r of slice) {
-        const rowId = rowByEmail.get(r.email);
-        if (rowId) {
-          await service
-            .from("email_sends")
-            .update({ status: "failed", error: err?.message || "Send failed" })
-            .eq("id", rowId);
-        }
-        failed += 1;
-      }
-    }
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error || "Could not send campaign." }, { status: 500 });
   }
-
-  const finalStatus = failed === 0 ? "sent" : sent === 0 ? "failed" : "sent";
-  await service
-    .from("email_campaigns")
-    .update({
-      status: finalStatus,
-      sent_count: sent,
-      failed_count: failed,
-      sent_at: new Date().toISOString(),
-    })
-    .eq("id", campaign.id);
 
   await logAuditEntry(service, {
     actor_id: ctx.userId,
     actor_email: ctx.email,
     action: "mass_email.send",
     resource_type: "email_campaign",
-    resource_id: campaign.id,
-    summary: `Sent "${subject}" to ${sent} recipient(s) via ${sender.address}`,
-    metadata: { sent, failed, segment, from: sender.from },
+    resource_id: result.campaignId,
+    summary: `Sent "${subject}" to ${result.sent} recipient(s) via ${sender.address}`,
+    metadata: { sent: result.sent, failed: result.failed, segment, from: sender.from },
   });
 
-  return NextResponse.json({ ok: true, campaignId: campaign.id, sent, failed });
+  return NextResponse.json({ ok: true, campaignId: result.campaignId, sent: result.sent, failed: result.failed });
 }
