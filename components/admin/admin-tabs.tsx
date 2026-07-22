@@ -13,10 +13,14 @@ import { InterviewsTab } from "@/components/admin/interviews-tab";
 import { PlacementsTab } from "@/components/admin/placements-tab";
 import { MassEmailTab } from "@/components/admin/mass-email-tab";
 import { TasksTab } from "@/components/admin/tasks-tab";
+import { CalendarTab } from "@/components/admin/calendar-tab";
+import { SocialTab } from "@/components/admin/social-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 import {
   Activity,
+  BarChart3,
   Briefcase,
+  CalendarDays,
   CheckSquare,
   FileText,
   Folder,
@@ -65,6 +69,8 @@ type Tab =
   | "approvals"
   | "activity"
   | "tasks"
+  | "calendar"
+  | "social"
   | "placements";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -139,6 +145,8 @@ export function AdminTabs({
       label: "Operations",
       items: [
         { id: "tasks" as Tab, label: "Tasks", icon: ListChecks, count: null },
+        { id: "calendar" as Tab, label: "Calendar", icon: CalendarDays, count: null },
+        { id: "social" as Tab, label: "Social Analytics", icon: BarChart3, count: null },
       ],
     },
     {
@@ -230,6 +238,8 @@ export function AdminTabs({
         {tab === "interviews" && <InterviewsTab />}
         {tab === "mass_email" && <MassEmailTab />}
         {tab === "tasks" && <TasksTab />}
+        {tab === "calendar" && <CalendarTab />}
+        {tab === "social" && <SocialTab />}
         {tab === "approvals" && <ApprovalsTab />}
         {tab === "activity" && <ActivityTab />}
         {tab === "messages" && (
