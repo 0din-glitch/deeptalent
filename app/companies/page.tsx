@@ -136,10 +136,10 @@ function CompanyHero() {
 
 function CompanyBenefits() {
   const benefits = [
-    { title: "Placed within 21 days", desc: "From brief to shortlist in three weeks — no indefinite waiting." },
-    { title: "Top 3% acceptance rate", desc: "Only credentialled, interview-ready professionals enter our network." },
+    { title: "Placed in 14–21 days", desc: "From brief to shortlist in two to three weeks — no indefinite waiting." },
+    { title: "<8% acceptance rate", desc: "Only credentialled, interview-ready professionals enter our network." },
     { title: "Competitive rates", desc: "Senior-level output at rates that reflect Africa's talent market, not the Global North's." },
-    { title: "14-day risk-free trial", desc: "If a specialist isn't the right fit in the first two weeks, you pay nothing and we replace them." },
+    { title: "60-day free replacement", desc: "If a specialist is not the right fit within 60 days, we replace them at no additional cost." },
   ];
 
   return (

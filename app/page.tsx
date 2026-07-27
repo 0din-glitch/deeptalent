@@ -464,7 +464,7 @@ function HowItWorks() {
     {
       id: "step-2",
       title: "Get AI-Matched Talent",
-      description: "Our system sorts, screens, and presents a curated shortlist of the top 3% of vetted professionals within 21 days.",
+      description: "Our system sorts, screens, and presents a curated shortlist of fewer than 8% of applicants — placed within 14–21 days.",
       detail: "Receive a curated shortlist of 3-5 specialists, each with verified skills, work history, and culture fit signals — ready to interview.",
       icon: Users,
     },
@@ -616,13 +616,13 @@ function WhyChooseUs() {
     {
       id: "1",
       title: "Unmatched Vetting & Quality",
-      description: "We only deliver the top 3% of applicants — each verified by proprietary AI assessment and human expert review before they enter the network.",
+      description: "Fewer than 8% of applicants are accepted — each verified by proprietary AI assessment and human expert review before they enter the network.",
       image: "/images/vetting-quality.png",
     },
     {
       id: "2",
       title: "Speed to Strategic Impact",
-      description: "Eliminate recruiting delays. Receive a curated shortlist of 3-5 experts within 21 days.",
+      description: "Eliminate recruiting delays. Receive a curated shortlist of 3–5 experts within 14–21 days.",
       image: "/images/speed-impact.png",
     },
     {
@@ -1218,7 +1218,7 @@ function FaqSection() {
     },
     {
       question: "What if a match isn't the right fit?",
-      answer: "We offer a risk-free 14-day trial period. If a talent doesn't meet your expectations within the first two weeks, you pay nothing, and we immediately match you with a replacement.",
+      answer: "We offer a 60-day free replacement guarantee. If a specialist is not the right fit within the first 60 days, we replace them at no additional cost — no questions asked.",
     },
     {
       question: "Do you support full-time hiring?",
@@ -1335,7 +1335,7 @@ function Footer() {
             variants={fadeInUp()}
             className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto"
           >
-            Get matched with credentialled finance, compliance, and technology specialists from Africa&apos;s top talent pools — within 21 days.
+            Get matched with credentialled finance, compliance, and technology specialists from Africa&apos;s top talent pools — within 14–21 days.
           </motion.p>
           <motion.div
             variants={fadeInUp()}
