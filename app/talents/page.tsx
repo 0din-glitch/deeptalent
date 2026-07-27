@@ -1,8 +1,7 @@
 "use client";
 
-import { ArrowRight, Menu, X, Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Facebook, Star } from "lucide-react";
+import { ArrowRight, Menu, X, ChevronRight, Linkedin, ShieldCheck, Globe2, Zap, DollarSign } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 
 export default function TalentsPage() {
@@ -10,9 +9,10 @@ export default function TalentsPage() {
     <main className="bg-white">
       <Navbar />
       <TalentHero />
-      <TalentBenefits />
+      <RoleDisciplines />
+      <SalaryTransparency />
       <TalentJourney />
-      <TalentTestimonials />
+      <TalentNetwork />
       <Footer />
     </main>
   );
@@ -20,7 +20,7 @@ export default function TalentsPage() {
 
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "For Talents", href: "/talents" },
@@ -31,13 +31,9 @@ function Navbar() {
   return (
     <nav className="fixed top-4 left-1/2 z-50 w-[90%] max-w-7xl -translate-x-1/2 flex items-center justify-between rounded-2xl p-4 shadow-lg md:px-8 bg-[#3B5BDB] transition-all duration-300">
       <Link href="/" className="flex items-center gap-2">
-        <img
-          src="/images/logo-wordmark.png"
-          alt="Deep Talent"
-          className="h-12 w-auto"
-        />
+        <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-12 w-auto" />
       </Link>
-      
+
       <div className="hidden md:flex items-center gap-1">
         {navLinks.map((link) => (
           <Link
@@ -49,7 +45,7 @@ function Navbar() {
           </Link>
         ))}
       </div>
-      
+
       <div className="flex items-center gap-3">
         <Link
           href="/auth/login"
@@ -61,9 +57,9 @@ function Navbar() {
           href="/talents/apply"
           className="h-11 px-6 inline-flex items-center justify-center rounded-full bg-white text-[#3B5BDB] text-sm font-semibold hover:bg-white/90 transition-colors"
         >
-          Get Started
+          Apply Now
         </Link>
-        
+
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg"
@@ -94,65 +90,212 @@ function Navbar() {
 
 function TalentHero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 overflow-hidden pt-20">
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
-      </div>
-      
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+    <section className="relative min-h-[88vh] flex items-center justify-center bg-gradient-to-br from-[#1e3a8a] via-[#3B5BDB] to-[#4f6ee8] overflow-hidden pt-24">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 mb-6 backdrop-blur-sm">
           <span className="flex size-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-white text-sm font-medium">Accepting Top Tier Talent</span>
+          <span className="text-white text-sm font-medium">Selective network — accepting applications</span>
         </div>
-        
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-          Elevate Your Career <br /> Through DeepTalent
+
+        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight text-balance">
+          Finance, Compliance &amp; Technology <br className="hidden md:block" /> Professionals — Global Roles
         </h1>
-        
-        <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-          Connect with exclusive, high-impact roles only available to pre-vetted, top-tier professionals. Work with global companies on your terms.
+
+        <p className="text-xl text-white/85 mb-8 max-w-2xl mx-auto text-pretty leading-relaxed">
+          DeepTalent is a fully managed talent partner, not a job board. We place credentialled professionals from Africa&apos;s deepest talent pools into demanding global financial-services, technology, and compliance roles.
         </p>
-        
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/talents/apply"
             className="px-8 py-4 bg-white text-[#3B5BDB] font-semibold rounded-full hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
           >
-            Join the Network
+            Apply to the network
             <ArrowRight className="size-5" />
           </Link>
           <Link
-            href="/talents/apply#roles"
+            href="#roles"
             className="px-8 py-4 border border-white/30 text-white font-semibold rounded-full hover:bg-white/10 transition-colors"
           >
-            View Open Roles
+            See open disciplines
           </Link>
+        </div>
+
+        <div className="mt-12 grid grid-cols-3 gap-4 max-w-sm mx-auto">
+          <div className="text-center">
+            <p className="text-3xl font-bold text-white">Top 3%</p>
+            <p className="text-white/70 text-xs mt-1">Acceptance rate</p>
+          </div>
+          <div className="text-center border-x border-white/20">
+            <p className="text-3xl font-bold text-white">21 days</p>
+            <p className="text-white/70 text-xs mt-1">Avg. time to placement</p>
+          </div>
+          <div className="text-center">
+            <p className="text-3xl font-bold text-white">15+</p>
+            <p className="text-white/70 text-xs mt-1">Role categories</p>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function TalentBenefits() {
-  const benefits = [
-    { title: "Premium Compensation", desc: "Access high-paying remote roles with top global companies" },
-    { title: "No Bidding Wars", desc: "Pre-vetted matching means quality opportunities, not competition" },
-    { title: "Career Growth", desc: "Work on cutting-edge projects and expand your skillset" },
-    { title: "Flexible Terms", desc: "Choose roles that fit your lifestyle and career goals" },
-  ];
+const DISCIPLINES = [
+  {
+    title: "Finance &amp; Accounting",
+    roles: ["FP&A Analyst", "Accountant / Bookkeeper", "Credit Analyst"],
+    rangeLabel: "$2,940 – $9,450 /mo",
+    icon: "₦",
+    color: "bg-blue-50 border-blue-200",
+    badge: "bg-blue-100 text-blue-700",
+  },
+  {
+    title: "Compliance &amp; Risk",
+    roles: ["KYC / AML Analyst", "Cybersecurity Analyst", "Business Intelligence Analyst"],
+    rangeLabel: "$3,150 – $8,400 /mo",
+    icon: "⊗",
+    color: "bg-indigo-50 border-indigo-200",
+    badge: "bg-indigo-100 text-indigo-700",
+  },
+  {
+    title: "Technology &amp; Engineering",
+    roles: ["Full-Stack Developer", "DevOps / Cloud Engineer", "AI Prompt Engineer"],
+    rangeLabel: "$4,760 – $11,550 /mo",
+    icon: "</> ",
+    color: "bg-violet-50 border-violet-200",
+    badge: "bg-violet-100 text-violet-700",
+  },
+  {
+    title: "Data &amp; Analytics",
+    roles: ["Data Analyst", "BI Analyst"],
+    rangeLabel: "$3,640 – $7,000 /mo",
+    icon: "∑",
+    color: "bg-cyan-50 border-cyan-200",
+    badge: "bg-cyan-100 text-cyan-700",
+  },
+  {
+    title: "Product &amp; Design",
+    roles: ["Product Manager", "Project Manager", "UX / UI Designer"],
+    rangeLabel: "$4,060 – $11,200 /mo",
+    icon: "◈",
+    color: "bg-teal-50 border-teal-200",
+    badge: "bg-teal-100 text-teal-700",
+  },
+  {
+    title: "Operations &amp; Support",
+    roles: ["Executive / Operations Assistant", "Customer Service Representative"],
+    rangeLabel: "$1,960 – $4,550 /mo",
+    icon: "⟳",
+    color: "bg-amber-50 border-amber-200",
+    badge: "bg-amber-100 text-amber-700",
+  },
+];
+
+function RoleDisciplines() {
+  return (
+    <section id="roles" className="py-20 px-6 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-2xl mx-auto text-center mb-14">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Disciplines we place</h2>
+          <p className="text-gray-600 text-lg text-pretty">
+            We focus on roles where Africa&apos;s credentialled talent is genuinely world-class — finance, compliance, technology, and operations. Each range below is drawn from our published salary scale.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {DISCIPLINES.map((d, i) => (
+            <div key={i} className={`rounded-2xl border p-6 ${d.color}`}>
+              <div className="flex items-start justify-between mb-4">
+                <h3
+                  className="text-lg font-bold text-gray-900"
+                  dangerouslySetInnerHTML={{ __html: d.title }}
+                />
+                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${d.badge}`}>
+                  {d.rangeLabel}
+                </span>
+              </div>
+              <ul className="space-y-2">
+                {d.roles.map((r) => (
+                  <li key={r} className="flex items-center gap-2 text-sm text-gray-700">
+                    <ChevronRight className="size-3.5 text-[#3B5BDB] shrink-0" />
+                    {r}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-center text-xs text-gray-400 mt-8">
+          Monthly USD rates reflect junior–senior range across all roles. Full salary scale available during the application process.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+const SALARY_ROWS = [
+  { label: "Finance Analyst (FP&A)", junior: 4900, mid: 6650, senior: 9450 },
+  { label: "KYC / AML Analyst", junior: 3150, mid: 4200, senior: 5600 },
+  { label: "Full-Stack Developer", junior: 4760, mid: 6930, senior: 9450 },
+  { label: "Cybersecurity Analyst", junior: 4550, mid: 6160, senior: 8400 },
+  { label: "DevOps / Cloud Engineer", junior: 5460, mid: 7560, senior: 10500 },
+  { label: "Product Manager", junior: 5600, mid: 8050, senior: 11200 },
+  { label: "AI Prompt Engineer", junior: 5250, mid: 7700, senior: 11550 },
+  { label: "Data Analyst", junior: 3640, mid: 5040, senior: 6860 },
+];
+
+function SalaryTransparency() {
+  const fmt = (n: number) => `$${n.toLocaleString("en-US")}`;
 
   return (
-    <section className="py-20 px-6 max-w-6xl mx-auto">
-      <h2 className="text-4xl font-bold text-center mb-12">Why Join DeepTalent</h2>
-      
-      <div className="grid md:grid-cols-2 gap-8">
-        {benefits.map((benefit, i) => (
-          <div key={i} className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 hover:border-blue-400 transition-colors">
-            <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-            <p className="text-gray-700">{benefit.desc}</p>
+    <section id="salary" className="py-20 px-6 bg-gray-50">
+      <div className="max-w-5xl mx-auto">
+        <div className="max-w-2xl mx-auto text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-xs font-semibold uppercase tracking-wide mb-4">
+            <DollarSign className="size-3.5" /> Salary transparency
           </div>
-        ))}
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">What you can earn</h2>
+          <p className="text-gray-600 text-lg text-pretty">
+            We publish our monthly USD compensation ranges by seniority level. No guesswork, no negotiating blind.
+          </p>
+        </div>
+
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-[#3B5BDB] text-white">
+                <th className="px-5 py-3.5 text-left font-semibold">Role</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Junior</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Mid</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Senior</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SALARY_ROWS.map((row, i) => (
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <td className="px-5 py-3.5 font-medium text-gray-900">{row.label}</td>
+                  <td className="px-5 py-3.5 text-right text-gray-600">{fmt(row.junior)}/mo</td>
+                  <td className="px-5 py-3.5 text-right text-gray-600">{fmt(row.mid)}/mo</td>
+                  <td className="px-5 py-3.5 text-right font-semibold text-[#3B5BDB]">{fmt(row.senior)}/mo</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-center text-xs text-gray-400 mt-5">
+          Figures are monthly USD. Full table of 15 role categories is visible during the application process. Rates reflect local-market pricing — companies pay separately at rates that reflect their market.
+        </p>
+
+        <div className="mt-10 text-center">
+          <Link
+            href="/talents/apply"
+            className="h-12 px-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#3B5BDB] text-white font-semibold hover:bg-[#2f49b2] transition-colors"
+          >
+            Apply to the network <ArrowRight className="size-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -160,27 +303,51 @@ function TalentBenefits() {
 
 function TalentJourney() {
   const steps = [
-    { num: "01", title: "Complete Your Profile", desc: "Showcase your skills and experience" },
-    { num: "02", title: "Get Vetted", desc: "Our team verifies your qualifications" },
-    { num: "03", title: "Receive Opportunities", desc: "Exclusive roles matched to your profile" },
-    { num: "04", title: "Start Working", desc: "Onboard and begin your new role" },
+    {
+      num: "01",
+      title: "Submit your application",
+      desc: "Four short sections: experience, credentials, availability, and role preferences. Saved automatically as you go — most applicants finish in under five minutes.",
+    },
+    {
+      num: "02",
+      title: "Vetting &amp; verification",
+      desc: "Our team reviews your credentials, work history, and technical competencies. Only the top 3% proceed. You will hear back within 7 business days.",
+    },
+    {
+      num: "03",
+      title: "Profile enters the network",
+      desc: "Approved candidates are matched against live company briefs using our AI system. You receive curated opportunities — no cold applications or bidding wars.",
+    },
+    {
+      num: "04",
+      title: "Placement &amp; onboarding",
+      desc: "DeepTalent handles contracting, compliance, and global payroll. You focus on doing great work — we take care of everything else.",
+    },
   ];
 
   return (
-    <section className="py-20 px-6 bg-gray-50">
+    <section className="py-20 px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-12">Your Journey</h2>
-        
+        <div className="max-w-2xl mx-auto text-center mb-14">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">How placement works</h2>
+          <p className="text-gray-600 text-lg text-pretty">
+            A clear, four-step process with no hidden stages or ambiguous timelines.
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-4 gap-6">
           {steps.map((step, i) => (
             <div key={i} className="relative">
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 text-center">
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 h-full flex flex-col">
                 <div className="text-4xl font-bold text-[#3B5BDB] mb-4">{step.num}</div>
-                <h3 className="font-bold text-lg mb-2">{step.title}</h3>
-                <p className="text-gray-600 text-sm">{step.desc}</p>
+                <h3
+                  className="font-bold text-lg mb-2 text-gray-900"
+                  dangerouslySetInnerHTML={{ __html: step.title }}
+                />
+                <p className="text-gray-600 text-sm leading-relaxed flex-1">{step.desc}</p>
               </div>
               {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-[#3B5BDB]" />
+                <div className="hidden md:block absolute top-12 -right-3 w-6 h-0.5 bg-[#3B5BDB]" />
               )}
             </div>
           ))}
@@ -190,52 +357,71 @@ function TalentJourney() {
   );
 }
 
-function TalentTestimonials() {
-  const testimonials = [
+function TalentNetwork() {
+  const facts = [
     {
-      quote: "DeepTalent connected me with a role that's transformed my career. The process was seamless and the opportunities are incredible.",
-      author: "Sarah Chen",
-      title: "Senior Developer",
-      avatar: "SC"
+      icon: ShieldCheck,
+      stat: "Top 3% acceptance",
+      label: "Rigorous vetting",
+      detail: "Technical assessments, communication screening, and past-performance audits before any profile enters the network.",
     },
     {
-      quote: "I love that there's no bidding. DeepTalent matched me with a company that truly values my expertise.",
-      author: "Michael Johnson",
-      title: "Product Designer",
-      avatar: "MJ"
+      icon: Zap,
+      stat: "21 days",
+      label: "Average time to placement",
+      detail: "From profile approval to first matched opportunity — no indefinite waiting lists.",
     },
     {
-      quote: "The flexibility and compensation are unmatched. Highly recommend DeepTalent to any serious professional.",
-      author: "Amelia Rodriguez",
-      title: "Data Scientist",
-      avatar: "AR"
+      icon: Globe2,
+      stat: "Finance, Tech & Compliance",
+      label: "Core disciplines",
+      detail: "FP&A, KYC/AML, Engineering, Data, Cybersecurity, and Executive Operations — deep expertise, not generalist staffing.",
+    },
+    {
+      icon: DollarSign,
+      stat: "Published salary scale",
+      label: "Full transparency",
+      detail: "We publish every monthly USD compensation range before you apply — no negotiating blind.",
     },
   ];
 
   return (
-    <section className="py-20 px-6 max-w-6xl mx-auto">
-      <h2 className="text-4xl font-bold text-center mb-12">What Talents Say</h2>
-      
-      <div className="grid md:grid-cols-3 gap-8">
-        {testimonials.map((testimonial, i) => (
-          <div key={i} className="p-8 bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-200">
-            <div className="flex gap-1 mb-4">
-              {[...Array(5)].map((_, j) => (
-                <Star key={j} className="size-5 fill-yellow-400 text-yellow-400" />
-              ))}
-            </div>
-            <p className="text-gray-700 mb-6 italic">&ldquo;{testimonial.quote}&rdquo;</p>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#3B5BDB] text-white rounded-full flex items-center justify-center font-bold">
-                {testimonial.avatar}
+    <section className="py-20 px-6 bg-gray-50">
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-2xl mx-auto text-center mb-14">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Built for serious professionals</h2>
+          <p className="text-gray-600 text-lg">
+            DeepTalent is a selective, early-stage network. Every figure below reflects our operational standard.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {facts.map((f, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-gray-200 p-7 flex gap-5 items-start">
+              <div className="shrink-0 w-12 h-12 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center">
+                <f.icon className="size-5 text-[#3B5BDB]" />
               </div>
               <div>
-                <p className="font-bold text-gray-900">{testimonial.author}</p>
-                <p className="text-sm text-gray-600">{testimonial.title}</p>
+                <p className="font-bold text-gray-900 text-sm">{f.stat}</p>
+                <p className="text-xs text-[#3B5BDB] font-semibold uppercase tracking-wide mb-1">{f.label}</p>
+                <p className="text-gray-600 text-sm leading-relaxed">{f.detail}</p>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        <p className="text-center text-xs text-gray-400 mt-8">
+          Placement stories are published as they are completed. Follow{" "}
+          <a
+            href="https://www.linkedin.com/company/deeptalentplatform/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-[#3B5BDB]"
+          >
+            DeepTalent on LinkedIn
+          </a>{" "}
+          for live updates.
+        </p>
       </div>
     </section>
   );
@@ -247,25 +433,47 @@ function Footer() {
       <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8 mb-8">
         <div>
           <h3 className="font-bold mb-4">DeepTalent</h3>
-          <p className="text-gray-400 text-sm">Connecting top talent with world-class opportunities.</p>
+          <p className="text-gray-400 text-sm">
+            A fully managed talent partner connecting Africa&apos;s finest professionals with global opportunities.
+          </p>
+          <a
+            href="https://www.linkedin.com/company/deeptalentplatform/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 mt-4 text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            <Linkedin className="size-4" /> LinkedIn
+          </a>
         </div>
         <div>
           <h4 className="font-bold mb-4">Product</h4>
-          <Link href="/talents" className="text-gray-400 hover:text-white text-sm block mb-2">For Talents</Link>
-          <Link href="/companies" className="text-gray-400 hover:text-white text-sm block mb-2">For Companies</Link>
+          <Link href="/talents" className="text-gray-400 hover:text-white text-sm block mb-2">
+            For Talents
+          </Link>
+          <Link href="/companies" className="text-gray-400 hover:text-white text-sm block mb-2">
+            For Companies
+          </Link>
         </div>
         <div>
           <h4 className="font-bold mb-4">Company</h4>
-          <Link href="/about" className="text-gray-400 hover:text-white text-sm block mb-2">About</Link>
-          <Link href="/contact" className="text-gray-400 hover:text-white text-sm block mb-2">Contact</Link>
+          <Link href="/about" className="text-gray-400 hover:text-white text-sm block mb-2">
+            About
+          </Link>
+          <Link href="/contact" className="text-gray-400 hover:text-white text-sm block mb-2">
+            Contact
+          </Link>
         </div>
         <div>
           <h4 className="font-bold mb-4">Legal</h4>
-          <Link href="/privacy" className="text-gray-400 hover:text-white text-sm block mb-2">Privacy</Link>
-          <Link href="/terms" className="text-gray-400 hover:text-white text-sm block mb-2">Terms</Link>
+          <Link href="/privacy" className="text-gray-400 hover:text-white text-sm block mb-2">
+            Privacy
+          </Link>
+          <Link href="/terms" className="text-gray-400 hover:text-white text-sm block mb-2">
+            Terms
+          </Link>
         </div>
       </div>
-      
+
       <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
         <p>&copy; 2026 DeepTalent Platform. All rights reserved.</p>
       </div>

@@ -464,7 +464,7 @@ function HowItWorks() {
     {
       id: "step-2",
       title: "Get AI-Matched Talent",
-      description: "Our system sorts, screens, and presents the top 1% of vetted professionals within 21 days.",
+      description: "Our system sorts, screens, and presents a curated shortlist of the top 3% of vetted professionals within 21 days.",
       detail: "Receive a curated shortlist of 3-5 specialists, each with verified skills, work history, and culture fit signals — ready to interview.",
       icon: Users,
     },
@@ -616,7 +616,7 @@ function WhyChooseUs() {
     {
       id: "1",
       title: "Unmatched Vetting & Quality",
-      description: "We only deliver the top 1% of global specialists, verified by proprietary AI against technical mastery and cultural fit.",
+      description: "We only deliver the top 3% of applicants — each verified by proprietary AI assessment and human expert review before they enter the network.",
       image: "/images/vetting-quality.png",
     },
     {
@@ -722,16 +722,16 @@ interface Advantage {
 function StrategicAdvantages() {
   const advantages: Advantage[] = [
     {
-      title: "Elite Talent. Up to 50% Less Cost.",
-      description: "Access top-tier professionals from emerging markets at up to 50% off onshore rates — senior-level output with zero compromise on communication.",
-      image: "/images/upfront-compensation.png",
-      accent: "bg-blue-500/10 text-blue-600",
-    },
-    {
       title: "AI-Powered Precision Matching",
-      description: "Stop sifting through resumes. Our proprietary AI analyzes thousands of data points to instantly match you with candidates who fit your tech stack and culture.",
+      description: "Stop sifting through resumes. Our proprietary AI analyzes thousands of data points to instantly match you with candidates who fit your role requirements and operating environment.",
       image: "/images/direct-connection.png",
       accent: "bg-purple-500/10 text-purple-600",
+    },
+    {
+      title: "Credentialled Talent at Competitive Rates",
+      description: "Access senior-level finance, compliance, and technology professionals from Africa's deepest talent pools — the same calibre as onshore hires, at rates that reflect their market, not yours.",
+      image: "/images/upfront-compensation.png",
+      accent: "bg-blue-500/10 text-blue-600",
     },
     {
       title: "Follow-the-Sun Coverage",
@@ -1335,7 +1335,7 @@ function Footer() {
             variants={fadeInUp()}
             className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto"
           >
-            Join hundreds of companies scaling with DeepTalent specialists. Get matched with vetted experts within 21 days.
+            Get matched with credentialled finance, compliance, and technology specialists from Africa&apos;s top talent pools — within 21 days.
           </motion.p>
           <motion.div
             variants={fadeInUp()}
