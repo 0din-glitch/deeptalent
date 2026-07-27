@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Menu, X, Mail, Phone, MapPin, Linkedin, Twitter, Instagram, Facebook, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Menu, X, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -12,7 +12,7 @@ export default function CompaniesPage() {
       <CompanyHero />
       <CompanyBenefits />
       <HiringProcess />
-      <CompanyTestimonials />
+      <ClientProof />
       <Footer />
     </main>
   );
@@ -107,11 +107,11 @@ function CompanyHero() {
         </div>
         
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-          Access Verified <br /> Deep Expertise
+          Hire Finance, Compliance &amp; Technology Talent
         </h1>
         
         <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-          Scale your engineering team in days, not months. Our three-step process delivers interview-ready specialists aligned with your specific tech stack.
+          A fully managed talent partner — not a marketplace. We source, vet, and deploy credentialled specialists in finance, compliance, and technology from Africa&apos;s deepest professional pools into your team within 21 days.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -123,10 +123,10 @@ function CompanyHero() {
             <ArrowRight className="size-5" />
           </Link>
           <Link
-            href="/about"
+            href="/companies/hire"
             className="px-8 py-4 border border-white/30 text-white font-semibold rounded-full hover:bg-white/10 transition-colors"
           >
-            Browse Talent Pool
+            See How It Works
           </Link>
         </div>
       </div>
@@ -136,10 +136,10 @@ function CompanyHero() {
 
 function CompanyBenefits() {
   const benefits = [
-    { title: "Faster Hiring", desc: "Find qualified candidates within 21 days, not 3 months" },
-    { title: "Vetted Quality", desc: "Only top 1% of candidates make it through our process" },
-    { title: "Lower Costs", desc: "Reduce hiring costs by up to 50% compared to onshore market rates" },
-    { title: "Zero Risk", desc: "Quality guarantee means we replace underperformers" },
+    { title: "Placed within 21 days", desc: "From brief to shortlist in three weeks — no indefinite waiting." },
+    { title: "Top 3% acceptance rate", desc: "Only credentialled, interview-ready professionals enter our network." },
+    { title: "Competitive rates", desc: "Senior-level output at rates that reflect Africa's talent market, not the Global North's." },
+    { title: "14-day risk-free trial", desc: "If a specialist isn't the right fit in the first two weeks, you pay nothing and we replace them." },
   ];
 
   return (
@@ -189,43 +189,55 @@ function HiringProcess() {
   );
 }
 
-function CompanyTestimonials() {
-  const testimonials = [
+function ClientProof() {
+  const clients = [
     {
-      quote: "DeepTalent cut our hiring time by 70%. The candidates were immediately productive and culture fit.",
-      author: "John Smith",
-      title: "CTO, TechStartup",
-      avatar: "JS"
+      quote: "Deeptalent transformed the way I run my business. The VA they matched me with was trained, proactive, and integrated into my workflow from day one. What impressed me most was the cost advantage — I'm getting Fortune-500-level support at half the traditional price.",
+      name: "Dianitte Erilus",
+      title: "Founder & Operations Lead",
+      location: "Orlando, Florida, USA",
+      initials: "DE",
+      avatarBg: "#f97316",
     },
     {
-      quote: "Finally a recruitment solution that actually works. Quality is top-notch and costs are transparent.",
-      author: "Lisa Wong",
-      title: "VP People, FinTech Co",
-      avatar: "LW"
+      quote: "We needed reliable administrative and customer-support help, and Deeptalent delivered beyond expectations. Their talent is disciplined, well-trained, and incredibly responsive — exactly what a fast-moving hospitality brand like ours needs.",
+      name: "CRI Lounge",
+      title: "Hospitality & Events",
+      location: "South Croydon, London, UK",
+      initials: "CL",
+      avatarBg: "#14b8a6",
     },
     {
-      quote: "We've scaled our team from 10 to 40 people using DeepTalent. Absolutely game-changing.",
-      author: "Marcus Davis",
-      title: "Founder, ScaleUp Inc",
-      avatar: "MD"
+      quote: "The operational burden in our clinic used to be overwhelming until Deeptalent stepped in. Their Executive Assistant support has completely reshaped our scheduling, client communication, and admin processes. Professional, discreet, tech-savvy, and consistent.",
+      name: "Al Ahad MD",
+      title: "Medical & Wellness Practice",
+      location: "Sharjah, Dubai, UAE",
+      initials: "AA",
+      avatarBg: "#3b82f6",
     },
   ];
 
   return (
     <section className="py-20 px-6 max-w-6xl mx-auto">
-      <h2 className="text-4xl font-bold text-center mb-12">What Companies Say</h2>
-      
+      <div className="max-w-2xl mx-auto text-center mb-12">
+        <h2 className="text-4xl font-bold text-gray-900 mb-4">What our clients say</h2>
+        <p className="text-gray-600">Real feedback from businesses already working with DeepTalent specialists.</p>
+      </div>
+
       <div className="grid md:grid-cols-3 gap-8">
-        {testimonials.map((testimonial, i) => (
-          <div key={i} className="p-8 bg-gradient-to-br from-indigo-50 to-white rounded-2xl border border-indigo-200">
-            <p className="text-gray-700 mb-6 italic">&ldquo;{testimonial.quote}&rdquo;</p>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#3B5BDB] text-white rounded-full flex items-center justify-center font-bold text-sm">
-                {testimonial.avatar}
+        {clients.map((c, i) => (
+          <div key={i} className="p-8 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col">
+            <p className="text-gray-700 text-sm leading-relaxed italic flex-1 mb-6">&ldquo;{c.quote}&rdquo;</p>
+            <div className="flex items-center gap-3">
+              <div
+                className="size-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+                style={{ backgroundColor: c.avatarBg }}
+              >
+                {c.initials}
               </div>
               <div>
-                <p className="font-bold text-gray-900">{testimonial.author}</p>
-                <p className="text-sm text-gray-600">{testimonial.title}</p>
+                <p className="font-semibold text-sm text-gray-900">{c.name}</p>
+                <p className="text-xs text-gray-500">{c.title} &middot; {c.location}</p>
               </div>
             </div>
           </div>
