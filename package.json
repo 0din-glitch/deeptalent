@@ -14,6 +14,8 @@
     "@supabase/supabase-js": "^2.105.4",
     "ai": "^6.0.197",
     "clsx": "^2.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.468.0",
     "motion": "^12.38.0",
     "next": "^16",

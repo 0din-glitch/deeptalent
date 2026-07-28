@@ -20,6 +20,25 @@ export async function signUpWithResendConfirmation(
 ) {
   const admin = createServiceClient();
 
+  // Step 0: guard against duplicate emails before touching auth.
+  // The profiles table has a unique constraint on email (migration 006).
+  const { data: existingProfile } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (existingProfile) {
+    return { error: "An account with this email address already exists. Please log in instead." };
+  }
+
+  // Also check Supabase auth directly (handles confirmed users not yet in profiles).
+  const { data: authList } = await admin.auth.admin.listUsers();
+  const authConflict = (authList?.users ?? []).find((u) => u.email === email);
+  if (authConflict) {
+    return { error: "An account with this email address already exists. Please log in instead." };
+  }
+
   // Step 1: create the user (unconfirmed). This avoids triggering Supabase's
   // own SMTP pipeline up front, which has been flaky.
   const { data: createData, error: createError } = await admin.auth.admin.createUser({
