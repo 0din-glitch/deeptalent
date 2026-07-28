@@ -1,7 +1,7 @@
 # DeepTalent — Platform Audit Checklist
 
 Based on Theo's Action Items and the Phase 1 Website Audit.  
-Last updated: 27 July 2026.
+Last updated: 28 July 2026.
 
 ---
 
@@ -54,6 +54,13 @@ Last updated: 27 July 2026.
 - [x] Tasks tab — admin task management with delegation
 - [x] AI Interview flow — browser-based oral interview, scoring, and qualifying role matching
 - [x] Cover letter generator in talent dashboard
+
+### AI Tools (Talent Dashboard)
+
+- [x] **LinkedIn reviewer — screenshot analysis** — upload up to 3 PNG/JPG/WebP screenshots; base64 sent to `gpt-4.1` vision; returns an extra `visual_presence` section covering photo, banner, and layout quality
+- [x] **LinkedIn reviewer — web scraper** — URL mode fetches page HTML, strips to clean text, feeds to AI; auto-falls back to manual paste mode if the page is blocked
+- [x] **Resume builder — Build with AI wizard** — 13-step question wizard; on completion calls `/api/resume/wizard` which uses `gpt-4.1` + structured output (`Output.object`) to generate the full resume (summary, bullets, education, skills); costs 5 credits; drops straight into preview on completion
+- [x] **Resume builder — Export PDF fix** — "Export PDF" now uses `html2canvas` + `jsPDF` to capture only the `ResumePreview` DOM node; produces a correctly sized A4 PDF named `{Full_Name}_Resume.pdf`; old `window.print()` (which printed the whole dashboard) removed
 
 ---
 
