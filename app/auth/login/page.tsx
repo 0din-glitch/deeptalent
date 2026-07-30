@@ -87,16 +87,20 @@ function LoginForm() {
     }
   }
 
+  const signUpHref = `/auth/sign-up${next ? `?next=${encodeURIComponent(next)}${email ? `&email=${encodeURIComponent(email)}` : ""}` : ""}`;
+
   return (
     <AuthShell
       title="Welcome back"
       subtitle="Log in to access your DeepTalent dashboard."
+      activeTab="signin"
+      signUpHref={signUpHref}
       footer={
         <>
           Don&apos;t have an account?{" "}
           <Link
-            href={`/auth/sign-up${next ? `?next=${encodeURIComponent(next)}${email ? `&email=${encodeURIComponent(email)}` : ""}` : ""}`}
-            className="text-[#3B5BDB] font-semibold hover:underline"
+            href={signUpHref}
+            className="font-semibold text-white underline underline-offset-2 hover:text-white/80"
           >
             Sign up
           </Link>
@@ -106,7 +110,7 @@ function LoginForm() {
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-white/80">
             Email
           </label>
           <input
@@ -115,13 +119,13 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#3B5BDB] focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]/20 transition"
+            className="frosted-input"
             placeholder="you@company.com"
           />
         </div>
         <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <div className="mb-1.5 flex items-center justify-between">
+            <label htmlFor="password" className="block text-sm font-medium text-white/80">
               Password
             </label>
           </div>
@@ -131,13 +135,13 @@ function LoginForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-[#3B5BDB] focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]/20 transition"
+            className="frosted-input"
             placeholder="••••••••"
           />
         </div>
 
         {error && (
-          <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg p-3">
+          <div className="rounded-xl border border-red-300/30 bg-red-500/15 p-3 text-sm text-red-100">
             {error}
           </div>
         )}
@@ -145,7 +149,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-12 inline-flex items-center justify-center rounded-lg bg-[#3B5BDB] text-white font-semibold hover:bg-[#2f49b2] transition-colors disabled:opacity-60"
+          className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-white font-semibold text-[#3B5BDB] transition-colors hover:bg-white/90 disabled:opacity-60"
         >
           {loading ? <Loader2 className="size-5 animate-spin" /> : "Log in"}
         </button>

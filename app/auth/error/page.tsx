@@ -13,13 +13,13 @@ export default async function AuthErrorPage({
       title="Something went wrong"
       subtitle={params?.error || "An authentication error occurred. Please try again."}
     >
-      <div className="flex flex-col items-center text-center gap-4 py-4">
-        <div className="size-16 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+      <div className="flex flex-col items-center gap-4 py-4 text-center">
+        <div className="flex size-16 items-center justify-center rounded-full bg-red-500/20 text-red-100">
           <AlertTriangle className="size-8" />
         </div>
         <Link
           href="/auth/login"
-          className="mt-2 inline-flex h-11 px-6 items-center justify-center rounded-lg bg-[#3B5BDB] text-white font-semibold hover:bg-[#2f49b2] transition-colors"
+          className="mt-2 inline-flex h-11 items-center justify-center rounded-xl bg-white px-6 font-semibold text-[#3B5BDB] transition-colors hover:bg-white/90"
         >
           Back to login
         </Link>
