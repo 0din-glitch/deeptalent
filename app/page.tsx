@@ -12,6 +12,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   motion, useScroll, AnimatePresence,
 } from "motion/react";
+import { FluidCTA } from "@/components/site/fluid-cta";
 import { fadeInUp, staggerContainer, scaleIn, viewport } from "@/lib/motion";
 
 /* ─── light palette shortcuts ─── */
@@ -152,51 +153,6 @@ function Navbar() {
   );
 }
 
-/* ════════════════════════════════════════════════════
-   FLUID CTA — morphing pill button
-═══════════════════════════════════════════════════════ */
-interface FluidCTAProps {
-  href: string;
-  children: React.ReactNode;
-  size?: "sm" | "md" | "lg";
-  variant?: "primary" | "outline";
-  className?: string;
-}
-
-function FluidCTA({ href, children, size = "md", variant = "primary", className = "" }: FluidCTAProps) {
-  const [hovered, setHovered] = useState(false);
-
-  const pad = size === "sm" ? "h-9 px-5 text-sm" : size === "lg" ? "h-14 px-10 text-base" : "h-12 px-8 text-sm";
-  const base =
-    variant === "primary"
-      ? "bg-[#3B5BDB] text-white hover:bg-[#2F49B0] shadow-[0_8px_24px_rgba(59,91,219,0.25)]"
-      : "bg-white border border-[#3B5BDB]/40 text-[#3B5BDB] hover:bg-[#3B5BDB]/5";
-
-  return (
-    <Link
-      href={href}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className={`fluid-cta relative overflow-hidden inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all duration-300 ${pad} ${base} ${className}`}
-    >
-      <span className="fluid-cta-ripple" aria-hidden="true" />
-      <motion.span
-        animate={{ x: hovered ? -2 : 0 }}
-        transition={{ duration: 0.2 }}
-        className="relative z-10"
-      >
-        {children}
-      </motion.span>
-      <motion.span
-        animate={{ x: hovered ? 2 : 0, opacity: hovered ? 1 : 0.7 }}
-        transition={{ duration: 0.2 }}
-        className="relative z-10"
-      >
-        <ArrowUpRight className="size-4" />
-      </motion.span>
-    </Link>
-  );
-}
 
 /* ════════════════════════════════════════════════════
    LEARNING PARTNERSHIPS — platform logo matrix
@@ -408,7 +364,7 @@ function Hero() {
   );
 }
 
-/* ════════════════════════════════════════════════════
+/* ══════════════���═════════════════════════════════════
    TRUSTED BY — marquee + Trustpilot
 ═══════════════════════════════════════════════════════ */
 function TrustedBy() {
@@ -1152,7 +1108,7 @@ function WhyChooseUs() {
 
 /* ════════════════════════════════════════════════════
    STRATEGIC ADVANTAGES — pinned scroll-through (light)
-══════════════════════════════��════════════════════════ */
+══════════════════════════════����═══════════════════════ */
 function StrategicAdvantages() {
   const advantages = [
     { title: "AI-Powered Precision Matching", description: "Stop sifting through resumes. Our proprietary AI analyzes thousands of data points to instantly match you with candidates who fit your role requirements and operating environment.", image: "/images/direct-connection.png" },
