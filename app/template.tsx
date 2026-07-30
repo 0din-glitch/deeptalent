@@ -17,41 +17,56 @@ export default function Template({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
+  // Same fluid signature as the FluidCTA: a brand-blue liquid whose edge
+  // curves into a meniscus (50% radius) then flattens (0%) as it moves.
+  const liquidEase: [number, number, number, number] = [0.76, 0, 0.24, 1];
+
   return (
     <>
-      {/* Liquid reveal overlay — covers, then sweeps up and away */}
+      {/* Liquid reveal overlay — covers the screen, then drains downward and
+          out the bottom, its TOP edge curving like the FluidCTA fill. */}
       <motion.div
         aria-hidden="true"
         className="pointer-events-none fixed inset-x-0 top-0 z-[9999]"
         style={{ height: "110vh", backgroundColor: "#3B5BDB" }}
-        initial={{ y: "0%", borderBottomLeftRadius: "0%", borderBottomRightRadius: "0%" }}
+        initial={{ y: "0%", borderTopLeftRadius: "0%", borderTopRightRadius: "0%" }}
         animate={{
-          y: "-110%",
-          borderBottomLeftRadius: ["0%", "35%", "50%"],
-          borderBottomRightRadius: ["0%", "35%", "50%"],
+          y: "110%",
+          borderTopLeftRadius: ["0%", "45%", "50%"],
+          borderTopRightRadius: ["0%", "45%", "50%"],
         }}
         transition={{
-          duration: 0.7,
-          ease: [0.76, 0, 0.24, 1],
-          borderBottomLeftRadius: { duration: 0.7, times: [0, 0.5, 1] },
-          borderBottomRightRadius: { duration: 0.7, times: [0, 0.5, 1] },
+          duration: 0.75,
+          ease: liquidEase,
+          borderTopLeftRadius: { duration: 0.75, times: [0, 0.45, 1] },
+          borderTopRightRadius: { duration: 0.75, times: [0, 0.45, 1] },
         }}
       />
-      {/* A trailing deeper-blue drip layer for added fluid depth */}
+      {/* Trailing deeper-blue drip layer for added fluid depth */}
       <motion.div
         aria-hidden="true"
         className="pointer-events-none fixed inset-x-0 top-0 z-[9998]"
         style={{ height: "110vh", backgroundColor: "#2F49B0" }}
-        initial={{ y: "0%" }}
-        animate={{ y: "-110%" }}
-        transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 0.08 }}
+        initial={{ y: "0%", borderTopLeftRadius: "0%", borderTopRightRadius: "0%" }}
+        animate={{
+          y: "110%",
+          borderTopLeftRadius: ["0%", "45%", "50%"],
+          borderTopRightRadius: ["0%", "45%", "50%"],
+        }}
+        transition={{
+          duration: 0.75,
+          ease: liquidEase,
+          delay: 0.08,
+          borderTopLeftRadius: { duration: 0.75, times: [0, 0.45, 1] },
+          borderTopRightRadius: { duration: 0.75, times: [0, 0.45, 1] },
+        }}
       />
 
-      {/* New page content fades up beneath the retracting liquid */}
+      {/* New page content fades up beneath the draining liquid */}
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, ease: "easeOut", delay: 0.35 }}
+        transition={{ duration: 0.45, ease: "easeOut", delay: 0.32 }}
       >
         {children}
       </motion.div>
