@@ -60,22 +60,32 @@ export default function AboutPage() {
           </div>
 
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Founder image */}
-            <div className="lg:col-span-4 flex flex-col items-center gap-4">
-              <div className="relative w-full aspect-[3/4] max-w-xs rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-                <Image
-                  src="/assets/images/founder.jpg"
-                  alt="Joshua Raymond Onifade — Founder & CEO, DeepTalent"
-                  fill
-                  className="object-cover object-top"
-                  sizes="(max-width: 768px) 100vw, 320px"
-                />
+            {/* Image card */}
+            <aside className="lg:col-span-4 lg:sticky lg:top-28">
+              <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100">
+                <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
+                  <Image
+                    src="/images/founder.jpg"
+                    alt="Joshua Raymond Onifade, MD/CEO of DeepTalent"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="mt-5">
+                  <p className="font-bold text-gray-900 text-lg leading-tight">Joshua Raymond Onifade</p>
+                  <p className="text-[#3B5BDB] text-sm font-medium mt-0.5">MD/CEO DeepTalent Platform</p>
+                  <a
+                    href="https://www.linkedin.com/company/deeptalentplatform/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-3 text-sm text-gray-500 hover:text-[#3B5BDB] transition-colors"
+                  >
+                    <Linkedin className="size-4" /> Connect on LinkedIn
+                  </a>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="font-bold text-gray-900 text-lg">Joshua Raymond Onifade</p>
-                <p className="text-[#3B5BDB] font-medium text-sm">Founder &amp; CEO</p>
-              </div>
-            </div>
+            </aside>
 
             <div className="lg:col-span-8">
               <Quote className="size-10 text-[#3B5BDB]/20 mb-4" />
@@ -132,18 +142,20 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             {/* Joshua Raymond Onifade */}
             <div className="flex flex-col items-center text-center">
-              <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-md border border-gray-100 mb-5">
-                <Image
-                  src="/assets/images/founder.jpg"
-                  alt="Joshua Raymond Onifade"
-                  fill
-                  className="object-cover object-top"
-                  sizes="192px"
-                />
+              <div className="w-full max-w-xs mb-6">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image
+                    src="/images/founder.jpg"
+                    alt="Joshua Raymond Onifade"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </div>
               <h3 className="text-2xl font-bold text-gray-900">Joshua Raymond Onifade</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">MD/CEO</p>
-              <p className="text-gray-600 text-sm mt-3 leading-relaxed max-w-xs">
+              <p className="text-gray-600 text-sm mt-3 leading-relaxed">
                 Leading the infrastructure revolution. Nearly 20 years in African structured finance, transforming how talent flows across continents.
               </p>
               <a
@@ -158,18 +170,20 @@ export default function AboutPage() {
 
             {/* Adedayo Setro A. */}
             <div className="flex flex-col items-center text-center">
-              <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-md border border-gray-100 mb-5">
-                <Image
-                  src="/assets/images/leader-setro.jpg"
-                  alt="Adedayo Setro A."
-                  fill
-                  className="object-cover object-top"
-                  sizes="192px"
-                />
+              <div className="w-full max-w-xs mb-6">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image
+                    src="/images/leader-setro.jpg"
+                    alt="Adedayo Setro A., DMD of DeepTalent Platform"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </div>
               <h3 className="text-2xl font-bold text-gray-900">Adedayo Setro A.</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">DMD, DeepTalent Platform</p>
-              <p className="text-gray-600 text-sm mt-3 leading-relaxed max-w-xs">
+              <p className="text-gray-600 text-sm mt-3 leading-relaxed">
                 Scaling excellence. Dedicated to building systems that connect Africa&apos;s finest professionals with global opportunities.
               </p>
               <a
@@ -210,7 +224,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-md">
                 <Image
-                  src="/assets/images/about-img.png"
+                  src="/images/about-img.png"
                   alt="DeepTalent team at work"
                   fill
                   className="object-cover"
@@ -219,7 +233,7 @@ export default function AboutPage() {
               </div>
               <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-md mt-8">
                 <Image
-                  src="/assets/images/about-img-2.png"
+                  src="/images/about-img-2.png"
                   alt="DeepTalent professionals"
                   fill
                   className="object-cover"
