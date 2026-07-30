@@ -65,6 +65,7 @@ function Navbar() {
     { label: "Home", href: "/" },
     { label: "For Talents", href: "/talents" },
     { label: "For Companies", href: "/companies" },
+    { label: "Consulting", href: "/consulting" },
     { label: "About Us", href: "/about" },
   ];
 
@@ -370,17 +371,18 @@ function Hero() {
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.1] text-balance"
             style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", letterSpacing: "-0.01em" }}
           >
-            Hire AI-Vetted Staff You Can Trust
+            Hire Global Talent
           </motion.h1>
 
           <motion.p
             variants={fadeInUp()}
             className="text-lg md:text-xl text-white/90 max-w-xl leading-relaxed text-pretty"
           >
-            Our AI vetting system screens and scores every candidate on real skills—so you hire{" "}
+            Connect with accredited and vetted experts in{" "}
             <span className="font-semibold text-white">finance</span>,{" "}
-            <span className="font-semibold text-white">technology</span> and{" "}
-            <span className="font-semibold text-white">operations</span>{" "}talent that&apos;s ready to perform from day one.
+            <span className="font-semibold text-white">compliance</span>,{" "}
+            <span className="font-semibold text-white">risk</span>,{" "}
+            <span className="font-semibold text-white">technology</span> and more — all screened and scored by our AI vetting system so every hire performs from day one.
           </motion.p>
 
           <motion.div
