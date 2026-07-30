@@ -3,26 +3,25 @@
 import {
   ArrowUpRight, Menu, X, Mail, Phone, MapPin,
   Instagram, Linkedin, HelpCircle, Plus, Minus,
-  FileText, Users, ShieldCheck, ChevronRight,
-  ArrowRight, Star, Globe, Zap, Check,
+  FileText, Users, ShieldCheck, ChevronRight, ChevronLeft,
+  Star, Globe, Zap, Check,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  motion, useScroll, useTransform, AnimatePresence,
-  useMotionValue, useSpring, type MotionValue,
+  motion, useScroll, AnimatePresence,
 } from "motion/react";
-import { fadeInUp, slideIn, staggerContainer, fadeIn, scaleIn, viewport } from "@/lib/motion";
+import { fadeInUp, staggerContainer, scaleIn, viewport } from "@/lib/motion";
 
-/* ─── palette shortcuts ─── */
+/* ─── light palette shortcuts ─── */
 const C = {
-  bg:     "#001619",
-  card:   "#011f24",
-  border: "#0d3a40",
-  cyan:   "#50E8F4",
-  ice:    "#C7F8FE",
-  muted:  "#7ecdd6",
+  primary: "#3B5BDB",
+  primaryDark: "#2F49B0",
+  ink: "#111827",
+  body: "#6B7280",
+  border: "#E5E7EB",
+  soft: "#F9FAFB",
 } as const;
 
 /* ════════════════════════════════════════════════════
@@ -30,7 +29,7 @@ const C = {
 ═══════════════════════════════════════════════════════ */
 export default function Home() {
   return (
-    <main className="bg-[#001619] text-[#C7F8FE] overflow-x-hidden">
+    <main className="bg-white text-gray-900 overflow-x-hidden">
       <Navbar />
       <Hero />
       <TrustedBy />
@@ -71,8 +70,8 @@ function Navbar() {
     <nav
       className={`fixed top-4 left-1/2 z-50 w-[92%] max-w-7xl -translate-x-1/2 flex items-center justify-between rounded-2xl px-5 py-3 md:px-8 transition-all duration-300 ${
         scrolled
-          ? "bg-[#011f24]/90 backdrop-blur-xl border border-[#0d3a40] shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
-          : "bg-[#011f24]/70 backdrop-blur-md border border-[#0d3a40]/60"
+          ? "bg-white/90 backdrop-blur-xl border border-gray-200 shadow-[0_8px_32px_rgba(17,24,39,0.08)]"
+          : "bg-white/70 backdrop-blur-md border border-gray-200/60"
       }`}
     >
       <Link href="/" className="flex items-center gap-2">
@@ -84,7 +83,7 @@ function Navbar() {
           <Link
             key={link.label}
             href={link.href}
-            className="px-4 py-2 text-[#7ecdd6] hover:text-[#50E8F4] text-sm font-medium transition-colors"
+            className="px-4 py-2 text-gray-600 hover:text-[#3B5BDB] text-sm font-medium transition-colors"
           >
             {link.label}
           </Link>
@@ -94,7 +93,7 @@ function Navbar() {
       <div className="flex items-center gap-3">
         <Link
           href="/auth/login"
-          className="hidden md:inline-flex h-9 px-5 items-center justify-center rounded-full border border-[#0d3a40] bg-transparent text-[#C7F8FE] text-sm font-medium hover:border-[#50E8F4]/60 hover:text-[#50E8F4] transition-colors"
+          className="hidden md:inline-flex h-9 px-5 items-center justify-center rounded-full border border-gray-300 bg-transparent text-gray-700 text-sm font-medium hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors"
         >
           Login
         </Link>
@@ -102,7 +101,8 @@ function Navbar() {
 
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-[#C7F8FE] hover:bg-[#0d3a40] rounded-lg"
+          className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+          aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
@@ -114,24 +114,24 @@ function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-[#011f24] border border-[#0d3a40] rounded-2xl shadow-2xl p-6 md:hidden"
+            className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 md:hidden"
           >
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className="px-4 py-3 text-[#C7F8FE] hover:bg-[#0d3a40] rounded-lg font-medium"
+                  className="px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg font-medium"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
-              <hr className="my-3 border-[#0d3a40]" />
-              <Link href="/auth/login" className="px-4 py-3 text-[#C7F8FE] hover:bg-[#0d3a40] rounded-lg font-medium">
+              <hr className="my-3 border-gray-200" />
+              <Link href="/auth/login" className="px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg font-medium">
                 Login
               </Link>
-              <Link href="/companies/hire" className="px-4 py-3 bg-[#50E8F4] text-[#001619] rounded-lg font-semibold text-center">
+              <Link href="/companies/hire" className="px-4 py-3 bg-[#3B5BDB] text-white rounded-lg font-semibold text-center">
                 Hire Talent
               </Link>
             </div>
@@ -159,8 +159,8 @@ function FluidCTA({ href, children, size = "md", variant = "primary", className 
   const pad = size === "sm" ? "h-9 px-5 text-sm" : size === "lg" ? "h-14 px-10 text-base" : "h-12 px-8 text-sm";
   const base =
     variant === "primary"
-      ? "bg-[#50E8F4] text-[#001619] hover:bg-[#C7F8FE]"
-      : "bg-transparent border border-[#50E8F4]/50 text-[#50E8F4] hover:bg-[#50E8F4]/10";
+      ? "bg-[#3B5BDB] text-white hover:bg-[#2F49B0] shadow-[0_8px_24px_rgba(59,91,219,0.25)]"
+      : "bg-white border border-[#3B5BDB]/40 text-[#3B5BDB] hover:bg-[#3B5BDB]/5";
 
   return (
     <Link
@@ -191,11 +191,9 @@ function FluidCTA({ href, children, size = "md", variant = "primary", className 
 /* ════════════════════════════════════════════════════
    HERO — Andela floating logos grid + centered text
 ═══════════════════════════════════════════════════════ */
-
 const GRID_COLS = 7;
 const GRID_ROWS = 5;
 
-/* Which cells hold a brand logo, keyed "row-col" */
 const LOGO_MAP: Record<string, { src: string; name: string }> = {
   "0-1": { src: "/icons/sterling-bank.svg", name: "Sterling Bank" },
   "0-5": { src: "/icons/tulcan-energy.svg", name: "Tulcan Energy" },
@@ -209,7 +207,7 @@ const LOGO_MAP: Record<string, { src: string; name: string }> = {
   "4-5": { src: "/icons/premium-trust.svg", name: "Premium Trust" },
 };
 
-/* Center block (cols 2–4, rows 1–3) is left clear for the headline. */
+/* Center block (cols 2–4, rows 1–3) left clear for headline. */
 function isTextZone(r: number, c: number) {
   return c >= 2 && c <= 4 && r >= 1 && r <= 3;
 }
@@ -241,12 +239,12 @@ function HeroLogoGrid() {
             return (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.8, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
                 className="flex items-center justify-center"
               >
-                <div className="float-y size-16 lg:size-20 rounded-2xl bg-white flex items-center justify-center p-3 shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+                <div className="float-y size-16 lg:size-20 rounded-2xl bg-white flex items-center justify-center p-3 border border-gray-200 shadow-[0_10px_30px_rgba(17,24,39,0.08)]">
                   <img
                     src={logo.src}
                     alt={logo.name}
@@ -265,7 +263,7 @@ function HeroLogoGrid() {
               transition={{ duration: 0.5, delay }}
               className="flex items-center justify-center"
             >
-              <div className="size-16 lg:size-20 rounded-2xl border border-[#0d3a40]/50 bg-[#011f24]/40" />
+              <div className="size-16 lg:size-20 rounded-2xl border border-gray-100 bg-gray-50/70" />
             </motion.div>
           );
         })}
@@ -276,7 +274,7 @@ function HeroLogoGrid() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 46% 52% at 50% 46%, #001619 0%, #001619 38%, rgba(0,22,25,0.7) 60%, transparent 78%)",
+            "radial-gradient(ellipse 48% 54% at 50% 46%, #ffffff 0%, #ffffff 40%, rgba(255,255,255,0.75) 62%, transparent 80%)",
         }}
       />
     </div>
@@ -285,14 +283,13 @@ function HeroLogoGrid() {
 
 function Hero() {
   return (
-    <section className="relative min-h-[100svh] flex flex-col items-center justify-center pt-24 pb-20 px-4 overflow-hidden">
-      {/* Background glow orbs */}
-      <div className="pointer-events-none absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#50E8F4]/5 blur-[120px]" aria-hidden="true" />
-      <div className="pointer-events-none absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-[#50E8F4]/4 blur-[100px]" aria-hidden="true" />
+    <section className="relative min-h-[100svh] flex flex-col items-center justify-center pt-24 pb-20 px-4 overflow-hidden bg-white">
+      {/* soft brand glow */}
+      <div className="pointer-events-none absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#3B5BDB]/5 blur-[120px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-[#8690FD]/5 blur-[100px]" aria-hidden="true" />
 
       <HeroLogoGrid />
 
-      {/* Center text */}
       <motion.div
         className="relative z-10 text-center max-w-3xl mx-auto"
         initial="hidden"
@@ -300,35 +297,32 @@ function Hero() {
         variants={staggerContainer(0.14, 0.2)}
       >
         <motion.div variants={fadeInUp()} className="mb-5">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#50E8F4]/30 bg-[#50E8F4]/10 text-[#50E8F4] text-xs font-semibold tracking-widest uppercase">
-            <span className="size-1.5 rounded-full bg-[#50E8F4] animate-pulse" />
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#3B5BDB]/20 bg-[#3B5BDB]/8 text-[#3B5BDB] text-xs font-semibold tracking-widest uppercase">
+            <span className="size-1.5 rounded-full bg-[#3B5BDB] animate-pulse" />
             Cross-Border Talent Infrastructure
           </span>
         </motion.div>
 
         <motion.h1
           variants={fadeInUp()}
-          className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.05] text-balance mb-6"
+          className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.05] text-balance mb-6"
         >
           The World&apos;s Best Talent.{" "}
-          <span className="text-[#50E8F4]">Anywhere You Need It.</span>
+          <span className="text-[#3B5BDB]">Anywhere You Need It.</span>
         </motion.h1>
 
         <motion.p
           variants={fadeInUp()}
-          className="text-lg md:text-xl text-[#7ecdd6] max-w-2xl mx-auto leading-relaxed text-pretty mb-8"
+          className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed text-pretty mb-8"
         >
           Connect with AI-vetted experts in{" "}
-          <span className="text-[#C7F8FE] font-semibold">finance</span>,{" "}
-          <span className="text-[#C7F8FE] font-semibold">technology</span>, and{" "}
-          <span className="text-[#C7F8FE] font-semibold">operations</span>—
+          <span className="text-gray-900 font-semibold">finance</span>,{" "}
+          <span className="text-gray-900 font-semibold">technology</span>, and{" "}
+          <span className="text-gray-900 font-semibold">operations</span>—
           placed within 14–21 days. Fewer than 8% of applicants make the cut.
         </motion.p>
 
-        <motion.div
-          variants={fadeInUp()}
-          className="flex flex-wrap gap-3 justify-center"
-        >
+        <motion.div variants={fadeInUp()} className="flex flex-wrap gap-3 justify-center">
           <FluidCTA href="/companies/hire" size="lg">
             Start Hiring
           </FluidCTA>
@@ -337,7 +331,6 @@ function Hero() {
           </FluidCTA>
         </motion.div>
 
-        {/* Stats strip */}
         <motion.div
           variants={fadeInUp()}
           className="mt-14 grid grid-cols-3 gap-6 max-w-lg mx-auto"
@@ -348,8 +341,8 @@ function Hero() {
             { value: "50+", label: "Countries served" },
           ].map((stat) => (
             <div key={stat.value} className="text-center">
-              <p className="text-2xl md:text-3xl font-extrabold text-[#50E8F4]">{stat.value}</p>
-              <p className="text-xs text-[#7ecdd6] mt-1">{stat.label}</p>
+              <p className="text-2xl md:text-3xl font-extrabold text-[#3B5BDB]">{stat.value}</p>
+              <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
             </div>
           ))}
         </motion.div>
@@ -373,9 +366,8 @@ function TrustedBy() {
   ];
 
   return (
-    <section className="py-16 border-t border-[#0d3a40] overflow-hidden">
+    <section className="py-16 border-t border-gray-200 overflow-hidden bg-white">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        {/* Header row with Trustpilot */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -383,10 +375,10 @@ function TrustedBy() {
             viewport={viewport}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-1">
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-1">
               Trusted By Leaders &amp; Brands
             </p>
-            <h2 className="text-2xl md:text-3xl font-bold text-white">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
               Companies that trust DeepTalent
             </h2>
           </motion.div>
@@ -400,14 +392,13 @@ function TrustedBy() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={viewport}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex flex-col items-start gap-1.5 px-5 py-4 rounded-2xl border border-[#0d3a40] bg-[#011f24] hover:border-[#50E8F4]/30 transition-colors"
+            className="inline-flex flex-col items-start gap-1.5 px-5 py-4 rounded-2xl border border-gray-200 bg-white hover:border-[#3B5BDB]/30 hover:shadow-md transition-all"
           >
-            {/* Trustpilot wordmark */}
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
                 <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/>
               </svg>
-              <span className="text-sm font-bold text-white tracking-wide">Trustpilot</span>
+              <span className="text-sm font-bold text-gray-900 tracking-wide">Trustpilot</span>
             </div>
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
@@ -415,23 +406,23 @@ function TrustedBy() {
                   <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/>
                 </svg>
               ))}
-              <span className="text-xs text-[#7ecdd6] ml-1">4.8 / 5.0</span>
+              <span className="text-xs text-gray-500 ml-1">4.8 / 5.0</span>
             </div>
-            <p className="text-[10px] text-[#7ecdd6]">Based on 120+ reviews</p>
+            <p className="text-[10px] text-gray-400">Based on 120+ reviews</p>
           </motion.a>
         </div>
       </div>
 
       {/* Marquee */}
       <div className="relative w-full overflow-hidden marquee-container">
-        <div className="flex animate-marquee gap-12 w-max">
+        <div className="flex animate-marquee gap-8 w-max">
           {[...partners, ...partners, ...partners].map((partner, index) => (
             <div key={`${partner.id}-${index}`} className="flex-shrink-0 flex items-center justify-center h-20 px-2">
-              <div className="h-16 w-40 rounded-xl bg-white flex items-center justify-center px-5 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.35)] opacity-90 hover:opacity-100 transition-opacity">
+              <div className="h-16 w-40 rounded-xl bg-white border border-gray-200 flex items-center justify-center px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
                 <img
                   src={partner.image}
                   alt={partner.name}
-                  className="max-h-full max-w-full w-auto h-auto object-contain"
+                  className="max-h-full max-w-full w-auto h-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
                 />
               </div>
             </div>
@@ -443,7 +434,7 @@ function TrustedBy() {
 }
 
 /* ════════════════════════════════════════════════════
-   SERVICE SHOWCASE — interactive card stack + scroll
+   SERVICE SHOWCASE — pinned scroll-through (light)
 ═══════════════════════════════════════════════════════ */
 interface ServiceData {
   id: string;
@@ -451,7 +442,6 @@ interface ServiceData {
   description: string;
   features: string[];
   illustration: string;
-  accent: string;
 }
 
 function ServiceShowcase() {
@@ -470,7 +460,6 @@ function ServiceShowcase() {
       description: "Ensure financial accuracy and strategic insight with experienced finance professionals vetted at the highest standard.",
       features: ["Bookkeeping & Financial Reporting", "Accounts Payable & Receivable", "Financial Planning & Analysis", "Credit Risk Assessment", "KYC / AML Compliance", "External & Internal Audit"],
       illustration: "/images/accounting-illustration.png",
-      accent: "#50E8F4",
     },
     {
       id: "engineering",
@@ -478,7 +467,6 @@ function ServiceShowcase() {
       description: "Build scalable applications and infrastructure with engineers experienced in modern systems and cloud environments.",
       features: ["Full Stack Application Development", "Cloud Infrastructure & DevOps", "API Development & Integration", "System Architecture Design", "CI/CD Pipeline Implementation", "Performance Optimization"],
       illustration: "/images/creative-roles-illustration.png",
-      accent: "#C7F8FE",
     },
     {
       id: "data-ai",
@@ -486,7 +474,6 @@ function ServiceShowcase() {
       description: "Turn data into insights and automate workflows using modern analytics and AI tools.",
       features: ["Data Analysis & Visualization", "Business Intelligence Dashboards", "AI Workflow Automation", "Predictive Reporting & Insights", "Data Cleaning & Transformation", "Process Automation Systems"],
       illustration: "/images/data-entry-illustration.png",
-      accent: "#50E8F4",
     },
     {
       id: "security",
@@ -494,7 +481,6 @@ function ServiceShowcase() {
       description: "Protect systems and data with experts focused on security, compliance, and risk mitigation.",
       features: ["Threat Detection & Prevention", "Security Audits & Risk Assessment", "Compliance Monitoring", "Identity & Access Management", "Incident Response", "Vulnerability Testing"],
       illustration: "/images/ai-support-illustration.png",
-      accent: "#C7F8FE",
     },
     {
       id: "operations",
@@ -502,7 +488,6 @@ function ServiceShowcase() {
       description: "Streamline execution with experienced operators managing coordination, workflows, and executive support.",
       features: ["Executive Calendar & Priority Management", "Cross-Team Coordination", "Project & Task Oversight", "Operational Workflow Optimization", "Internal Communication Systems", "Process Documentation & Reporting"],
       illustration: "/images/virtual-assistant-illustration.png",
-      accent: "#50E8F4",
     },
     {
       id: "customer-support",
@@ -510,7 +495,6 @@ function ServiceShowcase() {
       description: "Deliver fast, reliable, and high-quality customer interactions that improve retention and satisfaction.",
       features: ["Multi-Channel Support", "Customer Success & Retention", "CRM Management & Optimization", "Customer Feedback Analysis", "Issue Resolution Handling", "Support Process Improvement"],
       illustration: "/images/customer-service-illustration.png",
-      accent: "#C7F8FE",
     },
   ];
 
@@ -525,41 +509,40 @@ function ServiceShowcase() {
   const activeService = services[activeIndex];
 
   return (
-    <section id="services" className="relative bg-[#001619]">
+    <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200">
       <div ref={containerRef} style={{ height: `${services.length * 100}vh` }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-7xl mx-auto w-full">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               className="mb-10 max-w-2xl"
             >
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-2">Our Capabilities</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-white">
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Our Capabilities</p>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gray-900">
                 Every Discipline.<br />
-                <span className="text-[#50E8F4]">One Platform.</span>
+                <span className="text-[#3B5BDB]">One Platform.</span>
               </h2>
-              <p className="text-[#7ecdd6] text-base md:text-lg mt-3 leading-relaxed">
+              <p className="text-gray-500 text-base md:text-lg mt-3 leading-relaxed">
                 DeepTalent connects you with pre-vetted specialists ready to integrate into your workflow immediately.
               </p>
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-              {/* Illustration panel — card stack effect */}
+              {/* Illustration card stack */}
               <div className="relative h-[260px] md:h-[380px]">
-                {/* stacked shadow cards */}
                 {[2, 1].map((offset) => (
                   <div
                     key={offset}
-                    className="absolute inset-0 rounded-3xl border border-[#0d3a40] bg-[#011f24]"
+                    className="absolute inset-0 rounded-3xl border border-gray-200 bg-white"
                     style={{
                       transform: `translateY(${offset * 8}px) translateX(${offset * 8}px) scale(${1 - offset * 0.03})`,
-                      opacity: 1 - offset * 0.35,
+                      opacity: 1 - offset * 0.4,
                     }}
                   />
                 ))}
-                {/* active card */}
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeService.id}
@@ -567,21 +550,18 @@ function ServiceShowcase() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -20, scale: 0.95 }}
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0 flex items-center justify-center rounded-3xl border border-[#0d3a40] bg-[#011f24] overflow-hidden"
-                    style={{ boxShadow: `0 0 40px ${activeService.accent}18` }}
+                    className="absolute inset-0 flex items-center justify-center rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.06)]"
                   >
                     <div
-                      className="absolute inset-0 opacity-5"
-                      style={{
-                        backgroundImage: `radial-gradient(circle at 50% 50%, ${activeService.accent} 0%, transparent 60%)`,
-                      }}
+                      className="absolute inset-0 opacity-[0.04]"
+                      style={{ backgroundImage: `radial-gradient(circle at 50% 50%, ${C.primary} 0%, transparent 60%)` }}
                     />
                     <Image
                       src={activeService.illustration}
                       alt={activeService.title}
                       width={360}
                       height={360}
-                      className="max-w-full max-h-full object-contain drop-shadow-2xl relative z-10 p-6"
+                      className="max-w-full max-h-full object-contain relative z-10 p-6"
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -592,43 +572,38 @@ function ServiceShowcase() {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeService.id}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial="hidden"
+                    animate="visible"
                     exit={{ opacity: 0, y: -30 }}
+                    variants={staggerContainer(0.06)}
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     className="absolute inset-0"
                   >
-                    <div className="flex items-center gap-3 mb-4">
-                      <span
-                        className="font-mono text-xs font-bold px-3 py-1.5 rounded-full"
-                        style={{
-                          background: `${activeService.accent}20`,
-                          color: activeService.accent,
-                        }}
-                      >
+                    <motion.div variants={fadeInUp()} className="flex items-center gap-3 mb-4">
+                      <span className="font-mono text-xs font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
                         0{activeIndex + 1} / 0{services.length}
                       </span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-[#0d3a40] to-transparent" />
-                    </div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-3 text-white">
+                      <div className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
+                    </motion.div>
+                    <motion.h3 variants={fadeInUp()} className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-3 text-gray-900">
                       {activeService.title}
-                    </h3>
-                    <p className="text-[#7ecdd6] text-base md:text-lg leading-relaxed mb-5">
+                    </motion.h3>
+                    <motion.p variants={fadeInUp()} className="text-gray-500 text-base md:text-lg leading-relaxed mb-5">
                       {activeService.description}
-                    </p>
+                    </motion.p>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {activeService.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2 text-sm text-[#C7F8FE]">
-                          <Check className="mt-0.5 size-4 shrink-0" style={{ color: activeService.accent }} />
+                        <motion.li key={feature} variants={fadeInUp()} className="flex items-start gap-2 text-sm text-gray-700">
+                          <Check className="mt-0.5 size-4 shrink-0 text-[#3B5BDB]" />
                           <span>{feature}</span>
-                        </li>
+                        </motion.li>
                       ))}
                     </ul>
-                    <div className="mt-6">
+                    <motion.div variants={fadeInUp()} className="mt-6">
                       <FluidCTA href="/companies/hire" size="md">
                         Hire a {activeService.title.split(" ")[0]} Specialist
                       </FluidCTA>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -640,10 +615,7 @@ function ServiceShowcase() {
                 <div
                   key={i}
                   className="h-1.5 rounded-full transition-all duration-500"
-                  style={{
-                    width: i === activeIndex ? 40 : 6,
-                    backgroundColor: i === activeIndex ? C.cyan : C.border,
-                  }}
+                  style={{ width: i === activeIndex ? 40 : 6, backgroundColor: i === activeIndex ? C.primary : C.border }}
                 />
               ))}
             </div>
@@ -655,14 +627,12 @@ function ServiceShowcase() {
 }
 
 /* ════════════════════════════════════════════════════
-   GLOBE SECTION — dot-matrix wireframe globe
-   (canvas-drawn to avoid heavy 3D deps)
+   GLOBE SECTION — dot-matrix wireframe globe (light)
 ═══════════════════════════════════════════════════════ */
 function GlobeSection() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
 
-  // Talent cities: [lat, lng]
   const CITIES: [number, number, string][] = [
     [6.5244, 3.3792, "Lagos"],
     [-1.2921, 36.8219, "Nairobi"],
@@ -704,7 +674,6 @@ function GlobeSection() {
       const cy = H / 2;
       const r = Math.min(W, H) * 0.38;
 
-      // Draw dot grid on sphere
       const DOT_ROWS = 24;
       const DOT_COLS = 48;
       for (let row = 0; row <= DOT_ROWS; row++) {
@@ -712,16 +681,15 @@ function GlobeSection() {
           const lat = -90 + (row / DOT_ROWS) * 180;
           const lng = -180 + (col / DOT_COLS) * 360;
           const { x, y, z } = latLngToXY(lat, lng, r, cx, cy, rotation);
-          if (z < 0) continue; // back-face cull
-          const opacity = 0.15 + (z / r) * 0.25;
+          if (z < 0) continue;
+          const opacity = 0.12 + (z / r) * 0.28;
           ctx.beginPath();
           ctx.arc(x, y, 1.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(80,232,244,${opacity})`;
+          ctx.fillStyle = `rgba(59,91,219,${opacity})`;
           ctx.fill();
         }
       }
 
-      // Grid lines (latitude)
       for (let lat = -60; lat <= 60; lat += 30) {
         ctx.beginPath();
         let first = true;
@@ -730,12 +698,11 @@ function GlobeSection() {
           if (z < 0) { first = true; continue; }
           if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }
         }
-        ctx.strokeStyle = "rgba(80,232,244,0.08)";
+        ctx.strokeStyle = "rgba(59,91,219,0.1)";
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
 
-      // Grid lines (longitude)
       for (let lng = -180; lng < 180; lng += 30) {
         ctx.beginPath();
         let first = true;
@@ -744,36 +711,32 @@ function GlobeSection() {
           if (z < 0) { first = true; continue; }
           if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }
         }
-        ctx.strokeStyle = "rgba(80,232,244,0.08)";
+        ctx.strokeStyle = "rgba(59,91,219,0.1)";
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
 
-      // Cities
       CITIES.forEach(([lat, lng, label]) => {
         const { x, y, z } = latLngToXY(lat, lng, r, cx, cy, rotation);
         if (z < -r * 0.1) return;
         const scale = 0.5 + (z / r) * 0.5;
 
-        // glow ring
         const gradient = ctx.createRadialGradient(x, y, 0, x, y, 14 * scale);
-        gradient.addColorStop(0, `rgba(80,232,244,${0.4 * scale})`);
-        gradient.addColorStop(1, "rgba(80,232,244,0)");
+        gradient.addColorStop(0, `rgba(59,91,219,${0.4 * scale})`);
+        gradient.addColorStop(1, "rgba(59,91,219,0)");
         ctx.beginPath();
         ctx.arc(x, y, 14 * scale, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
 
-        // dot
         ctx.beginPath();
         ctx.arc(x, y, 3.5 * scale, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(80,232,244,${0.9 * scale})`;
+        ctx.fillStyle = `rgba(59,91,219,${0.95 * scale})`;
         ctx.fill();
 
-        // label
         if (scale > 0.65 && z > r * 0.2) {
           ctx.font = `bold ${Math.round(11 * scale)}px Inter, sans-serif`;
-          ctx.fillStyle = `rgba(199,248,254,${0.85 * scale})`;
+          ctx.fillStyle = `rgba(17,24,39,${0.8 * scale})`;
           ctx.fillText(label, x + 7 * scale, y - 4 * scale);
         }
       });
@@ -802,25 +765,24 @@ function GlobeSection() {
   }, []);
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 border-t border-[#0d3a40] relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 dot-grid-bg opacity-20" aria-hidden="true" />
-      <div className="max-w-7xl mx-auto">
+    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 border-t border-gray-200 relative overflow-hidden bg-white">
+      <div className="pointer-events-none absolute inset-0 dot-grid-bg opacity-40" aria-hidden="true" />
+      <div className="max-w-7xl mx-auto relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Text side */}
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
             variants={staggerContainer(0.13)}
           >
-            <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-3">
+            <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-3">
               Global Talent Network
             </motion.p>
-            <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-5 text-balance">
+            <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-5 text-balance">
               Talent from Every Continent.{" "}
-              <span className="text-[#50E8F4]">Compliant Everywhere.</span>
+              <span className="text-[#3B5BDB]">Compliant Everywhere.</span>
             </motion.h2>
-            <motion.p variants={fadeInUp()} className="text-[#7ecdd6] text-lg leading-relaxed mb-8">
+            <motion.p variants={fadeInUp()} className="text-gray-500 text-lg leading-relaxed mb-8">
               Our network spans Nigeria, Kenya, Ghana, South Africa, Egypt, the Philippines, India, and beyond. We handle payroll, tax, and local compliance — you just hire.
             </motion.p>
 
@@ -834,14 +796,14 @@ function GlobeSection() {
                 <motion.div
                   key={label}
                   variants={fadeInUp()}
-                  className="flex items-start gap-3 p-4 rounded-2xl border border-[#0d3a40] bg-[#011f24]"
+                  className="flex items-start gap-3 p-4 rounded-2xl border border-gray-200 bg-white shadow-sm"
                 >
-                  <div className="size-9 rounded-xl bg-[#50E8F4]/10 flex items-center justify-center shrink-0">
-                    <Icon className="size-4 text-[#50E8F4]" />
+                  <div className="size-9 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center shrink-0">
+                    <Icon className="size-4 text-[#3B5BDB]" />
                   </div>
                   <div>
-                    <p className="font-semibold text-[#C7F8FE] text-sm">{label}</p>
-                    <p className="text-xs text-[#7ecdd6]">{desc}</p>
+                    <p className="font-semibold text-gray-900 text-sm">{label}</p>
+                    <p className="text-xs text-gray-500">{desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -860,22 +822,20 @@ function GlobeSection() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={viewport}
             transition={{ duration: 0.8 }}
-            className="relative h-[400px] md:h-[520px] rounded-3xl border border-[#0d3a40] bg-[#011f24] overflow-hidden"
+            className="relative h-[400px] md:h-[520px] rounded-3xl border border-gray-200 bg-[#F9FAFB] overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.06)]"
           >
-            {/* Scan line overlay */}
             <div className="absolute inset-0 pointer-events-none z-10" aria-hidden="true">
               <motion.div
-                className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#50E8F4]/40 to-transparent"
+                className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#3B5BDB]/40 to-transparent"
                 animate={{ top: ["5%", "95%"] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "linear", repeatType: "reverse" }}
               />
             </div>
             <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" aria-label="Interactive globe showing talent locations" />
-            {/* Corner accents */}
-            <div className="absolute top-3 left-3 size-5 border-t-2 border-l-2 border-[#50E8F4]/40 rounded-tl-lg" aria-hidden="true" />
-            <div className="absolute top-3 right-3 size-5 border-t-2 border-r-2 border-[#50E8F4]/40 rounded-tr-lg" aria-hidden="true" />
-            <div className="absolute bottom-3 left-3 size-5 border-b-2 border-l-2 border-[#50E8F4]/40 rounded-bl-lg" aria-hidden="true" />
-            <div className="absolute bottom-3 right-3 size-5 border-b-2 border-r-2 border-[#50E8F4]/40 rounded-br-lg" aria-hidden="true" />
+            <div className="absolute top-3 left-3 size-5 border-t-2 border-l-2 border-[#3B5BDB]/40 rounded-tl-lg" aria-hidden="true" />
+            <div className="absolute top-3 right-3 size-5 border-t-2 border-r-2 border-[#3B5BDB]/40 rounded-tr-lg" aria-hidden="true" />
+            <div className="absolute bottom-3 left-3 size-5 border-b-2 border-l-2 border-[#3B5BDB]/40 rounded-bl-lg" aria-hidden="true" />
+            <div className="absolute bottom-3 right-3 size-5 border-b-2 border-r-2 border-[#3B5BDB]/40 rounded-br-lg" aria-hidden="true" />
           </motion.div>
         </div>
       </div>
@@ -884,95 +844,127 @@ function GlobeSection() {
 }
 
 /* ════════════════════════════════════════════════════
-   HOW IT WORKS
+   HOW IT WORKS — interactive card stack
 ═══════════════════════════════════════════════════════ */
 function HowItWorks() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeCard, setActiveCard] = useState(0);
 
   const steps = [
-    { id: "step-1", title: "Share Your Requirements", description: "Tell us about the role, skills, timeline, and culture. Our AI maps your brief against thousands of vetted profiles in seconds.", detail: "Share your needs and project brief. Our AI instantly analyzes your stack to find the perfect match.", icon: FileText },
-    { id: "step-2", title: "Get AI-Matched Talent", description: "Receive a curated shortlist of 3–5 specialists, each with verified skills, work history, and culture fit signals — ready to interview.", detail: "Our system sorts, screens, and presents a curated shortlist of fewer than 8% of applicants — placed within 14–21 days.", icon: Users },
-    { id: "step-3", title: "Interview & Select", description: "Meet your shortlisted candidates in structured interviews. We facilitate and provide scoring assistance so you can decide with confidence.", detail: "Conduct structured video interviews with our platform support. Our team facilitates and helps score candidates.", icon: ShieldCheck },
-    { id: "step-4", title: "Onboard & Scale", description: "We handle contracting, payroll, and compliance. Your specialist integrates into your stack from day one.", detail: "We handle all paperwork, contracts, and payment processing so you can focus on results.", icon: Zap },
+    { id: "step-1", n: "01", title: "Share Your Requirements", description: "Tell us about the role, skills, timeline, and culture. Our AI maps your brief against thousands of vetted profiles in seconds.", icon: FileText, image: "/images/direct-connection.png" },
+    { id: "step-2", n: "02", title: "Get AI-Matched Talent", description: "Receive a curated shortlist of 3–5 specialists, each with verified skills, work history, and culture-fit signals — ready to interview.", icon: Users, image: "/images/global-talent-mapping.png" },
+    { id: "step-3", n: "03", title: "Interview & Select", description: "Meet your shortlisted candidates in structured interviews. We facilitate and provide scoring assistance so you can decide with confidence.", icon: ShieldCheck, image: "/images/upfront-compensation.png" },
+    { id: "step-4", n: "04", title: "Onboard & Scale", description: "We handle contracting, payroll, and compliance. Your specialist integrates into your stack from day one.", icon: Zap, image: "/images/illustration-72-hrs.png" },
   ];
 
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      const idx = Math.min(Math.floor(latest * steps.length * 0.999), steps.length - 1);
-      setActiveStep(idx);
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress, steps.length]);
+  const next = useCallback(() => setActiveCard((c) => (c + 1) % steps.length), [steps.length]);
+  const prev = useCallback(() => setActiveCard((c) => (c - 1 + steps.length) % steps.length), [steps.length]);
 
   return (
-    <section className="relative bg-[#011f24]" id="howItWorks">
-      <div ref={containerRef} style={{ height: `${steps.length * 100}vh` }} className="relative">
-        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
-          <div className="max-w-7xl mx-auto w-full">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center mb-10"
-            >
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-2">Process</p>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.05]">
-                From Brief to Billable in{" "}
-                <span className="text-[#50E8F4]">4 Steps</span>
-              </h2>
-            </motion.div>
+    <section id="howItWorks" className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#F9FAFB] border-t border-gray-200">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-14 max-w-2xl mx-auto"
+        >
+          <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Process</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.05]">
+            From Brief to Billable in{" "}
+            <span className="text-[#3B5BDB]">4 Steps</span>
+          </h2>
+        </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-              {steps.map((step, i) => {
-                const Icon = step.icon;
-                const isActive = i === activeStep;
-                const isPast = i < activeStep;
-                return (
-                  <motion.div
-                    key={step.id}
-                    animate={{
-                      scale: isActive ? 1.03 : 1,
-                      borderColor: isActive ? "#50E8F4" : isPast ? "#50E8F420" : "#0d3a40",
-                    }}
-                    transition={{ duration: 0.4 }}
-                    className="rounded-2xl border p-5 transition-colors"
-                    style={{ background: isActive ? "#50E8F408" : "#011f24" }}
-                  >
-                    <div
-                      className="size-10 rounded-xl flex items-center justify-center mb-3 transition-colors"
-                      style={{
-                        background: isActive ? "#50E8F420" : isPast ? "#50E8F410" : "#0d3a40",
-                      }}
-                    >
-                      <Icon className="size-5" style={{ color: isActive || isPast ? "#50E8F4" : "#7ecdd6" }} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          {/* Interactive card stack */}
+          <div className="card-stack-scene relative h-[420px] flex items-center justify-center order-2 lg:order-1">
+            {steps.map((item, i) => {
+              const offset = (i - activeCard + steps.length) % steps.length;
+              const isActive = offset === 0;
+              const zIndex = steps.length - offset;
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.id}
+                  animate={{
+                    scale: isActive ? 1 : 1 - offset * 0.04,
+                    y: offset * 18,
+                    x: offset * 12,
+                    rotateY: offset * -4,
+                    opacity: offset > 2 ? 0 : 1,
+                    zIndex,
+                  }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  drag={isActive ? "x" : false}
+                  dragConstraints={{ left: -60, right: 60 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (Math.abs(info.offset.x) > 70) {
+                      if (info.offset.x < 0) next(); else prev();
+                    }
+                  }}
+                  className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden cursor-grab active:cursor-grabbing shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
+                >
+                  <div className="relative h-44 overflow-hidden bg-[#3B5BDB]/5">
+                    <Image src={item.image} alt={item.title} fill className="object-contain p-6" />
+                    <div className="absolute top-4 left-4 size-10 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
+                      <Icon className="size-5 text-white" />
                     </div>
-                    <p
-                      className="font-bold text-sm mb-1"
-                      style={{ color: isActive ? "#C7F8FE" : isPast ? "#7ecdd6" : "#4a8a92" }}
-                    >
-                      0{i + 1}. {step.title}
-                    </p>
-                    <p className="text-xs leading-relaxed" style={{ color: isActive ? "#7ecdd6" : "#3d666c" }}>
-                      {step.description}
-                    </p>
-                  </motion.div>
-                );
-              })}
+                    <span className="absolute top-4 right-4 font-mono text-3xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Step nav */}
+          <div className="order-1 lg:order-2">
+            <div className="space-y-3">
+              {steps.map((item, i) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveCard(i)}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all"
+                  style={{
+                    borderColor: activeCard === i ? C.primary : C.border,
+                    background: activeCard === i ? "rgba(59,91,219,0.04)" : "#ffffff",
+                  }}
+                >
+                  <div
+                    className="size-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 transition-colors"
+                    style={{
+                      background: activeCard === i ? C.primary : "#F3F4F6",
+                      color: activeCard === i ? "#ffffff" : C.body,
+                    }}
+                  >
+                    {i + 1}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{item.description}</p>
+                  </div>
+                  <ChevronRight className="size-4 ml-auto shrink-0" style={{ color: activeCard === i ? C.primary : C.border }} />
+                </button>
+              ))}
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={steps[activeStep].id}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="max-w-2xl mx-auto text-center"
-              >
-                <p className="text-[#7ecdd6] text-lg leading-relaxed">{steps[activeStep].detail}</p>
-              </motion.div>
-            </AnimatePresence>
+            <div className="flex items-center gap-3 mt-6">
+              <button onClick={prev} aria-label="Previous step" className="size-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors">
+                <ChevronLeft className="size-4" />
+              </button>
+              <button onClick={next} aria-label="Next step" className="size-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors">
+                <ChevronRight className="size-4" />
+              </button>
+              <p className="text-xs text-gray-400 ml-1">Drag the cards or tap a step</p>
+            </div>
+
+            <div className="mt-6">
+              <FluidCTA href="/companies/hire" size="md">Start Hiring on DeepTalent</FluidCTA>
+            </div>
           </div>
         </div>
       </div>
@@ -985,7 +977,6 @@ function HowItWorks() {
 ═══════════════════════════════════════════════════════ */
 function WhyChooseUs() {
   const [activeCard, setActiveCard] = useState(0);
-  const [dragging, setDragging] = useState(false);
 
   const reasons = [
     { id: "1", title: "Unmatched Vetting & Quality", description: "Fewer than 8% of applicants are accepted — each verified by proprietary AI assessment and human expert review before they enter the network.", image: "/images/vetting-quality.png", stat: "<8%", statLabel: "Acceptance rate" },
@@ -998,15 +989,15 @@ function WhyChooseUs() {
   const prevCard = useCallback(() => setActiveCard((c) => (c - 1 + reasons.length) % reasons.length), [reasons.length]);
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#001619] border-t border-[#0d3a40]">
+    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-white border-t border-gray-200">
       <div className="max-w-7xl mx-auto">
         <div className="mb-14 md:max-w-3xl">
-          <p className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-2">Why DeepTalent</p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-4">
+          <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
             Why Businesses Choose<br />
-            <span className="text-[#50E8F4]">DeepTalent Platform</span>
+            <span className="text-[#3B5BDB]">DeepTalent Platform</span>
           </h2>
-          <p className="text-[#7ecdd6] text-lg md:text-xl leading-relaxed">
+          <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
             Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
           </p>
         </div>
@@ -1032,29 +1023,27 @@ function WhyChooseUs() {
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   drag={isActive ? "x" : false}
                   dragConstraints={{ left: -50, right: 50 }}
+                  dragElastic={0.2}
                   onDragEnd={(_, info) => {
                     if (Math.abs(info.offset.x) > 60) {
                       if (info.offset.x < 0) nextCard(); else prevCard();
                     }
                   }}
-                  className="absolute w-full max-w-sm rounded-3xl border border-[#0d3a40] bg-[#011f24] overflow-hidden cursor-grab active:cursor-grabbing"
-                  style={{
-                    boxShadow: isActive ? `0 0 60px ${reasons[activeCard].stat === "<8%" ? "#50E8F430" : "#50E8F420"}` : "none",
-                  }}
+                  className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden cursor-grab active:cursor-grabbing shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
                 >
                   <div className="relative h-44 overflow-hidden">
                     <Image src={item.image} alt={item.title} fill className="object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#011f24] via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#001619]/80 backdrop-blur-sm border border-[#0d3a40]">
-                        <span className="text-xl font-extrabold text-[#50E8F4]">{item.stat}</span>
-                        <span className="text-xs text-[#7ecdd6]">{item.statLabel}</span>
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
+                        <span className="text-xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
+                        <span className="text-xs text-gray-600">{item.statLabel}</span>
                       </div>
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                    <p className="text-sm text-[#7ecdd6] leading-relaxed">{item.description}</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
                   </div>
                 </motion.div>
               );
@@ -1065,36 +1054,34 @@ function WhyChooseUs() {
           <div>
             <div className="space-y-4">
               {reasons.map((item, i) => (
-                <motion.button
+                <button
                   key={item.id}
                   onClick={() => setActiveCard(i)}
-                  animate={{ borderColor: activeCard === i ? "#50E8F4" : "#0d3a40" }}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl border bg-[#011f24] text-left transition-colors"
-                  style={{ background: activeCard === i ? "#50E8F408" : "#011f24" }}
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all"
+                  style={{
+                    borderColor: activeCard === i ? C.primary : C.border,
+                    background: activeCard === i ? "rgba(59,91,219,0.04)" : "#ffffff",
+                  }}
                 >
                   <div
                     className="size-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 transition-colors"
                     style={{
-                      background: activeCard === i ? "#50E8F420" : "#0d3a40",
-                      color: activeCard === i ? "#50E8F4" : "#7ecdd6",
+                      background: activeCard === i ? C.primary : "#F3F4F6",
+                      color: activeCard === i ? "#ffffff" : C.body,
                     }}
                   >
                     {i + 1}
                   </div>
-                  <div>
-                    <p className="font-semibold text-[#C7F8FE] text-sm">{item.title}</p>
-                    <p className="text-xs text-[#7ecdd6] mt-0.5 line-clamp-1">{item.description}</p>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{item.description}</p>
                   </div>
-                  <ChevronRight
-                    className="size-4 ml-auto shrink-0 transition-colors"
-                    style={{ color: activeCard === i ? "#50E8F4" : "#0d3a40" }}
-                  />
-                </motion.button>
+                  <ChevronRight className="size-4 ml-auto shrink-0" style={{ color: activeCard === i ? C.primary : C.border }} />
+                </button>
               ))}
             </div>
 
-            {/* Swipe hint */}
-            <p className="text-xs text-[#3d666c] mt-4 text-center">Swipe cards or click to navigate</p>
+            <p className="text-xs text-gray-400 mt-4 text-center">Swipe cards or click to navigate</p>
 
             <div className="mt-6">
               <FluidCTA href="/companies/hire" size="md">
@@ -1109,7 +1096,7 @@ function WhyChooseUs() {
 }
 
 /* ════════════════════════════════════════════════════
-   STRATEGIC ADVANTAGES — scroll stack
+   STRATEGIC ADVANTAGES — pinned scroll-through (light)
 ═══════════════════════════════════════════════════════ */
 function StrategicAdvantages() {
   const advantages = [
@@ -1134,18 +1121,19 @@ function StrategicAdvantages() {
   }, [scrollYProgress, advantages.length]);
 
   return (
-    <section className="relative bg-[#011f24]">
+    <section className="relative bg-[#F9FAFB] border-t border-gray-200">
       <div ref={containerRef} style={{ height: `${advantages.length * 100}vh` }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-6xl mx-auto w-full">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               className="text-center max-w-3xl mx-auto mb-10"
             >
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-2">The Advantage</p>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.05]">
-                The DeepTalent <span className="text-[#50E8F4]">Advantage</span>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">The Advantage</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.05]">
+                The DeepTalent <span className="text-[#3B5BDB]">Advantage</span>
               </h2>
             </motion.div>
 
@@ -1157,43 +1145,54 @@ function StrategicAdvantages() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -60, scale: 0.96 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 flex flex-col md:flex-row gap-6 md:gap-12 bg-[#011f24] p-6 md:p-10 rounded-3xl border border-[#0d3a40]"
-                  style={{ boxShadow: "0 20px 60px rgba(80,232,244,0.06)" }}
+                  className="absolute inset-0 flex flex-col md:flex-row gap-6 md:gap-12 bg-white p-6 md:p-10 rounded-3xl border border-gray-200 shadow-[0_20px_60px_rgba(17,24,39,0.08)]"
                 >
                   <div className="flex w-full flex-col justify-between md:w-5/12 order-2 md:order-1">
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
-                        <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-full bg-[#50E8F4]/10 text-[#50E8F4]">
+                        <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
                           0{activeIndex + 1} / 0{advantages.length}
                         </span>
-                        <div className="h-px flex-1 bg-gradient-to-r from-[#0d3a40] to-transparent" />
+                        <div className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
                       </div>
-                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight tracking-tight">
+                      <motion.h3
+                        key={`${advantages[activeIndex].title}-h`}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.1 }}
+                        className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight tracking-tight"
+                      >
                         {advantages[activeIndex].title}
-                      </h3>
-                      <p className="text-base md:text-lg text-[#7ecdd6] leading-relaxed">
+                      </motion.h3>
+                      <motion.p
+                        key={`${advantages[activeIndex].title}-p`}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.18 }}
+                        className="text-base md:text-lg text-gray-500 leading-relaxed"
+                      >
                         {advantages[activeIndex].description}
-                      </p>
+                      </motion.p>
                     </div>
                     <div className="hidden md:block w-full mt-6">
-                      <div className="flex items-center justify-between text-xs font-medium text-[#3d666c] mb-2">
+                      <div className="flex items-center justify-between text-xs font-medium text-gray-400 mb-2">
                         <span>Progress</span>
                         <span>{Math.round(((activeIndex + 1) / advantages.length) * 100)}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-[#0d3a40] rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${((activeIndex + 1) / advantages.length) * 100}%` }}
                           transition={{ duration: 0.6, ease: "easeOut" }}
                           className="h-full rounded-full"
-                          style={{ background: "linear-gradient(90deg, #50E8F4, #C7F8FE)" }}
+                          style={{ background: "linear-gradient(90deg, #3B5BDB, #8690FD)" }}
                         />
                       </div>
                     </div>
                   </div>
-                  <div className="w-full md:w-7/12 h-44 md:h-full bg-[#001619] rounded-2xl overflow-hidden relative order-1 md:order-2 border border-[#0d3a40]">
+                  <div className="w-full md:w-7/12 h-44 md:h-full bg-[#F9FAFB] rounded-2xl overflow-hidden relative order-1 md:order-2 border border-gray-200">
                     <div className="relative h-full w-full flex items-center justify-center p-6 md:p-10">
-                      <Image src={advantages[activeIndex].image} alt={advantages[activeIndex].title} width={400} height={400} className="max-w-full max-h-full object-contain drop-shadow-xl" />
+                      <Image src={advantages[activeIndex].image} alt={advantages[activeIndex].title} width={400} height={400} className="max-w-full max-h-full object-contain" />
                     </div>
                   </div>
                 </motion.div>
@@ -1202,7 +1201,7 @@ function StrategicAdvantages() {
 
             <div className="flex justify-center items-center gap-2 mt-6">
               {advantages.map((_, i) => (
-                <div key={i} className="h-1.5 rounded-full transition-all duration-500" style={{ width: i === activeIndex ? 40 : 6, backgroundColor: i === activeIndex ? "#50E8F4" : "#0d3a40" }} />
+                <div key={i} className="h-1.5 rounded-full transition-all duration-500" style={{ width: i === activeIndex ? 40 : 6, backgroundColor: i === activeIndex ? C.primary : C.border }} />
               ))}
             </div>
           </div>
@@ -1210,7 +1209,7 @@ function StrategicAdvantages() {
       </div>
 
       {/* CTA */}
-      <div className="py-12 md:py-16 px-4 md:px-8 lg:px-12 border-t border-[#0d3a40]">
+      <div className="py-12 md:py-16 px-4 md:px-8 lg:px-12 border-t border-gray-200">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center gap-4">
           <FluidCTA href="/companies/hire" size="lg">Start Hiring on DeepTalent</FluidCTA>
           <FluidCTA href="/talents" size="lg" variant="outline">View Talent Pool</FluidCTA>
@@ -1221,33 +1220,32 @@ function StrategicAdvantages() {
 }
 
 /* ════════════════════════════════════════════════════
-   TESTIMONIALS — scrolling cards
+   TESTIMONIALS
 ═══════════════════════════════════════════════════════ */
 function TestimonialCarousel() {
   const testimonials = [
-    { id: "t1", quote: "Deeptalent transformed the way I run my business. The VA they matched me with was trained, proactive, and integrated into my workflow from day one. What impressed me most was the cost advantage — I'm getting Fortune-500-level support at half the traditional price.", name: "Dianitte Erilus", location: "Orlando, Florida, USA", title: "Founder & Operations Lead", avatarBg: "#50E8F4", initials: "DE", rating: 5 },
-    { id: "t2", quote: "We needed reliable administrative and customer-support help, and Deeptalent delivered beyond expectations. Their talent is disciplined, well-trained, and incredibly responsive — exactly what a fast-moving hospitality brand like ours needs.", name: "CRI Lounge", location: "South Croydon, London, UK", title: "Hospitality & Events", avatarBg: "#C7F8FE", initials: "CL", rating: 5 },
-    { id: "t3", quote: "The operational burden in our clinic was overwhelming until Deeptalent stepped in. Their Executive Assistant support has completely reshaped our scheduling, client communication, and admin processes. Professional, discreet, tech-savvy, and consistent.", name: "Al Ahad MD", location: "Sharjah, Dubai, UAE", title: "Medical & Wellness Practice", avatarBg: "#50E8F4", initials: "AA", rating: 5 },
-    { id: "t4", quote: "In social care, consistency and reliability are critical. Deeptalent helped us secure trained support staff who understood our compliance-heavy environment from day one. They've improved our documentation, scheduling, and family communication turnarounds significantly.", name: "Peculiar Care Home", location: "Erith, London, UK", title: "Social Care Management", avatarBg: "#C7F8FE", initials: "PC", rating: 5 },
+    { id: "t1", quote: "Deeptalent transformed the way I run my business. The VA they matched me with was trained, proactive, and integrated into my workflow from day one. What impressed me most was the cost advantage — I'm getting Fortune-500-level support at half the traditional price.", name: "Dianitte Erilus", location: "Orlando, Florida, USA", title: "Founder & Operations Lead", initials: "DE", rating: 5 },
+    { id: "t2", quote: "We needed reliable administrative and customer-support help, and Deeptalent delivered beyond expectations. Their talent is disciplined, well-trained, and incredibly responsive — exactly what a fast-moving hospitality brand like ours needs.", name: "CRI Lounge", location: "South Croydon, London, UK", title: "Hospitality & Events", initials: "CL", rating: 5 },
+    { id: "t3", quote: "The operational burden in our clinic was overwhelming until Deeptalent stepped in. Their Executive Assistant support has completely reshaped our scheduling, client communication, and admin processes. Professional, discreet, tech-savvy, and consistent.", name: "Al Ahad MD", location: "Sharjah, Dubai, UAE", title: "Medical & Wellness Practice", initials: "AA", rating: 5 },
+    { id: "t4", quote: "In social care, consistency and reliability are critical. Deeptalent helped us secure trained support staff who understood our compliance-heavy environment from day one. They've improved our documentation, scheduling, and family communication turnarounds significantly.", name: "Peculiar Care Home", location: "Erith, London, UK", title: "Social Care Management", initials: "PC", rating: 5 },
   ];
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#001619] overflow-hidden border-t border-[#0d3a40]">
+    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-white overflow-hidden border-t border-gray-200">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12 gap-6">
           <div className="space-y-3">
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4]">Testimonials</p>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.1]">
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB]">Testimonials</p>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
               Loved by Users{" "}
-              <span className="text-[#50E8F4]">Around the World</span>
+              <span className="text-[#3B5BDB]">Around the World</span>
             </h2>
-            <p className="text-[#7ecdd6] text-lg">See how DeepTalent is reshaping operations for businesses everywhere.</p>
+            <p className="text-gray-500 text-lg">See how DeepTalent is reshaping operations for businesses everywhere.</p>
           </div>
-          {/* Trustpilot mini */}
-          <div className="inline-flex items-center gap-3 px-4 py-3 rounded-2xl border border-[#0d3a40] bg-[#011f24] shrink-0">
+          <div className="inline-flex items-center gap-3 px-4 py-3 rounded-2xl border border-gray-200 bg-white shadow-sm shrink-0">
             <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/></svg>
             <div>
-              <p className="text-sm font-bold text-white">4.8 / 5.0</p>
+              <p className="text-sm font-bold text-gray-900">4.8 / 5.0</p>
               <div className="flex gap-0.5">{[...Array(5)].map((_, i) => (<svg key={i} viewBox="0 0 24 24" className="size-3" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/></svg>))}</div>
             </div>
           </div>
@@ -1261,17 +1259,17 @@ function TestimonialCarousel() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="bg-[#011f24] border border-[#0d3a40] rounded-2xl p-6 hover:border-[#50E8F4]/30 hover:shadow-[0_0_24px_rgba(80,232,244,0.08)] transition-all"
+              className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:border-[#3B5BDB]/30 hover:shadow-lg transition-all"
             >
               <div className="flex gap-1 mb-4">
                 {[...Array(item.rating)].map((_, i) => (<Star key={i} className="size-4 fill-yellow-400 text-yellow-400" />))}
               </div>
-              <p className="text-[#7ecdd6] text-sm leading-relaxed mb-6 line-clamp-5">&ldquo;{item.quote}&rdquo;</p>
+              <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-5">&ldquo;{item.quote}&rdquo;</p>
               <div className="flex items-center gap-3">
-                <div className="size-10 rounded-full flex items-center justify-center text-[#001619] text-sm font-bold" style={{ backgroundColor: item.avatarBg }}>{item.initials}</div>
+                <div className="size-10 rounded-full flex items-center justify-center bg-[#3B5BDB] text-white text-sm font-bold">{item.initials}</div>
                 <div>
-                  <p className="font-semibold text-sm text-[#C7F8FE]">{item.name}</p>
-                  <p className="text-xs text-[#3d666c]">{item.title}</p>
+                  <p className="font-semibold text-sm text-gray-900">{item.name}</p>
+                  <p className="text-xs text-gray-400">{item.title}</p>
                 </div>
               </div>
             </motion.div>
@@ -1302,10 +1300,10 @@ function IndustryInsights() {
   const readLabel = (m: number | null) => (m ? `${m} min read` : "");
   const heroPost = posts[0];
   const recentPosts = posts.slice(1, 4);
-  const heroImage = heroPost.cover_image_url || `https://placehold.co/1200x800/001619/50E8F4?text=${encodeURIComponent(heroPost.category || "Insights")}`;
+  const heroImage = heroPost.cover_image_url || `https://placehold.co/1200x800/3B5BDB/FFFFFF?text=${encodeURIComponent(heroPost.category || "Insights")}`;
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#011f24] border-t border-[#0d3a40]">
+    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#F9FAFB] border-t border-gray-200">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="hidden"
@@ -1315,9 +1313,9 @@ function IndustryInsights() {
           className="flex flex-col md:flex-row md:items-end md:justify-between mb-12 gap-6"
         >
           <div className="max-w-2xl">
-            <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-2">Insights</motion.p>
-            <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Strategic Intelligence</motion.h2>
-            <motion.p variants={fadeInUp()} className="text-[#7ecdd6] text-lg">Deep dives into global hiring trends, AI vetting, and remote team scaling.</motion.p>
+            <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Insights</motion.p>
+            <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-3">Strategic Intelligence</motion.h2>
+            <motion.p variants={fadeInUp()} className="text-gray-500 text-lg">Deep dives into global hiring trends, AI vetting, and remote team scaling.</motion.p>
           </div>
           <motion.div variants={fadeInUp()}>
             <FluidCTA href="/insights" size="md" variant="outline">View All Articles</FluidCTA>
@@ -1327,14 +1325,14 @@ function IndustryInsights() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={viewport} transition={{ duration: 0.6 }} className="lg:col-span-3">
             <Link href={`/insights/${heroPost.slug}`} className="block">
-              <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden bg-[#011f24] group border border-[#0d3a40]">
+              <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden bg-white group border border-gray-200 shadow-sm">
                 <Image src={heroImage} alt={heroPost.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#001619]/90 via-[#001619]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
-                  {heroPost.category && (<span className="inline-block px-3 py-1 bg-[#50E8F4]/20 backdrop-blur-sm rounded-full text-xs font-medium mb-3 text-[#50E8F4] border border-[#50E8F4]/30">{heroPost.category}</span>)}
+                  {heroPost.category && (<span className="inline-block px-3 py-1 bg-[#3B5BDB] rounded-full text-xs font-medium mb-3 text-white">{heroPost.category}</span>)}
                   <h3 className="text-2xl md:text-3xl font-bold mb-2">{heroPost.title}</h3>
-                  {heroPost.excerpt && (<p className="text-[#7ecdd6] text-sm mb-3 line-clamp-2">{heroPost.excerpt}</p>)}
-                  <p className="text-[#3d666c] text-xs">{fmtDate(heroPost.published_at)}{readLabel(heroPost.read_time_minutes) ? ` · ${readLabel(heroPost.read_time_minutes)}` : ""}</p>
+                  {heroPost.excerpt && (<p className="text-white/80 text-sm mb-3 line-clamp-2">{heroPost.excerpt}</p>)}
+                  <p className="text-white/60 text-xs">{fmtDate(heroPost.published_at)}{readLabel(heroPost.read_time_minutes) ? ` · ${readLabel(heroPost.read_time_minutes)}` : ""}</p>
                 </div>
               </div>
             </Link>
@@ -1342,16 +1340,16 @@ function IndustryInsights() {
 
           <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.1, 0.2)} className="lg:col-span-2 flex flex-col gap-5">
             <motion.div variants={fadeInUp()} className="flex items-center gap-2 mb-1">
-              <div className="size-2 bg-[#50E8F4] rounded-full animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-widest text-[#7ecdd6]">Recent Updates</span>
+              <div className="size-2 bg-[#3B5BDB] rounded-full animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Recent Updates</span>
             </motion.div>
             {recentPosts.map((post) => (
               <motion.div key={post.id} variants={fadeInUp()}>
-                <Link href={`/insights/${post.slug}`} className="flex gap-4 p-4 bg-[#001619] rounded-xl border border-[#0d3a40] hover:border-[#50E8F4]/30 transition-all">
+                <Link href={`/insights/${post.slug}`} className="flex gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-[#3B5BDB]/30 hover:shadow-md transition-all">
                   <div className="flex-1">
-                    {post.category && (<span className="inline-block px-2 py-0.5 bg-[#50E8F4]/10 rounded text-xs font-medium text-[#50E8F4] mb-2">{post.category}</span>)}
-                    <h4 className="font-semibold text-[#C7F8FE] mb-1 line-clamp-2">{post.title}</h4>
-                    <p className="text-[#3d666c] text-xs">{fmtDate(post.published_at)}{readLabel(post.read_time_minutes) ? ` · ${readLabel(post.read_time_minutes)}` : ""}</p>
+                    {post.category && (<span className="inline-block px-2 py-0.5 bg-[#3B5BDB]/10 rounded text-xs font-medium text-[#3B5BDB] mb-2">{post.category}</span>)}
+                    <h4 className="font-semibold text-gray-900 mb-1 line-clamp-2">{post.title}</h4>
+                    <p className="text-gray-400 text-xs">{fmtDate(post.published_at)}{readLabel(post.read_time_minutes) ? ` · ${readLabel(post.read_time_minutes)}` : ""}</p>
                   </div>
                 </Link>
               </motion.div>
@@ -1384,7 +1382,7 @@ function FaqSection() {
   const rightColumn = faqs.slice(midPoint);
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#001619] border-t border-[#0d3a40]" id="faq">
+    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-white border-t border-gray-200" id="faq">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="hidden"
@@ -1393,15 +1391,15 @@ function FaqSection() {
           variants={staggerContainer(0.15)}
           className="text-center mb-16 max-w-2xl mx-auto"
         >
-          <motion.div variants={scaleIn()} className="inline-flex items-center justify-center size-12 rounded-2xl bg-[#50E8F4]/10 text-[#50E8F4] mb-6">
+          <motion.div variants={scaleIn()} className="inline-flex items-center justify-center size-12 rounded-2xl bg-[#3B5BDB]/10 text-[#3B5BDB] mb-6">
             <HelpCircle className="size-6" />
           </motion.div>
-          <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-5">
+          <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-5">
             Frequently Asked Questions
           </motion.h2>
-          <motion.p variants={fadeInUp()} className="text-[#7ecdd6] text-lg">
+          <motion.p variants={fadeInUp()} className="text-gray-500 text-lg">
             Everything you need to know. Can&apos;t find what you&apos;re looking for?{" "}
-            <Link href="/contact" className="text-[#50E8F4] underline underline-offset-2">Contact support.</Link>
+            <Link href="/contact" className="text-[#3B5BDB] underline underline-offset-2">Contact support.</Link>
           </motion.p>
         </motion.div>
 
@@ -1420,19 +1418,19 @@ function FaqSection() {
                     transition={{ duration: 0.4, delay: index * 0.06 }}
                     className="rounded-2xl border transition-all duration-300"
                     style={{
-                      borderColor: isOpen ? "#50E8F440" : "#0d3a40",
-                      background: isOpen ? "#50E8F408" : "#011f24",
+                      borderColor: isOpen ? "rgba(59,91,219,0.4)" : C.border,
+                      background: isOpen ? "rgba(59,91,219,0.03)" : "#ffffff",
                     }}
                   >
                     <button
                       onClick={() => setOpenIndex(isOpen ? -1 : actualIndex)}
                       className="flex items-center justify-between w-full p-5 text-left"
                     >
-                      <span className="font-semibold pr-4 text-sm" style={{ color: isOpen ? "#50E8F4" : "#C7F8FE" }}>
+                      <span className="font-semibold pr-4 text-sm" style={{ color: isOpen ? C.primary : C.ink }}>
                         {faq.question}
                       </span>
-                      <div className="flex-shrink-0 p-1 rounded-full transition-colors" style={{ background: isOpen ? "#50E8F420" : "#0d3a40" }}>
-                        {isOpen ? <Minus className="size-4 text-[#50E8F4]" /> : <Plus className="size-4 text-[#7ecdd6]" />}
+                      <div className="flex-shrink-0 p-1 rounded-full transition-colors" style={{ background: isOpen ? "rgba(59,91,219,0.12)" : "#F3F4F6" }}>
+                        {isOpen ? <Minus className="size-4 text-[#3B5BDB]" /> : <Plus className="size-4 text-gray-500" />}
                       </div>
                     </button>
                     <AnimatePresence>
@@ -1444,7 +1442,7 @@ function FaqSection() {
                           transition={{ duration: 0.3 }}
                           className="px-5 pb-5"
                         >
-                          <p className="text-[#7ecdd6] leading-relaxed text-sm">{faq.answer}</p>
+                          <p className="text-gray-500 leading-relaxed text-sm">{faq.answer}</p>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -1464,14 +1462,12 @@ function FaqSection() {
 ═══════════════════════════════════════════════════════ */
 function Footer() {
   return (
-    <footer className="bg-[#011f24] border-t border-[#0d3a40] text-[#C7F8FE]">
+    <footer className="bg-[#0B1220] text-gray-300">
       {/* Fluid CTA Banner */}
       <div className="relative py-24 px-4 md:px-8 overflow-hidden">
-        {/* Background glow */}
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-[#50E8F4]/8 blur-[80px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-[#3B5BDB]/20 blur-[80px]" />
         </div>
-        <div className="dot-grid-bg absolute inset-0 opacity-15" aria-hidden="true" />
 
         <motion.div
           initial="hidden"
@@ -1480,7 +1476,7 @@ function Footer() {
           variants={staggerContainer(0.15)}
           className="max-w-4xl mx-auto text-center relative z-10"
         >
-          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#50E8F4] mb-4">
+          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#8690FD] mb-4">
             Get Started
           </motion.p>
           <motion.h2
@@ -1491,7 +1487,7 @@ function Footer() {
           </motion.h2>
           <motion.p
             variants={fadeInUp()}
-            className="text-[#7ecdd6] text-lg mb-10 max-w-2xl mx-auto"
+            className="text-gray-400 text-lg mb-10 max-w-2xl mx-auto"
           >
             Get matched with credentialled finance, compliance, and technology specialists from Africa&apos;s top talent pools — within 14–21 days.
           </motion.p>
@@ -1502,15 +1498,15 @@ function Footer() {
         </motion.div>
       </div>
 
-      <div className="border-t border-[#0d3a40]" />
+      <div className="border-t border-white/10" />
 
       {/* Footer links */}
       <div className="py-12 px-4 md:px-8 lg:px-12">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
             <div className="col-span-2 lg:col-span-2">
-              <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-10 w-auto mb-5" />
-              <p className="text-[#7ecdd6] text-sm mb-6 max-w-xs leading-relaxed">
+              <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-10 w-auto mb-5 brightness-0 invert" />
+              <p className="text-gray-400 text-sm mb-6 max-w-xs leading-relaxed">
                 DeepTalent platform connects top-tier professionals with global opportunities. Pre-vetted talent, transparent hiring.
               </p>
               <div className="flex gap-3">
@@ -1519,7 +1515,7 @@ function Footer() {
                   { href: "https://www.instagram.com/deeptalentplatform/", label: "Instagram", icon: <Instagram className="size-5" /> },
                   { href: "https://www.linkedin.com/company/deeptalentplatform/", label: "LinkedIn", icon: <Linkedin className="size-5" /> },
                 ].map((s) => (
-                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`DeepTalent on ${s.label}`} className="p-2 bg-[#0d3a40] rounded-lg hover:bg-[#50E8F4]/20 hover:text-[#50E8F4] text-[#7ecdd6] transition-colors">
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`DeepTalent on ${s.label}`} className="p-2 bg-white/10 rounded-lg hover:bg-[#3B5BDB] hover:text-white text-gray-300 transition-colors">
                     {s.icon}
                   </a>
                 ))}
@@ -1530,7 +1526,7 @@ function Footer() {
               <h4 className="font-semibold text-white mb-4">Platform</h4>
               <ul className="space-y-3">
                 {[{ label: "For Companies", href: "/companies" }, { label: "For Talents", href: "/talents" }, { label: "About Us", href: "/about" }, { label: "Hire Talent", href: "/companies/hire" }].map((l) => (
-                  <li key={l.label}><Link href={l.href} className="text-[#7ecdd6] hover:text-[#50E8F4] text-sm transition-colors">{l.label}</Link></li>
+                  <li key={l.label}><Link href={l.href} className="text-gray-400 hover:text-white text-sm transition-colors">{l.label}</Link></li>
                 ))}
               </ul>
             </div>
@@ -1539,7 +1535,7 @@ function Footer() {
               <h4 className="font-semibold text-white mb-4">Resources</h4>
               <ul className="space-y-3">
                 {[{ label: "About", href: "/about" }, { label: "Help Center", href: "/contact" }, { label: "Apply as Talent", href: "/talents/apply" }, { label: "Contact", href: "/contact" }].map((l) => (
-                  <li key={l.label}><Link href={l.href} className="text-[#7ecdd6] hover:text-[#50E8F4] text-sm transition-colors">{l.label}</Link></li>
+                  <li key={l.label}><Link href={l.href} className="text-gray-400 hover:text-white text-sm transition-colors">{l.label}</Link></li>
                 ))}
               </ul>
             </div>
@@ -1547,18 +1543,18 @@ function Footer() {
             <div>
               <h4 className="font-semibold text-white mb-4">Contact</h4>
               <ul className="space-y-3">
-                <li className="flex items-center gap-2 text-[#7ecdd6] text-sm"><Mail className="size-4" />Mail@deeptalentplatform.com</li>
-                <li className="flex items-center gap-2 text-[#7ecdd6] text-sm"><Phone className="size-4" /><a href="tel:+447367638151" className="hover:text-[#50E8F4] transition-colors">+44 7367 638151</a></li>
-                <li className="flex items-start gap-2 text-[#7ecdd6] text-sm"><MapPin className="size-4 shrink-0 mt-0.5" /><span>London, Lagos, Dubai</span></li>
+                <li className="flex items-center gap-2 text-gray-400 text-sm"><Mail className="size-4" />Mail@deeptalentplatform.com</li>
+                <li className="flex items-center gap-2 text-gray-400 text-sm"><Phone className="size-4" /><a href="tel:+447367638151" className="hover:text-white transition-colors">+44 7367 638151</a></li>
+                <li className="flex items-start gap-2 text-gray-400 text-sm"><MapPin className="size-4 shrink-0 mt-0.5" /><span>London, Lagos, Dubai</span></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-[#0d3a40] mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-[#3d666c] text-sm">© {new Date().getFullYear()} DeepTalent Platform. All rights reserved.</p>
+          <div className="border-t border-white/10 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-gray-500 text-sm">© {new Date().getFullYear()} DeepTalent Platform. All rights reserved.</p>
             <div className="flex gap-5 text-sm">
-              <Link href="/privacy" className="text-[#3d666c] hover:text-[#50E8F4] transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-[#3d666c] hover:text-[#50E8F4] transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="text-gray-500 hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="text-gray-500 hover:text-white transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>

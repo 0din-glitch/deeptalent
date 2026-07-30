@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#001619",
+  themeColor: "#FFFFFF",
 };
 
 const organizationSchema = {
@@ -67,7 +67,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("bg-[#001619]", "font-sans", geist.variable)}>
+    <html lang="en" className={cn("bg-white", "font-sans", geist.variable)}>
       <body>
         <script
           type="application/ld+json"
