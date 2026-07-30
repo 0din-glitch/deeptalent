@@ -3,12 +3,12 @@
 import {
   ArrowUpRight, Menu, X, Mail, Phone, MapPin,
   Instagram, Linkedin, HelpCircle, Plus, Minus,
-  FileText, Users, ShieldCheck, ChevronRight, ChevronLeft,
+  FileText, Users, ShieldCheck, ChevronRight,
   Star, Globe, Zap, Check,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   motion, useScroll, AnimatePresence,
 } from "motion/react";
@@ -29,7 +29,7 @@ const C = {
 ═══════════════════════════════════════════════════════ */
 export default function Home() {
   return (
-    <main className="bg-white text-gray-900 overflow-x-hidden">
+    <main className="bg-white text-gray-900 overflow-x-clip">
       <Navbar />
       <Hero />
       <TrustedBy />
@@ -510,7 +510,7 @@ function ServiceShowcase() {
 
   return (
     <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200">
-      <div ref={containerRef} style={{ height: `${services.length * 55}vh` }} className="relative">
+      <div ref={containerRef} style={{ height: `${services.length * 42}vh` }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-7xl mx-auto w-full">
             <motion.div
@@ -847,8 +847,6 @@ function GlobeSection() {
    HOW IT WORKS — interactive card stack
 ═══════════════════════════════════════════════════════ */
 function HowItWorks() {
-  const [activeCard, setActiveCard] = useState(0);
-
   const steps = [
     { id: "step-1", n: "01", title: "Share Your Requirements", description: "Tell us about the role, skills, timeline, and culture. Our AI maps your brief against thousands of vetted profiles in seconds.", icon: FileText, image: "/images/direct-connection.png" },
     { id: "step-2", n: "02", title: "Get AI-Matched Talent", description: "Receive a curated shortlist of 3–5 specialists, each with verified skills, work history, and culture-fit signals — ready to interview.", icon: Users, image: "/images/global-talent-mapping.png" },
@@ -856,114 +854,110 @@ function HowItWorks() {
     { id: "step-4", n: "04", title: "Onboard & Scale", description: "We handle contracting, payroll, and compliance. Your specialist integrates into your stack from day one.", icon: Zap, image: "/images/illustration-72-hrs.png" },
   ];
 
-  const next = useCallback(() => setActiveCard((c) => (c + 1) % steps.length), [steps.length]);
-  const prev = useCallback(() => setActiveCard((c) => (c - 1 + steps.length) % steps.length), [steps.length]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const [activeCard, setActiveCard] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      const idx = Math.min(Math.floor(latest * steps.length * 0.999), steps.length - 1);
+      setActiveCard(idx);
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress, steps.length]);
 
   return (
-    <section id="howItWorks" className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#F9FAFB] border-t border-gray-200">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14 max-w-2xl mx-auto"
-        >
-          <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Process</p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.05]">
-            From Brief to Billable in{" "}
-            <span className="text-[#3B5BDB]">4 Steps</span>
-          </h2>
-        </motion.div>
+    <section id="howItWorks" className="relative bg-[#F9FAFB] border-t border-gray-200">
+      <div ref={containerRef} style={{ height: `${steps.length * 60}vh` }} className="relative">
+        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
+          <div className="max-w-7xl mx-auto w-full">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-10 max-w-2xl mx-auto"
+            >
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Process</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.05]">
+                From Brief to Billable in{" "}
+                <span className="text-[#3B5BDB]">4 Steps</span>
+              </h2>
+            </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          {/* Interactive card stack */}
-          <div className="card-stack-scene relative h-[420px] flex items-center justify-center order-2 lg:order-1">
-            {steps.map((item, i) => {
-              const offset = (i - activeCard + steps.length) % steps.length;
-              const isActive = offset === 0;
-              const zIndex = steps.length - offset;
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={item.id}
-                  animate={{
-                    scale: isActive ? 1 : 1 - offset * 0.04,
-                    y: offset * 18,
-                    x: offset * 12,
-                    rotateY: offset * -4,
-                    opacity: offset > 2 ? 0 : 1,
-                    zIndex,
-                  }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  drag={isActive ? "x" : false}
-                  dragConstraints={{ left: -60, right: 60 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (Math.abs(info.offset.x) > 70) {
-                      if (info.offset.x < 0) next(); else prev();
-                    }
-                  }}
-                  className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden cursor-grab active:cursor-grabbing shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
-                >
-                  <div className="relative h-44 overflow-hidden bg-[#3B5BDB]/5">
-                    <Image src={item.image} alt={item.title} fill className="object-contain p-6" />
-                    <div className="absolute top-4 left-4 size-10 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
-                      <Icon className="size-5 text-white" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* Card stack — driven by scroll */}
+              <div className="card-stack-scene relative h-[380px] flex items-center justify-center order-2 lg:order-1">
+                {steps.map((item, i) => {
+                  const offset = (i - activeCard + steps.length) % steps.length;
+                  const isActive = offset === 0;
+                  const zIndex = steps.length - offset;
+                  const Icon = item.icon;
+                  return (
+                    <motion.div
+                      key={item.id}
+                      animate={{
+                        scale: isActive ? 1 : 1 - offset * 0.04,
+                        y: offset * 18,
+                        x: offset * 12,
+                        rotateY: offset * -4,
+                        opacity: offset > 2 ? 0 : 1,
+                        zIndex,
+                      }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
+                    >
+                      <div className="relative h-44 overflow-hidden bg-[#3B5BDB]/5">
+                        <Image src={item.image} alt={item.title} fill className="object-contain p-6" />
+                        <div className="absolute top-4 left-4 size-10 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
+                          <Icon className="size-5 text-white" />
+                        </div>
+                        <span className="absolute top-4 right-4 font-mono text-3xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                        <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* Step nav (reflects scroll position) */}
+              <div className="order-1 lg:order-2">
+                <div className="space-y-3">
+                  {steps.map((item, i) => (
+                    <div
+                      key={item.id}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all"
+                      style={{
+                        borderColor: activeCard === i ? C.primary : C.border,
+                        background: activeCard === i ? "rgba(59,91,219,0.04)" : "#ffffff",
+                      }}
+                    >
+                      <div
+                        className="size-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 transition-colors"
+                        style={{
+                          background: activeCard === i ? C.primary : "#F3F4F6",
+                          color: activeCard === i ? "#ffffff" : C.body,
+                        }}
+                      >
+                        {i + 1}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{item.description}</p>
+                      </div>
+                      <ChevronRight className="size-4 ml-auto shrink-0" style={{ color: activeCard === i ? C.primary : C.border }} />
                     </div>
-                    <span className="absolute top-4 right-4 font-mono text-3xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                  ))}
+                </div>
 
-          {/* Step nav */}
-          <div className="order-1 lg:order-2">
-            <div className="space-y-3">
-              {steps.map((item, i) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveCard(i)}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all"
-                  style={{
-                    borderColor: activeCard === i ? C.primary : C.border,
-                    background: activeCard === i ? "rgba(59,91,219,0.04)" : "#ffffff",
-                  }}
-                >
-                  <div
-                    className="size-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 transition-colors"
-                    style={{
-                      background: activeCard === i ? C.primary : "#F3F4F6",
-                      color: activeCard === i ? "#ffffff" : C.body,
-                    }}
-                  >
-                    {i + 1}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{item.description}</p>
-                  </div>
-                  <ChevronRight className="size-4 ml-auto shrink-0" style={{ color: activeCard === i ? C.primary : C.border }} />
-                </button>
-              ))}
-            </div>
+                <p className="text-xs text-gray-400 mt-4">Keep scrolling to step through the process</p>
 
-            <div className="flex items-center gap-3 mt-6">
-              <button onClick={prev} aria-label="Previous step" className="size-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors">
-                <ChevronLeft className="size-4" />
-              </button>
-              <button onClick={next} aria-label="Next step" className="size-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors">
-                <ChevronRight className="size-4" />
-              </button>
-              <p className="text-xs text-gray-400 ml-1">Drag the cards or tap a step</p>
-            </div>
-
-            <div className="mt-6">
-              <FluidCTA href="/companies/hire" size="md">Start Hiring on DeepTalent</FluidCTA>
+                <div className="mt-6">
+                  <FluidCTA href="/companies/hire" size="md">Start Hiring on DeepTalent</FluidCTA>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -976,8 +970,6 @@ function HowItWorks() {
    WHY CHOOSE US — interactive card stack
 ═══════════════════════════════════════════════════════ */
 function WhyChooseUs() {
-  const [activeCard, setActiveCard] = useState(0);
-
   const reasons = [
     { id: "1", title: "Unmatched Vetting & Quality", description: "Fewer than 8% of applicants are accepted — each verified by proprietary AI assessment and human expert review before they enter the network.", image: "/images/vetting-quality.png", stat: "<8%", statLabel: "Acceptance rate" },
     { id: "2", title: "Speed to Strategic Impact", description: "Eliminate recruiting delays. Receive a curated shortlist of 3–5 experts within 14–21 days — not months.", image: "/images/speed-impact.png", stat: "21d", statLabel: "Max time to hire" },
@@ -985,108 +977,112 @@ function WhyChooseUs() {
     { id: "4", title: "Expertise Over Overhead", description: "Engage high-value talent on flexible contracts, maximizing ROI without the cost of full-time payroll.", image: "/images/expertise-overhead.png", stat: "60%", statLabel: "Avg. cost saving" },
   ];
 
-  const nextCard = useCallback(() => setActiveCard((c) => (c + 1) % reasons.length), [reasons.length]);
-  const prevCard = useCallback(() => setActiveCard((c) => (c - 1 + reasons.length) % reasons.length), [reasons.length]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const [activeCard, setActiveCard] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      const idx = Math.min(Math.floor(latest * reasons.length * 0.999), reasons.length - 1);
+      setActiveCard(idx);
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress, reasons.length]);
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-white border-t border-gray-200">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-14 md:max-w-3xl">
-          <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
-            Why Businesses Choose<br />
-            <span className="text-[#3B5BDB]">DeepTalent Platform</span>
-          </h2>
-          <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-            Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          {/* Card stack */}
-          <div className="card-stack-scene relative h-[400px] flex items-center justify-center">
-            {reasons.map((item, i) => {
-              const offset = (i - activeCard + reasons.length) % reasons.length;
-              const isActive = offset === 0;
-              const zIndex = reasons.length - offset;
-              return (
-                <motion.div
-                  key={item.id}
-                  animate={{
-                    scale: isActive ? 1 : 1 - offset * 0.04,
-                    y: offset * 16,
-                    x: offset * 10,
-                    rotateY: offset * -4,
-                    opacity: offset > 2 ? 0 : 1,
-                    zIndex,
-                  }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  drag={isActive ? "x" : false}
-                  dragConstraints={{ left: -50, right: 50 }}
-                  dragElastic={0.2}
-                  onDragEnd={(_, info) => {
-                    if (Math.abs(info.offset.x) > 60) {
-                      if (info.offset.x < 0) nextCard(); else prevCard();
-                    }
-                  }}
-                  className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden cursor-grab active:cursor-grabbing shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
-                >
-                  <div className="relative h-44 overflow-hidden">
-                    <Image src={item.image} alt={item.title} fill className="object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
-                        <span className="text-xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
-                        <span className="text-xs text-gray-600">{item.statLabel}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Card navigation */}
-          <div>
-            <div className="space-y-4">
-              {reasons.map((item, i) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveCard(i)}
-                  className="w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all"
-                  style={{
-                    borderColor: activeCard === i ? C.primary : C.border,
-                    background: activeCard === i ? "rgba(59,91,219,0.04)" : "#ffffff",
-                  }}
-                >
-                  <div
-                    className="size-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 transition-colors"
-                    style={{
-                      background: activeCard === i ? C.primary : "#F3F4F6",
-                      color: activeCard === i ? "#ffffff" : C.body,
-                    }}
-                  >
-                    {i + 1}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{item.description}</p>
-                  </div>
-                  <ChevronRight className="size-4 ml-auto shrink-0" style={{ color: activeCard === i ? C.primary : C.border }} />
-                </button>
-              ))}
+    <section className="relative bg-white border-t border-gray-200">
+      <div ref={containerRef} style={{ height: `${reasons.length * 60}vh` }} className="relative">
+        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="mb-10 md:max-w-3xl">
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
+                Why Businesses Choose<br />
+                <span className="text-[#3B5BDB]">DeepTalent Platform</span>
+              </h2>
+              <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
+                Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
+              </p>
             </div>
 
-            <p className="text-xs text-gray-400 mt-4 text-center">Swipe cards or click to navigate</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* Card stack — driven by scroll */}
+              <div className="card-stack-scene relative h-[380px] flex items-center justify-center">
+                {reasons.map((item, i) => {
+                  const offset = (i - activeCard + reasons.length) % reasons.length;
+                  const isActive = offset === 0;
+                  const zIndex = reasons.length - offset;
+                  return (
+                    <motion.div
+                      key={item.id}
+                      animate={{
+                        scale: isActive ? 1 : 1 - offset * 0.04,
+                        y: offset * 16,
+                        x: offset * 10,
+                        rotateY: offset * -4,
+                        opacity: offset > 2 ? 0 : 1,
+                        zIndex,
+                      }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
+                    >
+                      <div className="relative h-44 overflow-hidden">
+                        <Image src={item.image} alt={item.title} fill className="object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
+                            <span className="text-xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
+                            <span className="text-xs text-gray-600">{item.statLabel}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                        <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
 
-            <div className="mt-6">
-              <FluidCTA href="/companies/hire" size="md">
-                Start Hiring on DeepTalent
-              </FluidCTA>
+              {/* Card navigation (reflects scroll position) */}
+              <div>
+                <div className="space-y-4">
+                  {reasons.map((item, i) => (
+                    <div
+                      key={item.id}
+                      className="w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all"
+                      style={{
+                        borderColor: activeCard === i ? C.primary : C.border,
+                        background: activeCard === i ? "rgba(59,91,219,0.04)" : "#ffffff",
+                      }}
+                    >
+                      <div
+                        className="size-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 transition-colors"
+                        style={{
+                          background: activeCard === i ? C.primary : "#F3F4F6",
+                          color: activeCard === i ? "#ffffff" : C.body,
+                        }}
+                      >
+                        {i + 1}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-gray-900 text-sm">{item.title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{item.description}</p>
+                      </div>
+                      <ChevronRight className="size-4 ml-auto shrink-0" style={{ color: activeCard === i ? C.primary : C.border }} />
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-xs text-gray-400 mt-4">Keep scrolling to reveal each reason</p>
+
+                <div className="mt-6">
+                  <FluidCTA href="/companies/hire" size="md">
+                    Start Hiring on DeepTalent
+                  </FluidCTA>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1122,7 +1118,7 @@ function StrategicAdvantages() {
 
   return (
     <section className="relative bg-[#F9FAFB] border-t border-gray-200">
-      <div ref={containerRef} style={{ height: `${advantages.length * 55}vh` }} className="relative">
+      <div ref={containerRef} style={{ height: `${advantages.length * 42}vh` }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-6xl mx-auto w-full">
             <motion.div
