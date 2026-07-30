@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { SiteFooter } from "@/components/site/site-footer";
+import { FluidCTA } from "@/components/site/fluid-cta";
 
 /* ─── Service categories ─────────────────────────────────────────── */
 const services = [
@@ -372,18 +373,12 @@ export default function ConsultingPage() {
             Tell us about the role, the domain, and your timeline. We&apos;ll send you a curated shortlist within 14–21 days.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-[#3B5BDB] text-white font-semibold hover:bg-[#3B5BDB]/90 transition-colors shadow-[0_8px_32px_rgba(59,91,219,0.3)]"
-            >
-              Book a Consultation <ArrowRight className="size-4" />
-            </Link>
-            <Link
-              href="/companies/hire"
-              className="inline-flex items-center h-12 px-8 rounded-full border border-gray-300 bg-white text-gray-800 font-semibold hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors"
-            >
+            <FluidCTA href="/contact" size="lg" variant="primary">
+              Book a Consultation
+            </FluidCTA>
+            <FluidCTA href="/companies/hire" size="lg" variant="outline" showArrow={false}>
               Browse Talent Instead
-            </Link>
+            </FluidCTA>
           </div>
         </div>
       </section>

@@ -2,7 +2,7 @@
 
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import { sendConfirmationEmail } from "@/lib/email/resend";
+import { sendVerificationCodeEmail } from "@/lib/email/resend";
 
 function createServiceClient() {
   return createAdminClient(
@@ -69,7 +69,8 @@ export async function signUpWithResendConfirmation(
     console.error("[v0] Profile upsert failed:", profileError.message);
   }
 
-  // Step 3: generate a confirmation link (does NOT send an email).
+  // Step 3: generate a signup confirmation OTP (does NOT send an email).
+  // generateLink returns a 6-digit `email_otp` alongside the action link.
   const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`;
   const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
     type: "signup",
@@ -80,53 +81,129 @@ export async function signUpWithResendConfirmation(
 
   if (linkError) {
     console.error("[v0] generateLink failed:", linkError.message);
+    return { error: "Could not start email verification. Please try again." };
   }
 
-  const confirmLink =
-    linkData?.properties?.action_link ||
-    `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/login`;
+  const code = linkData?.properties?.email_otp;
+  if (!code) {
+    console.error("[v0] generateLink returned no email_otp");
+    return { error: "Could not generate a verification code. Please try again." };
+  }
 
-  // Step 4: try Resend first (branded email).
-  console.log("[v0] Attempting Resend confirmation email to:", email);
-  const emailResult = await sendConfirmationEmail(email, fullName, confirmLink);
+  // Step 4: send the branded 6-digit code email via Resend.
+  console.log("[v0] Sending verification code email to:", email);
+  const emailResult = await sendVerificationCodeEmail(email, fullName, code);
 
-  if (emailResult.success) {
-    console.log("[v0] Resend confirmation sent:", emailResult.messageId);
+  if (!emailResult.success) {
+    console.error("[v0] Verification code email failed:", emailResult.error);
+    // The account exists and the code is valid — let the user request a resend.
     return {
       success: true,
       userId,
-      message: "Account created! Check your email to confirm.",
-      emailProvider: "resend",
+      needsCode: true,
+      email,
+      warning: "We couldn't email your code automatically. Tap \"Resend code\" to try again.",
     };
   }
 
-  // Step 5: Resend failed — fall back to Supabase's built-in confirmation email.
-  console.error("[v0] Resend failed, falling back to Supabase mailer:", emailResult.error);
-
-  const ssr = await createClient();
-  const { error: resendErr } = await ssr.auth.resend({
-    type: "signup",
-    email,
-    options: { emailRedirectTo: redirectTo },
-  });
-
-  if (resendErr) {
-    console.error("[v0] Supabase fallback resend also failed:", resendErr.message);
-    return {
-      success: true,
-      userId,
-      message:
-        "Account created, but confirmation email could not be sent. Use the resend button on the login page.",
-      emailProvider: "none",
-      emailError: typeof emailResult.error === "string" ? emailResult.error : JSON.stringify(emailResult.error),
-    };
-  }
-
-  console.log("[v0] Supabase fallback confirmation email sent");
+  console.log("[v0] Verification code sent:", emailResult.messageId);
   return {
     success: true,
     userId,
-    message: "Account created! Check your email to confirm.",
-    emailProvider: "supabase",
+    needsCode: true,
+    email,
+    message: "We sent a 6-digit code to your email.",
   };
+}
+
+// ---------------------------------------------------------------------------
+// Verify the 6-digit email confirmation code and establish a session.
+// ---------------------------------------------------------------------------
+export async function verifyEmailCode(
+  email: string,
+  code: string,
+  next?: string | null
+) {
+  const supabase = await createClient();
+
+  // generateLink(type:'signup') and resend(type:'magiclink') both mint an
+  // email_otp; verifyOtp confirms the address and sets the session cookies.
+  let verified = false;
+  for (const type of ["signup", "email", "magiclink"] as const) {
+    const { error } = await supabase.auth.verifyOtp({ email, token: code, type });
+    if (!error) {
+      verified = true;
+      break;
+    }
+  }
+
+  if (!verified) {
+    return { error: "That code is invalid or has expired. Please try again." };
+  }
+
+  // Session cookies are now set — resolve the post-auth destination by role.
+  const { data: userData } = await supabase.auth.getUser();
+  let redirect = next || "/dashboard";
+
+  if (userData.user && (!next || next === "/dashboard")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userData.user.id)
+      .single();
+    const roleVal = profile?.role;
+    if (roleVal === "admin") {
+      redirect = "/admin";
+    } else if (roleVal === "company") {
+      redirect = "/dashboard";
+    } else {
+      const { data: interview } = await supabase
+        .from("talent_interviews")
+        .select("id")
+        .eq("user_id", userData.user.id)
+        .eq("status", "completed")
+        .limit(1)
+        .maybeSingle();
+      redirect = interview ? "/dashboard" : "/interview";
+    }
+  }
+
+  return { success: true, redirect };
+}
+
+// ---------------------------------------------------------------------------
+// Resend a fresh 6-digit verification code (no password required).
+// ---------------------------------------------------------------------------
+export async function resendEmailCode(email: string) {
+  const admin = createServiceClient();
+
+  // magiclink also returns a fresh email_otp and confirms the email on verify.
+  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
+    type: "magiclink",
+    email,
+  });
+
+  const code = linkData?.properties?.email_otp;
+  if (linkError || !code) {
+    console.error("[v0] resend generateLink failed:", linkError?.message);
+    return { error: "Could not resend a code right now. Please try again shortly." };
+  }
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("full_name")
+    .eq("email", email)
+    .maybeSingle();
+
+  const emailResult = await sendVerificationCodeEmail(
+    email,
+    profile?.full_name || "there",
+    code
+  );
+
+  if (!emailResult.success) {
+    return { error: "Could not send the code email. Please try again." };
+  }
+
+  return { success: true };
 }

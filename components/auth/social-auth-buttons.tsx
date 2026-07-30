@@ -54,9 +54,9 @@ export function SocialAuthButtons() {
     <div className="mt-1">
       {/* Divider */}
       <div className="flex items-center gap-3 my-5">
-        <div className="flex-1 h-px bg-gray-200" />
-        <span className="text-xs font-medium text-gray-400 whitespace-nowrap">or continue with</span>
-        <div className="flex-1 h-px bg-gray-200" />
+        <div className="flex-1 h-px bg-white/20" />
+        <span className="text-xs font-medium text-white/60 whitespace-nowrap">or continue with</span>
+        <div className="flex-1 h-px bg-white/20" />
       </div>
 
       {/* Single pill row */}
