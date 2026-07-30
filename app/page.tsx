@@ -192,72 +192,93 @@ function FluidCTA({ href, children, size = "md", variant = "primary", className 
    HERO — Andela floating logos grid + centered text
 ═══════════════════════════════════════════════════════ */
 
-const LOGO_CARDS = [
-  // row, col (0-indexed), logo src, name
-  { r: 0, c: 1, src: "/icons/sterling-bank.svg", name: "Sterling Bank" },
-  { r: 0, c: 3, src: "/icons/tulcan-energy.svg", name: "Tulcan Energy" },
-  { r: 0, c: 4, src: "/icons/al-ahad.svg", name: "Al Ahad Group" },
-  { r: 1, c: 0, src: "/icons/premium-trust.svg", name: "Premium Trust" },
-  { r: 1, c: 5, src: "/icons/pro-win.svg", name: "ProWin" },
-  { r: 2, c: 0, src: "/icons/my-groud-crew.svg", name: "MyGround Crew" },
-  { r: 2, c: 5, src: "/icons/omiomio-tv.svg", name: "Omiomio TV" },
-  { r: 3, c: 1, src: "/icons/al-ahad.svg", name: "Al Ahad" },
-  { r: 3, c: 4, src: "/icons/sterling-bank.svg", name: "Sterling" },
-  { r: 4, c: 0, src: "/icons/tulcan-energy.svg", name: "Tulcan" },
-  { r: 4, c: 2, src: "/icons/premium-trust.svg", name: "Premium Trust" },
-  { r: 4, c: 5, src: "/icons/pro-win.svg", name: "ProWin" },
-];
+const GRID_COLS = 7;
+const GRID_ROWS = 5;
+
+/* Which cells hold a brand logo, keyed "row-col" */
+const LOGO_MAP: Record<string, { src: string; name: string }> = {
+  "0-1": { src: "/icons/sterling-bank.svg", name: "Sterling Bank" },
+  "0-5": { src: "/icons/tulcan-energy.svg", name: "Tulcan Energy" },
+  "1-0": { src: "/icons/premium-trust.svg", name: "Premium Trust" },
+  "1-6": { src: "/icons/al-ahad.svg", name: "Al Ahad Group" },
+  "2-0": { src: "/icons/pro-win.svg", name: "ProWin" },
+  "2-6": { src: "/icons/omiomio-tv.svg", name: "Omiomio TV" },
+  "3-0": { src: "/icons/my-groud-crew.svg", name: "MyGround Crew" },
+  "3-6": { src: "/icons/sterling-bank.svg", name: "Sterling Bank" },
+  "4-1": { src: "/icons/al-ahad.svg", name: "Al Ahad" },
+  "4-5": { src: "/icons/premium-trust.svg", name: "Premium Trust" },
+};
+
+/* Center block (cols 2–4, rows 1–3) is left clear for the headline. */
+function isTextZone(r: number, c: number) {
+  return c >= 2 && c <= 4 && r >= 1 && r <= 3;
+}
 
 function HeroLogoGrid() {
-  const COLS = 6;
-  const ROWS = 5;
-  const CELL = 88; // px per cell
+  const cells = Array.from({ length: GRID_COLS * GRID_ROWS });
 
   return (
     <div
-      className="absolute inset-0 pointer-events-none overflow-hidden"
+      className="absolute inset-0 hidden md:block pointer-events-none overflow-hidden"
       aria-hidden="true"
     >
-      {/* dot grid */}
-      <div className="dot-grid-bg absolute inset-0 opacity-30" />
+      <div
+        className="grid h-full w-full gap-3 lg:gap-5 p-6 lg:p-12"
+        style={{
+          gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
+          gridTemplateRows: `repeat(${GRID_ROWS}, minmax(0, 1fr))`,
+        }}
+      >
+        {cells.map((_, i) => {
+          const r = Math.floor(i / GRID_COLS);
+          const c = i % GRID_COLS;
+          if (isTextZone(r, c)) return <div key={i} />;
 
-      {/* logo cards */}
-      {LOGO_CARDS.map((card, i) => {
-        const delay = i * 0.12;
-        // center column 2–3 is reserved for text; skip if in center
-        if (card.c >= 2 && card.c <= 3) return null;
+          const logo = LOGO_MAP[`${r}-${c}`];
+          const delay = (r + c) * 0.05;
 
-        return (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.7, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-            style={{
-              position: "absolute",
-              left: `${(card.c / (COLS - 1)) * 90 + 5}%`,
-              top: `${(card.r / (ROWS - 1)) * 80 + 5}%`,
-            }}
-          >
+          if (logo) {
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+                className="flex items-center justify-center"
+              >
+                <div className="float-y size-16 lg:size-20 rounded-2xl bg-white flex items-center justify-center p-3 shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+                  <img
+                    src={logo.src}
+                    alt={logo.name}
+                    className="max-h-full max-w-full w-auto h-auto object-contain"
+                  />
+                </div>
+              </motion.div>
+            );
+          }
+
+          return (
             <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{
-                duration: 3 + (i % 3) * 0.8,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: delay * 2,
-              }}
-              className="size-16 md:size-20 rounded-2xl border border-[#0d3a40] bg-[#011f24] flex items-center justify-center shadow-[0_4px_24px_rgba(80,232,244,0.08)] hover:border-[#50E8F4]/40 hover:shadow-[0_4px_24px_rgba(80,232,244,0.2)] transition-all duration-300"
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay }}
+              className="flex items-center justify-center"
             >
-              <img
-                src={card.src}
-                alt={card.name}
-                className="w-10 h-10 md:w-12 md:h-12 object-contain"
-              />
+              <div className="size-16 lg:size-20 rounded-2xl border border-[#0d3a40]/50 bg-[#011f24]/40" />
             </motion.div>
-          </motion.div>
-        );
-      })}
+          );
+        })}
+      </div>
+
+      {/* radial fade so the centered headline stays readable */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 46% 52% at 50% 46%, #001619 0%, #001619 38%, rgba(0,22,25,0.7) 60%, transparent 78%)",
+        }}
+      />
     </div>
   );
 }
@@ -405,12 +426,14 @@ function TrustedBy() {
       <div className="relative w-full overflow-hidden marquee-container">
         <div className="flex animate-marquee gap-12 w-max">
           {[...partners, ...partners, ...partners].map((partner, index) => (
-            <div key={`${partner.id}-${index}`} className="flex-shrink-0 flex items-center justify-center h-20 px-4">
-              <img
-                src={partner.image}
-                alt={partner.name}
-                className="h-14 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity"
-              />
+            <div key={`${partner.id}-${index}`} className="flex-shrink-0 flex items-center justify-center h-20 px-2">
+              <div className="h-16 w-40 rounded-xl bg-white flex items-center justify-center px-5 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.35)] opacity-90 hover:opacity-100 transition-opacity">
+                <img
+                  src={partner.image}
+                  alt={partner.name}
+                  className="max-h-full max-w-full w-auto h-auto object-contain"
+                />
+              </div>
             </div>
           ))}
         </div>

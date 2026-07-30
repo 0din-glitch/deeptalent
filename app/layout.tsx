@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#3B5BDB",
+  themeColor: "#001619",
 };
 
 const organizationSchema = {
@@ -68,13 +68,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cn("bg-[#001619]", "font-sans", geist.variable)}>
-      <head>
+      <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-      </head>
-      <body>{children}</body>
+        {children}
+      </body>
     </html>
   );
 }
