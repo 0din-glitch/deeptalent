@@ -24,34 +24,31 @@ export function AuthShell({
   signUpHref = "/auth/sign-up",
 }: AuthShellProps) {
   return (
-    <main className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-10">
-      {/* Vibrant brand gradient backdrop */}
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          background:
-            "linear-gradient(135deg, #24316e 0%, #3B5BDB 45%, #8690FD 100%)",
-        }}
-        aria-hidden="true"
-      />
+    <main
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10"
+      style={{
+        background:
+          "linear-gradient(135deg, #24316e 0%, #3B5BDB 45%, #8690FD 100%)",
+      }}
+    >
       {/* Soft color blobs for depth */}
       <div
-        className="absolute -top-24 -left-24 h-96 w-96 rounded-full blur-3xl -z-10 opacity-60"
+        className="absolute -top-24 -left-24 z-0 h-96 w-96 rounded-full opacity-60 blur-3xl"
         style={{ background: "radial-gradient(circle, #8690FD 0%, transparent 70%)" }}
         aria-hidden="true"
       />
       <div
-        className="absolute -bottom-32 -right-16 h-[28rem] w-[28rem] rounded-full blur-3xl -z-10 opacity-50"
+        className="absolute -bottom-32 -right-16 z-0 h-[28rem] w-[28rem] rounded-full opacity-50 blur-3xl"
         style={{ background: "radial-gradient(circle, #2a3a8f 0%, transparent 70%)" }}
         aria-hidden="true"
       />
       <div
-        className="absolute top-1/3 right-1/4 h-72 w-72 rounded-full blur-3xl -z-10 opacity-40"
+        className="absolute top-1/3 right-1/4 z-0 h-72 w-72 rounded-full opacity-40 blur-3xl"
         style={{ background: "radial-gradient(circle, #5b73e6 0%, transparent 70%)" }}
         aria-hidden="true"
       />
 
-      <div className="w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md">
         <div className="relative rounded-3xl border border-white/20 bg-white/10 p-7 md:p-9 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-2xl">
           {/* Top row: toggle + close */}
           <div className="mb-7 flex items-center justify-between">

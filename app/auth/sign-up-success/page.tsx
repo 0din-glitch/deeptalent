@@ -12,18 +12,18 @@ export default async function SignUpSuccessPage({
   return (
     <AuthShell
       title="Check your email"
-      subtitle="We've sent a confirmation link to your inbox."
+      subtitle="We've sent a 6-digit verification code to your inbox."
     >
-      <div className="flex flex-col items-center text-center gap-4 py-4">
-        <div className="size-16 rounded-full bg-[#3B5BDB]/10 flex items-center justify-center text-[#3B5BDB]">
+      <div className="flex flex-col items-center gap-4 py-4 text-center">
+        <div className="flex size-16 items-center justify-center rounded-full bg-white/15 text-white">
           <MailCheck className="size-8" />
         </div>
-        <p className="text-gray-600 text-pretty">
-          Click the link in the email to verify your account, then return here to log in.
+        <p className="text-pretty text-white/80">
+          Enter the code from the email to verify your account, then return here to log in.
         </p>
         <Link
           href={loginHref}
-          className="mt-2 inline-flex h-11 px-6 items-center justify-center rounded-lg bg-[#3B5BDB] text-white font-semibold hover:bg-[#2f49b2] transition-colors"
+          className="mt-2 inline-flex h-11 items-center justify-center rounded-xl bg-white px-6 font-semibold text-[#3B5BDB] transition-colors hover:bg-white/90"
         >
           Back to login
         </Link>
