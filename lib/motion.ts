@@ -1,8 +1,8 @@
 import type { Variants } from "motion/react"
 
-const defaultDuration = 0.5
+const defaultDuration = 0.35
 
-export const staggerContainer = (staggerChildren = 0.15, delayChildren = 0): Variants => ({
+export const staggerContainer = (staggerChildren = 0.08, delayChildren = 0): Variants => ({
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -38,7 +38,7 @@ export const slideIn = (
 })
 
 export const fadeInUp = (delay = 0, duration = defaultDuration): Variants => ({
-  hidden: { y: 30, opacity: 0 },
+  hidden: { y: 16, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
@@ -69,4 +69,4 @@ export const zoomIn = (duration = defaultDuration): Variants => ({
   },
 })
 
-export const viewport = { once: true, amount: 0.2 }
+export const viewport = { once: true, amount: 0, margin: "0px 0px -80px 0px" }

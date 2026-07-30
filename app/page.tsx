@@ -253,8 +253,8 @@ function LearningPartnerships() {
                   key={i}
                   initial={{ opacity: 0, scale: 0.8, y: 12 }}
                   whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+                  viewport={{ once: true, amount: 0, margin: "0px 0px -120px 0px" }}
+                  transition={{ duration: 0.3, delay, ease: [0.22, 1, 0.36, 1] }}
                   className="flex items-center justify-center"
                 >
                   <div className="float-y size-16 lg:size-20 rounded-2xl bg-white flex items-center justify-center p-3.5 border border-gray-200 shadow-[0_10px_30px_rgba(17,24,39,0.08)]">
@@ -273,8 +273,8 @@ function LearningPartnerships() {
                 key={i}
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay }}
+                viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
+                transition={{ duration: 0.3, delay }}
                 className="flex items-center justify-center"
               >
                 <div className="size-16 lg:size-20 rounded-2xl border border-gray-100 bg-gray-100/60" />
@@ -296,8 +296,8 @@ function LearningPartnerships() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
+          transition={{ duration: 0.35, delay: 0.2 }}
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
         >
           <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Vetted Expertise</p>
@@ -448,7 +448,7 @@ function TrustedBy() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={viewport}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
             className="inline-flex flex-col items-start gap-1.5 px-5 py-4 rounded-2xl border border-gray-200 bg-white hover:border-[#3B5BDB]/30 hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-2">
@@ -575,7 +575,7 @@ function ServiceShowcase() {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
               transition={{ duration: 0.6 }}
               className="mb-10 max-w-2xl"
             >
@@ -608,7 +608,7 @@ function ServiceShowcase() {
                     initial={{ opacity: 0, y: 30, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     className="absolute inset-0 flex items-center justify-center rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.06)]"
                   >
                     <div
@@ -635,7 +635,7 @@ function ServiceShowcase() {
                     animate="visible"
                     exit={{ opacity: 0, y: -30 }}
                     variants={staggerContainer(0.06)}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                     className="absolute inset-0"
                   >
                     <motion.div variants={fadeInUp()} className="flex items-center gap-3 mb-4">
@@ -933,7 +933,7 @@ function HowItWorks() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
               className="text-center mb-10 max-w-2xl mx-auto"
             >
               <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Process</p>
@@ -1183,7 +1183,7 @@ function StrategicAdvantages() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
               className="text-center max-w-3xl mx-auto mb-10"
             >
               <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">The Advantage</p>
@@ -1199,7 +1199,7 @@ function StrategicAdvantages() {
                   initial={{ opacity: 0, y: 60, scale: 0.96 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -60, scale: 0.96 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   className="absolute inset-0 flex flex-col md:flex-row gap-6 md:gap-12 bg-white p-6 md:p-10 rounded-3xl border border-gray-200 shadow-[0_20px_60px_rgba(17,24,39,0.08)]"
                 >
                   <div className="flex w-full flex-col justify-between md:w-5/12 order-2 md:order-1">
@@ -1238,7 +1238,7 @@ function StrategicAdvantages() {
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${((activeIndex + 1) / advantages.length) * 100}%` }}
-                          transition={{ duration: 0.6, ease: "easeOut" }}
+                          transition={{ duration: 0.35, ease: "easeOut" }}
                           className="h-full rounded-full"
                           style={{ background: "linear-gradient(90deg, #3B5BDB, #8690FD)" }}
                         />
@@ -1282,7 +1282,7 @@ function HumanLayer() {
     initial: { opacity: 0, y: 24, scale: 0.95 },
     whileInView: { opacity: 1, y: 0, scale: 1 },
     viewport: { once: true, margin: "-60px" },
-    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { duration: 0.35, delay, ease: [0.22, 1, 0.36, 1] as const },
   });
 
   const platformPills = [
@@ -1298,7 +1298,7 @@ function HumanLayer() {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
           transition={{ duration: 0.6 }}
           className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 tracking-tight leading-[1.02] text-balance"
         >
@@ -1309,8 +1309,8 @@ function HumanLayer() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
+          transition={{ duration: 0.35, delay: 0.1 }}
           className="mt-6 text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed text-pretty"
         >
           Every candidate runs through our AI vetting system — skills assessments, a scored interview, and a verified match rating — so the shortlist you hire from is proven, not guessed.
@@ -1319,8 +1319,8 @@ function HumanLayer() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
+          transition={{ duration: 0.35, delay: 0.2 }}
           className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
         >
           {["AI-scored skills assessments", "Verified match ratings", "Hire in days, not months"].map((item) => (
@@ -1338,8 +1338,8 @@ function HumanLayer() {
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="absolute left-1/2 top-4 -translate-x-1/2 w-[280px] sm:w-[420px] md:w-[520px] h-[380px] sm:h-[420px] rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(59,91,219,0.25)]"
         >
           <Image src="/images/software-dev.jpg" alt="DeepTalent machine learning engineer" fill className="object-cover" />
@@ -1385,7 +1385,7 @@ function HumanLayer() {
                 <motion.div
                   initial={{ width: 0 }}
                   whileInView={{ width: `${bar.value}%` }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
                   transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
                   className="h-full rounded-full bg-[#3B5BDB]"
                 />
@@ -1427,7 +1427,7 @@ function HumanLayer() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
         transition={{ duration: 0.6 }}
         className="mt-4 flex flex-wrap items-center justify-center gap-3"
       >
@@ -1480,8 +1480,8 @@ function TestimonialCarousel() {
               key={item.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
+              transition={{ duration: 0.3, delay: idx * 0.1 }}
               className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:border-[#3B5BDB]/30 hover:shadow-lg transition-all"
             >
               <div className="flex gap-1 mb-4">
@@ -1637,7 +1637,7 @@ function FaqSection() {
                     key={actualIndex}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
+                    viewport={{ once: true, amount: 0, margin: "0px 0px -100px 0px" }}
                     transition={{ duration: 0.4, delay: index * 0.06 }}
                     className="rounded-2xl border transition-all duration-300"
                     style={{
