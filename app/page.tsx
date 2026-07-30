@@ -199,7 +199,7 @@ function FluidCTA({ href, children, size = "md", variant = "primary", className 
 
 /* ════════════════════════════════════════════════════
    LEARNING PARTNERSHIPS — platform logo matrix
-═══════════════════════════════════════════════════════ */
+════════════════════════════════════���══════════════════ */
 const GRID_COLS = 7;
 const GRID_ROWS = 5;
 
@@ -299,24 +299,24 @@ function LearningPartnerships() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
         >
-          <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Learning Partnerships</p>
+          <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Vetted Expertise</p>
           <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-snug max-w-md text-balance mb-6">
-            DeepTalent engineers are continuously trained on the platforms powering modern AI.
+            Every hire is AI-vetted on the platforms and tools your team actually runs on.
           </h2>
           <Link
-            href="/talents"
+            href="/companies/hire"
             className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[#111827] text-white text-sm font-semibold hover:bg-[#1f2937] transition-colors shadow-lg"
           >
-            Learn more
+            Start Hiring
           </Link>
         </motion.div>
       </div>
 
       {/* Mobile: text + wrapped logos */}
       <div className="md:hidden max-w-md mx-auto text-center">
-        <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Learning Partnerships</p>
+        <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Vetted Expertise</p>
         <h2 className="text-2xl font-bold text-gray-900 leading-snug text-balance mb-6">
-          DeepTalent engineers are continuously trained on the platforms powering modern AI.
+          Every hire is AI-vetted on the platforms and tools your team actually runs on.
         </h2>
         <div className="flex flex-wrap justify-center gap-3 mb-6">
           {logoList.map((logo) => (
@@ -325,7 +325,7 @@ function LearningPartnerships() {
             </div>
           ))}
         </div>
-        <Link href="/talents" className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[#111827] text-white text-sm font-semibold shadow-lg">Learn more</Link>
+        <Link href="/companies/hire" className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[#111827] text-white text-sm font-semibold shadow-lg">Start Hiring</Link>
       </div>
     </section>
   );
@@ -370,16 +370,17 @@ function Hero() {
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.1] text-balance"
             style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", letterSpacing: "-0.01em" }}
           >
-            Cross-Border Talent Infrastructure
+            Hire AI-Vetted Staff You Can Trust
           </motion.h1>
 
           <motion.p
             variants={fadeInUp()}
             className="text-lg md:text-xl text-white/90 max-w-xl leading-relaxed text-pretty"
           >
-            Connect with accredited and vetted experts in{" "}
+            Our AI vetting system screens and scores every candidate on real skills—so you hire{" "}
             <span className="font-semibold text-white">finance</span>,{" "}
-            <span className="font-semibold text-white">technology</span> and more—all in one trusted global infrastructure.
+            <span className="font-semibold text-white">technology</span> and{" "}
+            <span className="font-semibold text-white">operations</span>{" "}talent that&apos;s ready to perform from day one.
           </motion.p>
 
           <motion.div
@@ -387,10 +388,10 @@ function Hero() {
             className="flex flex-wrap gap-3 md:gap-4 pt-2"
           >
             <Link
-              href="/auth/sign-up"
+              href="/companies/hire"
               className="inline-flex items-center h-11 px-6 md:px-8 rounded-full bg-white text-[#3B5BDB] font-semibold hover:bg-white/95 hover:scale-105 transition-all shadow-lg"
             >
-              Join DeepTalent
+              Start Hiring
             </Link>
             <a
               href="#howItWorks"
@@ -1271,7 +1272,7 @@ function StrategicAdvantages() {
 
 /* ════════════════════════════════════════════════════
    HUMAN LAYER — human expertise behind production AI
-═══════════════════════════════════════════════════════ */
+═══════════════════════════���═══════════════════════════ */
 function HumanLayer() {
   const floatCard = (delay: number) => ({
     initial: { opacity: 0, y: 24, scale: 0.95 },
@@ -1297,8 +1298,8 @@ function HumanLayer() {
           transition={{ duration: 0.6 }}
           className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 tracking-tight leading-[1.02] text-balance"
         >
-          The Human Layer
-          <span className="block italic text-[#3B5BDB]">Powering Production AI</span>
+          AI Vetting That Finds
+          <span className="block italic text-[#3B5BDB]">The Right Hire</span>
         </motion.h2>
 
         <motion.p
@@ -1308,7 +1309,7 @@ function HumanLayer() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mt-6 text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed text-pretty"
         >
-          DeepTalent provides the human expertise layer behind modern AI systems — training models, deploying AI-native engineers, and upskilling the teams that build them.
+          Every candidate runs through our AI vetting system — skills assessments, a scored interview, and a verified match rating — so the shortlist you hire from is proven, not guessed.
         </motion.p>
 
         <motion.div
@@ -1318,7 +1319,7 @@ function HumanLayer() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
         >
-          {["Train & build AI systems", "Deploy AI-native engineers", "Upskill your workforce for AI"].map((item) => (
+          {["AI-scored skills assessments", "Verified match ratings", "Hire in days, not months"].map((item) => (
             <span key={item} className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-gray-800">
               <Check className="size-4 text-[#3B5BDB]" />
               {item}
