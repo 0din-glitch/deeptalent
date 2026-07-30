@@ -199,7 +199,7 @@ function FluidCTA({ href, children, size = "md", variant = "primary", className 
 
 /* ════════════════════════════════════════════════════
    LEARNING PARTNERSHIPS — platform logo matrix
-════════════════════════════════════���══════════════════ */
+════════════════════════════════════�����══════════════════ */
 const GRID_COLS = 7;
 const GRID_ROWS = 5;
 
@@ -477,7 +477,9 @@ function TrustedBy() {
                 <img
                   src={partner.image}
                   alt={partner.name}
-                  className="max-h-full max-w-full w-auto h-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all"
+                  loading="lazy"
+                  decoding="async"
+                  className="max-h-full max-w-full w-auto h-auto object-contain transition-transform hover:scale-105"
                 />
               </div>
             </div>
@@ -1021,7 +1023,7 @@ function HowItWorks() {
   );
 }
 
-/* ════════════════════════════════════════════════════
+/* ════════════════════════��═══════════════════════════
    WHY CHOOSE US — interactive card stack
 ═══════════════════════════════════════════════════════ */
 function WhyChooseUs() {
@@ -1272,7 +1274,7 @@ function StrategicAdvantages() {
 
 /* ════════════════════════════════════════════════════
    HUMAN LAYER — human expertise behind production AI
-═══════════════════════════���═══════════════════════════ */
+═══════════════════════════���═════════════════════���═════ */
 function HumanLayer() {
   const floatCard = (delay: number) => ({
     initial: { opacity: 0, y: 24, scale: 0.95 },
