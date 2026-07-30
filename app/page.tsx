@@ -1387,11 +1387,11 @@ function HumanLayer() {
         transition={{ duration: 0.6 }}
         className="mt-4 flex flex-wrap items-center justify-center gap-3"
       >
-        <Link href="/contact" className="inline-flex items-center h-12 px-8 rounded-full bg-[#111827] text-white text-sm font-semibold hover:bg-[#1f2937] transition-colors shadow-lg">
-          Book a discovery call
+        <Link href="/companies/hire" className="inline-flex items-center h-12 px-8 rounded-full bg-[#111827] text-white text-sm font-semibold hover:bg-[#1f2937] transition-colors shadow-lg">
+          Hire vetted staff
         </Link>
-        <Link href="/companies/hire" className="inline-flex items-center h-12 px-8 rounded-full border border-gray-300 bg-white text-gray-800 text-sm font-semibold hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors">
-          Take AI Maturity Assessment
+        <Link href="/auth/sign-up" className="inline-flex items-center h-12 px-8 rounded-full border border-gray-300 bg-white text-gray-800 text-sm font-semibold hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors">
+          Get a placement
         </Link>
       </motion.div>
     </section>
