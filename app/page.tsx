@@ -510,7 +510,7 @@ function ServiceShowcase() {
 
   return (
     <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200">
-      <div ref={containerRef} style={{ height: `${services.length * 100}vh` }} className="relative">
+      <div ref={containerRef} style={{ height: `${services.length * 55}vh` }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-7xl mx-auto w-full">
             <motion.div
@@ -1097,7 +1097,7 @@ function WhyChooseUs() {
 
 /* ════════════════════════════════════════════════════
    STRATEGIC ADVANTAGES — pinned scroll-through (light)
-═══════════════════════════════════════════════════════ */
+══════════════════════════════��════════════════════════ */
 function StrategicAdvantages() {
   const advantages = [
     { title: "AI-Powered Precision Matching", description: "Stop sifting through resumes. Our proprietary AI analyzes thousands of data points to instantly match you with candidates who fit your role requirements and operating environment.", image: "/images/direct-connection.png" },
@@ -1122,7 +1122,7 @@ function StrategicAdvantages() {
 
   return (
     <section className="relative bg-[#F9FAFB] border-t border-gray-200">
-      <div ref={containerRef} style={{ height: `${advantages.length * 100}vh` }} className="relative">
+      <div ref={containerRef} style={{ height: `${advantages.length * 55}vh` }} className="relative">
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-6xl mx-auto w-full">
             <motion.div
