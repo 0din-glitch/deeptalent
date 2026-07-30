@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -59,8 +60,34 @@ export default function AboutPage() {
           </div>
 
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Removed image card - now just showing text */}
-            <div className="lg:col-span-8 lg:col-start-1">
+            {/* Image card */}
+            <aside className="lg:col-span-4 lg:sticky lg:top-28">
+              <div className="bg-gray-50 rounded-3xl p-6 border border-gray-100">
+                <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
+                  <Image
+                    src="/images/founder.jpg"
+                    alt="Joshua Raymond Onifade, MD/CEO of DeepTalent"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="mt-5">
+                  <p className="font-bold text-gray-900 text-lg leading-tight">Joshua Raymond Onifade</p>
+                  <p className="text-[#3B5BDB] text-sm font-medium mt-0.5">MD/CEO DeepTalent Platform</p>
+                  <a
+                    href="https://www.linkedin.com/company/deeptalentplatform/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-3 text-sm text-gray-500 hover:text-[#3B5BDB] transition-colors"
+                  >
+                    <Linkedin className="size-4" /> Connect on LinkedIn
+                  </a>
+                </div>
+              </div>
+            </aside>
+
+            <div className="lg:col-span-8">
               <Quote className="size-10 text-[#3B5BDB]/20 mb-4" />
               <div className="space-y-5 text-gray-700 leading-relaxed text-pretty text-[17px]">
                 <p>
@@ -73,13 +100,7 @@ export default function AboutPage() {
                   For close to 20 years, I operated in African structured finance — leading transactions across oil &amp; gas, real estate, corporate banking, and infrastructure worth over $2 billion collectively. I structured petroleum trading lines for several energy companies during Nigeria&apos;s most turbulent market conditions and was an active observer of the syndicate that financed the $2 billion acquisition of Shell&apos;s 40% stake in one of the OMLs — one of the most significant upstream energy transactions in Nigerian history.
                 </p>
 
-                {/* Chapter Two — DeepTalent Platform sub-section */}
                 <div className="mt-8 mb-2 rounded-2xl border border-[#3B5BDB]/15 bg-[#3B5BDB]/[0.04] p-6 md:p-7">
-                  <div className="mb-3">
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 leading-tight">
-                      DeepTalent Platform
-                    </h3>
-                  </div>
                   <p className="text-gray-700 leading-relaxed text-pretty">
                     The workforce infrastructure I am building to deploy Africa&apos;s finest finance, technology, and compliance professionals into demanding global financial services environments. Not a staffing agency or a job board. Infrastructure that changes how talent and opportunity flow between continents.
                   </p>
@@ -115,6 +136,17 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             {/* Joshua Raymond Onifade */}
             <div className="flex flex-col items-center text-center">
+              <div className="w-full max-w-xs mb-6">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image
+                    src="/images/founder.jpg"
+                    alt="Joshua Raymond Onifade"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
               <h3 className="text-2xl font-bold text-gray-900">Joshua Raymond Onifade</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">MD/CEO</p>
               <p className="text-gray-600 text-sm mt-3 leading-relaxed">
@@ -132,6 +164,17 @@ export default function AboutPage() {
 
             {/* Adedayo Setro A. */}
             <div className="flex flex-col items-center text-center">
+              <div className="w-full max-w-xs mb-6">
+                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image
+                    src="/images/leader-setro.jpg"
+                    alt="Adedayo Setro A., DMD of DeepTalent Platform"
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              </div>
               <h3 className="text-2xl font-bold text-gray-900">Adedayo Setro A.</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">DMD, DeepTalent Platform</p>
               <p className="text-gray-600 text-sm mt-3 leading-relaxed">
@@ -162,13 +205,36 @@ export default function AboutPage() {
               World-class talent shouldn&apos;t be limited by geography, and high-growth companies shouldn&apos;t have to choose between speed, cost, and quality.
             </p>
           </div>
-          <div className="prose prose-lg max-w-3xl mx-auto text-gray-700">
-            <p className="text-pretty">
-              We started by partnering with the most ambitious startups and scale-ups, helping them build remote-first teams in finance, engineering, data, and operations — deploying Africa&apos;s finest finance, technology, and compliance professionals into demanding global financial services environments.
-            </p>
-            <p className="mt-4 text-pretty">
-              Our approach is different. We don&apos;t just match resumes to job descriptions. We invest deeply in understanding your team, culture, and goals to make placements that last.
-            </p>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-12">
+            <div className="space-y-5 text-gray-700 leading-relaxed text-pretty text-[17px]">
+              <p>
+                We started by partnering with the most ambitious startups and scale-ups, helping them build remote-first teams in finance, engineering, data, and operations — deploying Africa&apos;s finest finance, technology, and compliance professionals into demanding global financial services environments.
+              </p>
+              <p>
+                Our approach is different. We don&apos;t just match resumes to job descriptions. We invest deeply in understanding your team, culture, and goals to make placements that last.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-md">
+                <Image
+                  src="/images/about-img.png"
+                  alt="DeepTalent team at work"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 280px"
+                />
+              </div>
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-md mt-8">
+                <Image
+                  src="/images/about-img-2.png"
+                  alt="DeepTalent professionals"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 280px"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
