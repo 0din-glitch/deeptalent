@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://deeptalent.app";
 
@@ -63,7 +67,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-white">
+    <html lang="en" className={cn("bg-white", "font-sans", geist.variable)}>
       <head>
         <script
           type="application/ld+json"
