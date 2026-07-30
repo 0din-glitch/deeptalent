@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -59,8 +60,24 @@ export default function AboutPage() {
           </div>
 
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Removed image card - now just showing text */}
-            <div className="lg:col-span-8 lg:col-start-1">
+            {/* Founder image */}
+            <div className="lg:col-span-4 flex flex-col items-center gap-4">
+              <div className="relative w-full aspect-[3/4] max-w-xs rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                <Image
+                  src="/assets/images/founder.jpg"
+                  alt="Joshua Raymond Onifade — Founder & CEO, DeepTalent"
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 768px) 100vw, 320px"
+                />
+              </div>
+              <div className="text-center">
+                <p className="font-bold text-gray-900 text-lg">Joshua Raymond Onifade</p>
+                <p className="text-[#3B5BDB] font-medium text-sm">Founder &amp; CEO</p>
+              </div>
+            </div>
+
+            <div className="lg:col-span-8">
               <Quote className="size-10 text-[#3B5BDB]/20 mb-4" />
               <div className="space-y-5 text-gray-700 leading-relaxed text-pretty text-[17px]">
                 <p>
@@ -115,9 +132,18 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             {/* Joshua Raymond Onifade */}
             <div className="flex flex-col items-center text-center">
+              <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-md border border-gray-100 mb-5">
+                <Image
+                  src="/assets/images/founder.jpg"
+                  alt="Joshua Raymond Onifade"
+                  fill
+                  className="object-cover object-top"
+                  sizes="192px"
+                />
+              </div>
               <h3 className="text-2xl font-bold text-gray-900">Joshua Raymond Onifade</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">MD/CEO</p>
-              <p className="text-gray-600 text-sm mt-3 leading-relaxed">
+              <p className="text-gray-600 text-sm mt-3 leading-relaxed max-w-xs">
                 Leading the infrastructure revolution. Nearly 20 years in African structured finance, transforming how talent flows across continents.
               </p>
               <a
@@ -132,9 +158,18 @@ export default function AboutPage() {
 
             {/* Adedayo Setro A. */}
             <div className="flex flex-col items-center text-center">
+              <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-md border border-gray-100 mb-5">
+                <Image
+                  src="/assets/images/leader-setro.jpg"
+                  alt="Adedayo Setro A."
+                  fill
+                  className="object-cover object-top"
+                  sizes="192px"
+                />
+              </div>
               <h3 className="text-2xl font-bold text-gray-900">Adedayo Setro A.</h3>
               <p className="text-[#3B5BDB] font-semibold mt-2">DMD, DeepTalent Platform</p>
-              <p className="text-gray-600 text-sm mt-3 leading-relaxed">
+              <p className="text-gray-600 text-sm mt-3 leading-relaxed max-w-xs">
                 Scaling excellence. Dedicated to building systems that connect Africa&apos;s finest professionals with global opportunities.
               </p>
               <a
@@ -162,13 +197,36 @@ export default function AboutPage() {
               World-class talent shouldn&apos;t be limited by geography, and high-growth companies shouldn&apos;t have to choose between speed, cost, and quality.
             </p>
           </div>
-          <div className="prose prose-lg max-w-3xl mx-auto text-gray-700">
-            <p className="text-pretty">
-              We started by partnering with the most ambitious startups and scale-ups, helping them build remote-first teams in finance, engineering, data, and operations — deploying Africa&apos;s finest finance, technology, and compliance professionals into demanding global financial services environments.
-            </p>
-            <p className="mt-4 text-pretty">
-              Our approach is different. We don&apos;t just match resumes to job descriptions. We invest deeply in understanding your team, culture, and goals to make placements that last.
-            </p>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-12">
+            <div className="space-y-5 text-gray-700 leading-relaxed text-pretty text-[17px]">
+              <p>
+                We started by partnering with the most ambitious startups and scale-ups, helping them build remote-first teams in finance, engineering, data, and operations — deploying Africa&apos;s finest finance, technology, and compliance professionals into demanding global financial services environments.
+              </p>
+              <p>
+                Our approach is different. We don&apos;t just match resumes to job descriptions. We invest deeply in understanding your team, culture, and goals to make placements that last.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-md">
+                <Image
+                  src="/assets/images/about-img.png"
+                  alt="DeepTalent team at work"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 280px"
+                />
+              </div>
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-md mt-8">
+                <Image
+                  src="/assets/images/about-img-2.png"
+                  alt="DeepTalent professionals"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 280px"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
