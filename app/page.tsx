@@ -4,7 +4,7 @@ import {
   ArrowUpRight, Menu, X, Mail, Phone, MapPin,
   Instagram, Linkedin, HelpCircle, Plus, Minus,
   FileText, Users, ShieldCheck, ChevronRight,
-  Star, Globe, Zap, Check,
+  Star, Globe, Zap, Check, Paperclip, ArrowUp, Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -35,9 +35,11 @@ export default function Home() {
       <TrustedBy />
       <ServiceShowcase />
       <GlobeSection />
+      <LearningPartnerships />
       <HowItWorks />
       <WhyChooseUs />
       <StrategicAdvantages />
+      <HumanLayer />
       <TestimonialCarousel />
       <IndustryInsights />
       <FaqSection />
@@ -68,14 +70,16 @@ function Navbar() {
 
   return (
     <nav
-      className={`fixed top-4 left-1/2 z-50 w-[92%] max-w-7xl -translate-x-1/2 flex items-center justify-between rounded-2xl px-5 py-3 md:px-8 transition-all duration-300 ${
+      className={`fixed top-4 left-1/2 z-50 w-[92%] max-w-7xl -translate-x-1/2 flex items-center justify-between rounded-2xl px-5 py-3 md:px-8 transition-all duration-300 border border-white/20 ${
         scrolled
-          ? "bg-white/90 backdrop-blur-xl border border-gray-200 shadow-[0_8px_32px_rgba(17,24,39,0.08)]"
-          : "bg-white/70 backdrop-blur-md border border-gray-200/60"
+          ? "bg-[#3B5BDB]/90 backdrop-blur-xl shadow-[0_12px_40px_rgba(59,91,219,0.45)]"
+          : "bg-[#3B5BDB]/75 backdrop-blur-lg shadow-[0_8px_32px_rgba(59,91,219,0.30)]"
       }`}
     >
       <Link href="/" className="flex items-center gap-2">
-        <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-10 w-auto" />
+        <span className="inline-flex items-center rounded-xl bg-white px-2.5 py-1.5 shadow-[0_4px_14px_rgba(0,0,0,0.12)]">
+          <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-7 w-auto" />
+        </span>
       </Link>
 
       <div className="hidden md:flex items-center gap-1">
@@ -83,7 +87,7 @@ function Navbar() {
           <Link
             key={link.label}
             href={link.href}
-            className="px-4 py-2 text-gray-600 hover:text-[#3B5BDB] text-sm font-medium transition-colors"
+            className="px-4 py-2 text-white/85 hover:text-white text-sm font-medium transition-colors"
           >
             {link.label}
           </Link>
@@ -93,15 +97,20 @@ function Navbar() {
       <div className="flex items-center gap-3">
         <Link
           href="/auth/login"
-          className="hidden md:inline-flex h-9 px-5 items-center justify-center rounded-full border border-gray-300 bg-transparent text-gray-700 text-sm font-medium hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors"
+          className="hidden md:inline-flex h-9 px-5 items-center justify-center rounded-full border border-white/40 bg-transparent text-white text-sm font-medium hover:bg-white/10 transition-colors"
         >
           Login
         </Link>
-        <FluidCTA href="/companies/hire" size="sm">Hire Talent</FluidCTA>
+        <Link
+          href="/companies/hire"
+          className="inline-flex h-9 px-5 items-center justify-center rounded-full bg-white text-[#3B5BDB] text-sm font-semibold hover:bg-white/90 transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.15)]"
+        >
+          Hire Talent
+        </Link>
 
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+          className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -189,163 +198,208 @@ function FluidCTA({ href, children, size = "md", variant = "primary", className 
 }
 
 /* ════════════════════════════════════════════════════
-   HERO — Andela floating logos grid + centered text
+   LEARNING PARTNERSHIPS — platform logo matrix
 ═══════════════════════════════════════════════════════ */
 const GRID_COLS = 7;
 const GRID_ROWS = 5;
 
-const LOGO_MAP: Record<string, { src: string; name: string }> = {
-  "0-1": { src: "/icons/sterling-bank.svg", name: "Sterling Bank" },
-  "0-5": { src: "/icons/tulcan-energy.svg", name: "Tulcan Energy" },
-  "1-0": { src: "/icons/premium-trust.svg", name: "Premium Trust" },
-  "1-6": { src: "/icons/al-ahad.svg", name: "Al Ahad Group" },
-  "2-0": { src: "/icons/pro-win.svg", name: "ProWin" },
-  "2-6": { src: "/icons/omiomio-tv.svg", name: "Omiomio TV" },
-  "3-0": { src: "/icons/my-groud-crew.svg", name: "MyGround Crew" },
-  "3-6": { src: "/icons/sterling-bank.svg", name: "Sterling Bank" },
-  "4-1": { src: "/icons/al-ahad.svg", name: "Al Ahad" },
-  "4-5": { src: "/icons/premium-trust.svg", name: "Premium Trust" },
+const PLATFORM_LOGOS: Record<string, { src: string; name: string }> = {
+  "0-1": { src: "/icons/platforms/microsoft.svg", name: "Microsoft" },
+  "0-3": { src: "/icons/platforms/pytorch.svg", name: "PyTorch" },
+  "0-5": { src: "/icons/platforms/databricks.svg", name: "Databricks" },
+  "1-0": { src: "/icons/platforms/google.svg", name: "Google" },
+  "1-6": { src: "/icons/platforms/nvidia.svg", name: "NVIDIA" },
+  "2-0": { src: "/icons/platforms/kubernetes.svg", name: "Kubernetes" },
+  "2-6": { src: "/icons/platforms/aws.svg", name: "AWS" },
+  "3-0": { src: "/icons/platforms/huggingface.svg", name: "Hugging Face" },
+  "3-6": { src: "/icons/platforms/meta.svg", name: "Meta" },
+  "4-1": { src: "/icons/platforms/azure.svg", name: "Azure" },
+  "4-3": { src: "/icons/platforms/github.svg", name: "GitHub" },
+  "4-5": { src: "/icons/platforms/tensorflow.svg", name: "TensorFlow" },
 };
 
-/* Center block (cols 2–4, rows 1–3) left clear for headline. */
+/* Center block (cols 2–4, rows 1–3) left clear for the headline. */
 function isTextZone(r: number, c: number) {
   return c >= 2 && c <= 4 && r >= 1 && r <= 3;
 }
 
-function HeroLogoGrid() {
+function LearningPartnerships() {
   const cells = Array.from({ length: GRID_COLS * GRID_ROWS });
+  const logoList = Object.values(PLATFORM_LOGOS);
 
   return (
-    <div
-      className="absolute inset-0 hidden md:block pointer-events-none overflow-hidden"
-      aria-hidden="true"
-    >
-      <div
-        className="grid h-full w-full gap-3 lg:gap-5 p-6 lg:p-12"
-        style={{
-          gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-          gridTemplateRows: `repeat(${GRID_ROWS}, minmax(0, 1fr))`,
-        }}
-      >
-        {cells.map((_, i) => {
-          const r = Math.floor(i / GRID_COLS);
-          const c = i % GRID_COLS;
-          if (isTextZone(r, c)) return <div key={i} />;
+    <section className="relative bg-[#F9FAFB] border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12 overflow-hidden">
+      {/* Desktop: floating logo matrix with centered text */}
+      <div className="hidden md:block relative max-w-6xl mx-auto h-[560px]">
+        <div
+          className="grid h-full w-full gap-4 lg:gap-6"
+          style={{
+            gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
+            gridTemplateRows: `repeat(${GRID_ROWS}, minmax(0, 1fr))`,
+          }}
+        >
+          {cells.map((_, i) => {
+            const r = Math.floor(i / GRID_COLS);
+            const c = i % GRID_COLS;
+            if (isTextZone(r, c)) return <div key={i} />;
 
-          const logo = LOGO_MAP[`${r}-${c}`];
-          const delay = (r + c) * 0.05;
+            const logo = PLATFORM_LOGOS[`${r}-${c}`];
+            const delay = (r + c) * 0.05;
 
-          if (logo) {
+            if (logo) {
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.8, y: 12 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex items-center justify-center"
+                >
+                  <div className="float-y size-16 lg:size-20 rounded-2xl bg-white flex items-center justify-center p-3.5 border border-gray-200 shadow-[0_10px_30px_rgba(17,24,39,0.08)]">
+                    <img
+                      src={logo.src}
+                      alt={logo.name}
+                      className="max-h-full max-w-full w-auto h-auto object-contain"
+                    />
+                  </div>
+                </motion.div>
+              );
+            }
+
             return (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, scale: 0.8, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay }}
                 className="flex items-center justify-center"
               >
-                <div className="float-y size-16 lg:size-20 rounded-2xl bg-white flex items-center justify-center p-3 border border-gray-200 shadow-[0_10px_30px_rgba(17,24,39,0.08)]">
-                  <img
-                    src={logo.src}
-                    alt={logo.name}
-                    className="max-h-full max-w-full w-auto h-auto object-contain"
-                  />
-                </div>
+                <div className="size-16 lg:size-20 rounded-2xl border border-gray-100 bg-gray-100/60" />
               </motion.div>
             );
-          }
+          })}
+        </div>
 
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay }}
-              className="flex items-center justify-center"
-            >
-              <div className="size-16 lg:size-20 rounded-2xl border border-gray-100 bg-gray-50/70" />
-            </motion.div>
-          );
-        })}
+        {/* radial fade so the centered copy stays readable */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 42% 52% at 50% 50%, #F9FAFB 0%, #F9FAFB 42%, rgba(249,250,251,0.75) 62%, transparent 80%)",
+          }}
+        />
+
+        {/* centered text */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
+        >
+          <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Learning Partnerships</p>
+          <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-snug max-w-md text-balance mb-6">
+            DeepTalent engineers are continuously trained on the platforms powering modern AI.
+          </h2>
+          <Link
+            href="/talents"
+            className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[#111827] text-white text-sm font-semibold hover:bg-[#1f2937] transition-colors shadow-lg"
+          >
+            Learn more
+          </Link>
+        </motion.div>
       </div>
 
-      {/* radial fade so the centered headline stays readable */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 48% 54% at 50% 46%, #ffffff 0%, #ffffff 40%, rgba(255,255,255,0.75) 62%, transparent 80%)",
-        }}
-      />
-    </div>
+      {/* Mobile: text + wrapped logos */}
+      <div className="md:hidden max-w-md mx-auto text-center">
+        <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Learning Partnerships</p>
+        <h2 className="text-2xl font-bold text-gray-900 leading-snug text-balance mb-6">
+          DeepTalent engineers are continuously trained on the platforms powering modern AI.
+        </h2>
+        <div className="flex flex-wrap justify-center gap-3 mb-6">
+          {logoList.map((logo) => (
+            <div key={logo.name} className="size-14 rounded-2xl bg-white flex items-center justify-center p-3 border border-gray-200 shadow-[0_6px_20px_rgba(17,24,39,0.06)]">
+              <img src={logo.src} alt={logo.name} className="max-h-full max-w-full w-auto h-auto object-contain" />
+            </div>
+          ))}
+        </div>
+        <Link href="/talents" className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[#111827] text-white text-sm font-semibold shadow-lg">Learn more</Link>
+      </div>
+    </section>
   );
 }
 
 function Hero() {
   return (
-    <section className="relative min-h-[100svh] flex flex-col items-center justify-center pt-24 pb-20 px-4 overflow-hidden bg-white">
-      {/* soft brand glow */}
-      <div className="pointer-events-none absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#3B5BDB]/5 blur-[120px]" aria-hidden="true" />
-      <div className="pointer-events-none absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-[#8690FD]/5 blur-[100px]" aria-hidden="true" />
+    <section className="relative min-h-[720px] md:min-h-[820px] overflow-hidden bg-gradient-to-br from-[#8690FD] to-[#3B5BDB] pt-36 md:pt-44 pb-20 px-4 md:px-8 lg:px-12">
+      {/* 3D illustration sits in the background, behind the text layer */}
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 sm:-bottom-24 md:-bottom-48 lg:-bottom-80 z-0"
+        aria-hidden="true"
+      >
+        <Image
+          src="/images/hero-img.png"
+          alt=""
+          width={1200}
+          height={600}
+          className="w-full object-cover opacity-90"
+          priority
+        />
+      </motion.div>
 
-      <HeroLogoGrid />
+      {/* Soft gradient veil to lift text contrast over the illustration */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#3B5BDB]/40 via-[#3B5BDB]/15 to-transparent"
+        aria-hidden="true"
+      />
 
       <motion.div
-        className="relative z-10 text-center max-w-3xl mx-auto"
+        className="relative z-10 max-w-7xl mx-auto"
         initial="hidden"
         animate="visible"
-        variants={staggerContainer(0.14, 0.2)}
+        variants={staggerContainer(0.15, 0.1)}
       >
-        <motion.div variants={fadeInUp()} className="mb-5">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#3B5BDB]/20 bg-[#3B5BDB]/8 text-[#3B5BDB] text-xs font-semibold tracking-widest uppercase">
-            <span className="size-1.5 rounded-full bg-[#3B5BDB] animate-pulse" />
+        <div className="flex flex-col gap-5 md:gap-6 max-w-2xl">
+          <motion.h1
+            variants={fadeInUp()}
+            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.1] text-balance"
+            style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", letterSpacing: "-0.01em" }}
+          >
             Cross-Border Talent Infrastructure
-          </span>
-        </motion.div>
+          </motion.h1>
 
-        <motion.h1
-          variants={fadeInUp()}
-          className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.05] text-balance mb-6"
-        >
-          The World&apos;s Best Talent.{" "}
-          <span className="text-[#3B5BDB]">Anywhere You Need It.</span>
-        </motion.h1>
+          <motion.p
+            variants={fadeInUp()}
+            className="text-lg md:text-xl text-white/90 max-w-xl leading-relaxed text-pretty"
+          >
+            Connect with accredited and vetted experts in{" "}
+            <span className="font-semibold text-white">finance</span>,{" "}
+            <span className="font-semibold text-white">technology</span> and more—all in one trusted global infrastructure.
+          </motion.p>
 
-        <motion.p
-          variants={fadeInUp()}
-          className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed text-pretty mb-8"
-        >
-          Connect with AI-vetted experts in{" "}
-          <span className="text-gray-900 font-semibold">finance</span>,{" "}
-          <span className="text-gray-900 font-semibold">technology</span>, and{" "}
-          <span className="text-gray-900 font-semibold">operations</span>—
-          placed within 14–21 days. Fewer than 8% of applicants make the cut.
-        </motion.p>
-
-        <motion.div variants={fadeInUp()} className="flex flex-wrap gap-3 justify-center">
-          <FluidCTA href="/companies/hire" size="lg">
-            Start Hiring
-          </FluidCTA>
-          <FluidCTA href="#howItWorks" size="lg" variant="outline">
-            How it Works
-          </FluidCTA>
-        </motion.div>
-
-        <motion.div
-          variants={fadeInUp()}
-          className="mt-14 grid grid-cols-3 gap-6 max-w-lg mx-auto"
-        >
-          {[
-            { value: "<8%", label: "Acceptance rate" },
-            { value: "14–21d", label: "Time to hire" },
-            { value: "50+", label: "Countries served" },
-          ].map((stat) => (
-            <div key={stat.value} className="text-center">
-              <p className="text-2xl md:text-3xl font-extrabold text-[#3B5BDB]">{stat.value}</p>
-              <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
-            </div>
-          ))}
-        </motion.div>
+          <motion.div
+            variants={fadeInUp()}
+            className="flex flex-wrap gap-3 md:gap-4 pt-2"
+          >
+            <Link
+              href="/auth/sign-up"
+              className="inline-flex items-center h-11 px-6 md:px-8 rounded-full bg-white text-[#3B5BDB] font-semibold hover:bg-white/95 hover:scale-105 transition-all shadow-lg"
+            >
+              Join DeepTalent
+            </Link>
+            <a
+              href="#howItWorks"
+              className="inline-flex items-center gap-2 h-11 px-6 md:px-8 rounded-full bg-white/10 backdrop-blur-sm border border-white/40 text-white font-semibold hover:bg-white/20 hover:scale-105 transition-all"
+            >
+              How it Works <ArrowUpRight className="size-4" />
+            </a>
+          </motion.div>
+        </div>
       </motion.div>
     </section>
   );
@@ -1211,6 +1265,174 @@ function StrategicAdvantages() {
           <FluidCTA href="/talents" size="lg" variant="outline">View Talent Pool</FluidCTA>
         </div>
       </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   HUMAN LAYER — human expertise behind production AI
+═══════════════════════════════════════════════════════ */
+function HumanLayer() {
+  const floatCard = (delay: number) => ({
+    initial: { opacity: 0, y: 24, scale: 0.95 },
+    whileInView: { opacity: 1, y: 0, scale: 1 },
+    viewport: { once: true, margin: "-60px" },
+    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
+  });
+
+  const platformPills = [
+    { src: "/icons/platforms/pytorch.svg", name: "PyTorch" },
+    { src: "/icons/platforms/huggingface.svg", name: "Hugging Face" },
+    { src: "/icons/platforms/tensorflow.svg", name: "TensorFlow" },
+  ];
+
+  return (
+    <section className="relative bg-white py-20 md:py-28 px-4 md:px-8 lg:px-12 overflow-hidden border-t border-gray-200">
+      <div className="max-w-5xl mx-auto text-center">
+        {/* Headline */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 tracking-tight leading-[1.02] text-balance"
+        >
+          The Human Layer
+          <span className="block italic text-[#3B5BDB]">Powering Production AI</span>
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-6 text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed text-pretty"
+        >
+          DeepTalent provides the human expertise layer behind modern AI systems — training models, deploying AI-native engineers, and upskilling the teams that build them.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
+        >
+          {["Train & build AI systems", "Deploy AI-native engineers", "Upskill your workforce for AI"].map((item) => (
+            <span key={item} className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-gray-800">
+              <Check className="size-4 text-[#3B5BDB]" />
+              {item}
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Composition */}
+      <div className="relative max-w-5xl mx-auto mt-16 h-[560px] sm:h-[520px]">
+        {/* Central engineer card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute left-1/2 top-4 -translate-x-1/2 w-[280px] sm:w-[420px] md:w-[520px] h-[380px] sm:h-[420px] rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(59,91,219,0.25)]"
+        >
+          <Image src="/images/software-dev.jpg" alt="DeepTalent machine learning engineer" fill className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#3B5BDB]/50 via-transparent to-[#3B5BDB]/10" />
+
+          {/* candidate match tag */}
+          <motion.div {...floatCard(0.3)} className="absolute top-4 left-4 rounded-xl bg-white/95 backdrop-blur-sm px-4 py-3 shadow-lg">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-gray-900">Adaeze O.</span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-[#3B5BDB]/10 px-2 py-0.5 text-[10px] font-semibold text-[#3B5BDB]">
+                <span className="size-1.5 rounded-full bg-[#3B5BDB]" /> 100% Match
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mt-0.5">Machine Learning Engineer</p>
+          </motion.div>
+
+          {/* platform pills along the bottom */}
+          <div className="absolute bottom-4 left-0 right-0 flex items-center justify-between px-4">
+            <motion.div {...floatCard(0.5)} className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 shadow-md">
+              <img src={platformPills[0].src} alt={platformPills[0].name} className="size-4 object-contain" />
+              <span className="text-xs font-semibold text-gray-800">{platformPills[0].name}</span>
+            </motion.div>
+            <motion.div {...floatCard(0.6)} className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 shadow-md">
+              <img src={platformPills[2].src} alt={platformPills[2].name} className="size-4 object-contain" />
+              <span className="text-xs font-semibold text-gray-800">{platformPills[2].name}</span>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* AI Training Course card (left) */}
+        <motion.div {...floatCard(0.4)} className="absolute left-0 bottom-6 sm:bottom-16 w-[240px] rounded-2xl border border-gray-200 bg-white p-5 shadow-[0_20px_50px_rgba(17,24,39,0.12)] float-y">
+          <p className="text-sm font-bold text-gray-900 mb-4">AI Training Course</p>
+          {[
+            { label: "Prompt engineering", value: 100 },
+            { label: "Agent orchestration", value: 76 },
+          ].map((bar) => (
+            <div key={bar.label} className="mb-3 last:mb-0">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs text-gray-600">{bar.label}</span>
+                <span className="text-xs font-semibold text-gray-900">{bar.value}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${bar.value}%` }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
+                  className="h-full rounded-full bg-[#3B5BDB]"
+                />
+              </div>
+            </div>
+          ))}
+          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#3B5BDB] px-3 py-1.5 text-xs font-semibold text-white shadow">
+            <Sparkles className="size-3" /> Reskill internal teams
+          </span>
+        </motion.div>
+
+        {/* Revenue Ops Agent card (right) */}
+        <motion.div {...floatCard(0.55)} className="absolute right-0 top-10 sm:top-20 w-[250px] rounded-2xl border border-gray-200 bg-white p-4 shadow-[0_20px_50px_rgba(17,24,39,0.12)] float-y">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex size-5 items-center justify-center rounded-full bg-[#3B5BDB]/10">
+              <Sparkles className="size-3 text-[#3B5BDB]" />
+            </span>
+            <span className="text-sm font-semibold text-gray-900">Revenue Ops Agent</span>
+          </div>
+          <div className="rounded-xl border border-gray-200 p-3">
+            <div className="flex items-center gap-2">
+              <Paperclip className="size-4 text-gray-400 shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-gray-900 truncate">H2 Churn Forecasting</p>
+                <p className="text-[10px] text-gray-400">CSV · 1.43 KB</p>
+              </div>
+            </div>
+            <div className="mt-3 flex items-center gap-2">
+              <div className="h-6 flex-1 rounded-md border border-gray-200" />
+              <span className="inline-flex size-6 items-center justify-center rounded-full bg-gray-100">
+                <ArrowUp className="size-3.5 text-gray-500" />
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* CTAs */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="mt-4 flex flex-wrap items-center justify-center gap-3"
+      >
+        <Link href="/contact" className="inline-flex items-center h-12 px-8 rounded-full bg-[#111827] text-white text-sm font-semibold hover:bg-[#1f2937] transition-colors shadow-lg">
+          Book a discovery call
+        </Link>
+        <Link href="/companies/hire" className="inline-flex items-center h-12 px-8 rounded-full border border-gray-300 bg-white text-gray-800 text-sm font-semibold hover:border-[#3B5BDB] hover:text-[#3B5BDB] transition-colors">
+          Take AI Maturity Assessment
+        </Link>
+      </motion.div>
     </section>
   );
 }

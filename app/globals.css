@@ -7,6 +7,7 @@
 
 @theme inline {
   --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif), Georgia, "Times New Roman", serif;
   /* ── DeepTalent brand palette (light) ── */
   --color-primary: #3B5BDB;
   --color-primary-foreground: #FFFFFF;
