@@ -100,13 +100,7 @@ export default function AboutPage() {
                   For close to 20 years, I operated in African structured finance — leading transactions across oil &amp; gas, real estate, corporate banking, and infrastructure worth over $2 billion collectively. I structured petroleum trading lines for several energy companies during Nigeria&apos;s most turbulent market conditions and was an active observer of the syndicate that financed the $2 billion acquisition of Shell&apos;s 40% stake in one of the OMLs — one of the most significant upstream energy transactions in Nigerian history.
                 </p>
 
-                {/* Chapter Two — DeepTalent Platform sub-section */}
                 <div className="mt-8 mb-2 rounded-2xl border border-[#3B5BDB]/15 bg-[#3B5BDB]/[0.04] p-6 md:p-7">
-                  <div className="mb-3">
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 leading-tight">
-                      DeepTalent Platform
-                    </h3>
-                  </div>
                   <p className="text-gray-700 leading-relaxed text-pretty">
                     The workforce infrastructure I am building to deploy Africa&apos;s finest finance, technology, and compliance professionals into demanding global financial services environments. Not a staffing agency or a job board. Infrastructure that changes how talent and opportunity flow between continents.
                   </p>
