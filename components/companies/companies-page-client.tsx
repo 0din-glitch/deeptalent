@@ -531,8 +531,8 @@ function OptimizeHiring() {
 
   return (
     <section className="relative bg-white">
-      <div ref={containerRef} style={{ height: `${steps.length * 60}vh` }} className="relative">
-        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center px-4 py-24">
+      <div ref={containerRef} style={{ height: `${steps.length * 42}vh` }} className="relative">
+        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center px-4 py-20">
           <div className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
             {/* Left: heading + scroll accordion */}
             <div>
