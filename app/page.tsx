@@ -25,6 +25,19 @@ const C = {
   soft: "#F9FAFB",
 } as const;
 
+/* ─── responsive helper: true at lg (1024px) and up ─── */
+function useIsDesktop(breakpoint = 1024) {
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${breakpoint}px)`);
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [breakpoint]);
+  return isDesktop;
+}
+
 /* ════════════════════════════════════════════════════
    ROOT
 ═══════════════════════════════════════════════════════ */
@@ -460,9 +473,10 @@ interface ServiceData {
 }
 
 function ServiceShowcase() {
+  const isDesktop = useIsDesktop();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: isDesktop ? containerRef : undefined,
     offset: ["start start", "end end"],
   });
 
@@ -522,6 +536,62 @@ function ServiceShowcase() {
   }, [scrollYProgress, services.length]);
 
   const activeService = services[activeIndex];
+
+  /* ── Mobile / tablet: clean stacked layout (no scroll-pinning) ── */
+  if (!isDesktop) {
+    return (
+      <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200 py-16 px-4">
+        <div className="max-w-xl mx-auto">
+          <div className="mb-8">
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Our Capabilities</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-[1.1] text-gray-900">
+              Every Discipline.<br />
+              <span className="text-[#3B5BDB]">One Platform.</span>
+            </h2>
+            <p className="text-gray-500 text-base mt-3 leading-relaxed">
+              DeepTalent connects you with pre-vetted specialists ready to integrate into your workflow immediately.
+            </p>
+          </div>
+
+          <div className="space-y-5">
+            {services.map((service, i) => (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.4 }}
+                className="rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-sm"
+              >
+                <div className="relative h-40 bg-[#3B5BDB]/5 flex items-center justify-center">
+                  <Image src={service.illustration} alt={service.title} width={240} height={240} className="max-h-full w-auto object-contain p-6" />
+                  <span className="absolute top-4 left-4 font-mono text-xs font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
+                    0{i + 1} / 0{services.length}
+                  </span>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold tracking-tight mb-2 text-gray-900">{service.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed mb-4">{service.description}</p>
+                  <ul className="grid grid-cols-1 gap-2">
+                    {service.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 text-sm text-gray-700">
+                        <Check className="mt-0.5 size-4 shrink-0 text-[#3B5BDB]" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <FluidCTA href="/companies/hire" size="md">Hire a Specialist</FluidCTA>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200">
@@ -752,7 +822,17 @@ function GlobeSection() {
         if (scale > 0.65 && z > r * 0.2) {
           ctx.font = `bold ${Math.round(11 * scale)}px Inter, sans-serif`;
           ctx.fillStyle = `rgba(17,24,39,${0.8 * scale})`;
-          ctx.fillText(label, x + 7 * scale, y - 4 * scale);
+          const pad = 8;
+          const tw = ctx.measureText(label).width;
+          const rightX = x + 7 * scale;
+          if (rightX + tw > W - pad) {
+            // near the right edge — draw label to the left of the dot so it stays in view
+            ctx.textAlign = "right";
+            ctx.fillText(label, x - 7 * scale, y - 4 * scale);
+            ctx.textAlign = "left";
+          } else {
+            ctx.fillText(label, rightX, y - 4 * scale);
+          }
         }
       });
 
@@ -869,8 +949,9 @@ function HowItWorks() {
     { id: "step-4", n: "04", title: "Onboard & Scale", description: "We handle contracting, payroll, and compliance. Your specialist integrates into your stack from day one.", icon: Zap, image: "/images/illustration-72-hrs.png" },
   ];
 
+  const isDesktop = useIsDesktop();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const { scrollYProgress } = useScroll({ target: isDesktop ? containerRef : undefined, offset: ["start start", "end end"] });
   const [activeCard, setActiveCard] = useState(0);
 
   useEffect(() => {
@@ -880,6 +961,54 @@ function HowItWorks() {
     });
     return () => unsubscribe();
   }, [scrollYProgress, steps.length]);
+
+  /* ── Mobile / tablet: clean stacked step list ── */
+  if (!isDesktop) {
+    return (
+      <section id="howItWorks" className="relative bg-[#F9FAFB] border-t border-gray-200 py-16 px-4">
+        <div className="max-w-xl mx-auto">
+          <div className="text-center mb-8">
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Process</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
+              From Brief to Billable in <span className="text-[#3B5BDB]">4 Steps</span>
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            {steps.map((item) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.4 }}
+                  className="rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-sm"
+                >
+                  <div className="relative h-40 overflow-hidden bg-[#3B5BDB]/5">
+                    <Image src={item.image} alt={item.title} fill className="object-contain p-6" />
+                    <div className="absolute top-4 left-4 size-10 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
+                      <Icon className="size-5 text-white" />
+                    </div>
+                    <span className="absolute top-4 right-4 font-mono text-3xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="mt-8">
+            <FluidCTA href="/companies/hire" size="md">Start Hiring on DeepTalent</FluidCTA>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="howItWorks" className="relative bg-[#F9FAFB] border-t border-gray-200">
@@ -992,8 +1121,9 @@ function WhyChooseUs() {
     { id: "4", title: "Expertise Over Overhead", description: "Engage high-value talent on flexible contracts, maximizing ROI without the cost of full-time payroll.", image: "/images/expertise-overhead.png", stat: "60%", statLabel: "Avg. cost saving" },
   ];
 
+  const isDesktop = useIsDesktop();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const { scrollYProgress } = useScroll({ target: isDesktop ? containerRef : undefined, offset: ["start start", "end end"] });
   const [activeCard, setActiveCard] = useState(0);
 
   useEffect(() => {
@@ -1003,6 +1133,58 @@ function WhyChooseUs() {
     });
     return () => unsubscribe();
   }, [scrollYProgress, reasons.length]);
+
+  /* ── Mobile / tablet: clean stacked reason list ── */
+  if (!isDesktop) {
+    return (
+      <section className="relative bg-white border-t border-gray-200 py-16 px-4">
+        <div className="max-w-xl mx-auto">
+          <div className="mb-8">
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
+              Why Businesses Choose<br />
+              <span className="text-[#3B5BDB]">DeepTalent Platform</span>
+            </h2>
+            <p className="text-gray-500 text-base leading-relaxed">
+              Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
+            </p>
+          </div>
+
+          <div className="space-y-5">
+            {reasons.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.4 }}
+                className="rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-sm"
+              >
+                <div className="relative h-40 overflow-hidden">
+                  <Image src={item.image} alt={item.title} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
+                      <span className="text-xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
+                      <span className="text-xs text-gray-600">{item.statLabel}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <FluidCTA href="/companies/hire" size="md">Start Hiring on DeepTalent</FluidCTA>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative bg-white border-t border-gray-200">
@@ -1119,8 +1301,9 @@ function StrategicAdvantages() {
     { title: "Invoice in Your Currency", description: "Pay in USD, GBP, EUR, AUD, CAD, and more. We consolidate all your talent into one monthly invoice in your preferred currency and absorb the FX complexity so your finance team never has to think about it.", image: "/images/global-compliance.png" },
   ];
 
+  const isDesktop = useIsDesktop();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
+  const { scrollYProgress } = useScroll({ target: isDesktop ? containerRef : undefined, offset: ["start start", "end end"] });
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -1130,6 +1313,51 @@ function StrategicAdvantages() {
     });
     return () => unsubscribe();
   }, [scrollYProgress, advantages.length]);
+
+  /* ── Mobile / tablet: clean stacked advantage list ── */
+  if (!isDesktop) {
+    return (
+      <section className="relative bg-[#F9FAFB] border-t border-gray-200 py-16 px-4">
+        <div className="max-w-xl mx-auto">
+          <div className="text-center mb-8">
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">The Advantage</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
+              The DeepTalent <span className="text-[#3B5BDB]">Advantage</span>
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            {advantages.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.4 }}
+                className="rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-sm"
+              >
+                <div className="relative h-40 bg-[#F9FAFB] flex items-center justify-center border-b border-gray-200">
+                  <Image src={item.image} alt={item.title} width={240} height={240} className="max-h-full w-auto object-contain p-6" />
+                  <span className="absolute top-4 left-4 font-mono text-xs font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
+                    0{i + 1} / 0{advantages.length}
+                  </span>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">{item.title}</h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3">
+            <FluidCTA href="/companies/hire" size="lg">Start Hiring on DeepTalent</FluidCTA>
+            <FluidCTA href="/talents" size="lg" variant="outline">View Talent Pool</FluidCTA>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative bg-[#F9FAFB] border-t border-gray-200">

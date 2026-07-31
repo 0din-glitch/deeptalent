@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
-import { useState } from "react";
+import { motion, AnimatePresence, useScroll } from "motion/react";
+import { useState, useRef, useEffect } from "react";
 import {
   Check,
   Download,
@@ -13,17 +13,24 @@ import {
   Search,
   Scale,
   BarChart3,
-  Handshake,
-  GitBranch,
   BrainCircuit,
   CalendarClock,
   FolderKanban,
   ArrowRight,
-  Quote,
   TrendingUp,
   Globe,
   Award,
   Rocket,
+  Zap,
+  Share2,
+  QrCode,
+  Copy,
+  Smile,
+  Clock,
+  Bell,
+  AlertTriangle,
+  FileText,
+  ChevronRight,
 } from "lucide-react";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { FluidCTA } from "@/components/site/fluid-cta";
@@ -35,8 +42,10 @@ export function CompaniesPageClient() {
       <Hero />
       <ProblemStatement />
       <OurSolutions />
+      <OptimizeHiring />
       <TrustedPlatform />
       <PowerfulTools />
+      <WorkforceVisibility />
       <GrowthPillars />
       <CustomizedAnswers />
       <RetentionMetric />
@@ -397,33 +406,31 @@ function ProblemStatement() {
           </div>
         </div>
 
-        {/* Blue geometric panel */}
-        <div className="relative hidden h-[420px] overflow-hidden rounded-[28px] bg-[#3B5BDB] lg:block">
-          <GeometricLogoPattern />
+        {/* Blue panel with DeepTalent logo */}
+        <div className="relative hidden h-[420px] items-center justify-center overflow-hidden rounded-[28px] bg-[#3B5BDB] lg:flex">
+          {/* soft radial glow */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-40"
+            style={{ backgroundImage: "radial-gradient(circle at 50% 45%, rgba(255,255,255,0.35) 0%, transparent 55%)" }}
+          />
+          {/* concentric rings */}
+          <div aria-hidden className="absolute left-1/2 top-[42%] size-[120%] -translate-x-1/2 -translate-y-1/2">
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/15"
+                style={{ width: `${30 + i * 22}%`, height: `${30 + i * 22}%` }}
+              />
+            ))}
+          </div>
+          {/* logo lockup card */}
+          <div className="relative z-10 rounded-2xl bg-white px-10 py-8 shadow-2xl">
+            <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-14 w-auto" />
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function GeometricLogoPattern() {
-  return (
-    <svg aria-hidden viewBox="0 0 400 400" className="absolute right-0 top-1/2 h-[120%] w-auto -translate-y-1/2 opacity-90">
-      <g fill="#fff" fillOpacity="0.9">
-        <path d="M210 60 h40 v70 l-40 40 v-40 l-40 -40 v-30 z" opacity="0.25" />
-      </g>
-      {/* Big stylized "D" chevrons */}
-      <g stroke="#ffffff" strokeOpacity="0.35" strokeWidth="2" fill="none">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <path key={i} d={`M${120 + i * 24} 90 q60 110 0 220`} />
-        ))}
-      </g>
-      <path
-        d="M250 110 h70 v40 h-40 v100 h40 v40 h-70 z"
-        fill="#ffffff"
-        fillOpacity="0.95"
-      />
-    </svg>
   );
 }
 
@@ -482,6 +489,187 @@ function OurSolutions() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   3b. OPTIMIZE HIRING — HireRight (scroll-driven accordion list + gradient card)
+   ───────────────────────────────────────────────────────────────────────── */
+
+function OptimizeHiring() {
+  const steps = [
+    {
+      icon: Zap,
+      title: "AI-driven, lightning-fast job brief creation",
+      desc: "Describe the role in plain language and our AI drafts a complete, bias-checked job brief with skills, seniority, and salary band in seconds.",
+    },
+    {
+      icon: Share2,
+      title: "Effortless job sharing, increased exposure",
+      desc: "Publish and share your role across social channels or inside your org in one click — enhanced visibility gets your brief in front of the right specialists faster.",
+    },
+    {
+      icon: FolderKanban,
+      title: "AI-driven Applicant Tracking System (ATS)",
+      desc: "Every applicant is auto-scored, ranked, and moved through a clean pipeline — from shortlist to signed offer — so nothing slips through the cracks.",
+    },
+  ];
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const unsub = scrollYProgress.on("change", (v) => {
+      setActive(Math.min(Math.floor(v * steps.length * 0.999), steps.length - 1));
+    });
+    return () => unsub();
+  }, [scrollYProgress, steps.length]);
+
+  return (
+    <section className="relative bg-white">
+      <div ref={containerRef} style={{ height: `${steps.length * 28}vh` }} className="relative">
+        <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center px-4 py-16">
+          <div className="mx-auto grid w-full max-w-6xl gap-12 lg:grid-cols-2 lg:items-center">
+            {/* Left: heading + scroll accordion */}
+            <div>
+              <img src="/images/logo-wordmark.png" alt="DeepTalent" className="mb-8 h-9 w-auto" />
+              <div className="space-y-1">
+                {steps.map((s, i) => {
+                  const on = i === active;
+                  return (
+                    <button
+                      key={s.title}
+                      onClick={() => setActive(i)}
+                      className="block w-full border-t border-gray-200 py-5 text-left last:border-b"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`grid size-9 shrink-0 place-items-center rounded-lg transition-colors ${
+                            on ? "bg-[#3B5BDB] text-white" : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          <s.icon className="size-4.5" />
+                        </div>
+                        <div className="flex-1">
+                          <h3
+                            className={`text-base font-bold transition-colors ${
+                              on ? "text-[#3B5BDB]" : "text-gray-900"
+                            }`}
+                          >
+                            {s.title}
+                          </h3>
+                          <AnimatePresence initial={false}>
+                            {on && (
+                              <motion.p
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="overflow-hidden text-sm leading-relaxed text-gray-500"
+                              >
+                                <span className="block pt-2">{s.desc}</span>
+                              </motion.p>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right: heading + checks + gradient mock card */}
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+                Optimize hiring with AI
+                <br />
+                <span className="text-gray-400">from job brief to shortlist</span>
+              </h2>
+              <div className="mt-5 flex flex-wrap gap-x-8 gap-y-2">
+                <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <Check className="size-4 text-[#3B5BDB]" /> 100% vetted candidates
+                </span>
+                <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <Check className="size-4 text-[#3B5BDB]" /> 60% time saved on hiring
+                </span>
+              </div>
+
+              <div className="mt-8 rounded-3xl bg-gradient-to-br from-[#3B5BDB] via-[#5b74e6] to-[#8690FD] p-5 md:p-6">
+                <div className="grid gap-4 sm:grid-cols-[1.3fr_1fr]">
+                  <ShareJobMock />
+                  <TalentVizMock />
+                </div>
+              </div>
+
+              <div className="mt-8">
+                <FluidCTA href="/companies/hire" size="lg">Start hiring with AI</FluidCTA>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ShareJobMock() {
+  return (
+    <div className="space-y-3">
+      {/* share bar */}
+      <div className="rounded-xl bg-white p-3 shadow-lg">
+        <div className="flex items-center gap-2 rounded-lg bg-gray-50 px-2.5 py-1.5">
+          <Share2 className="size-3.5 text-gray-400" />
+          <span className="flex-1 truncate text-[11px] text-gray-400">deeptalent.io/roles/share...</span>
+          <span className="flex items-center gap-1 rounded-md bg-white px-2 py-1 text-[10px] font-semibold text-gray-600 shadow-sm">
+            <Copy className="size-3" /> Copy
+          </span>
+        </div>
+        <div className="mt-2 flex gap-1.5">
+          <span className="rounded-md bg-[#3B5BDB] px-2 py-1 text-[10px] font-semibold text-white">Facebook</span>
+          <span className="rounded-md bg-gray-900 px-2 py-1 text-[10px] font-semibold text-white">X</span>
+          <span className="rounded-md bg-[#0a66c2] px-2 py-1 text-[10px] font-semibold text-white">LinkedIn</span>
+        </div>
+      </div>
+      {/* job card */}
+      <div className="rounded-xl bg-white p-3 shadow-lg">
+        <div className="flex items-center gap-2">
+          <img src="/images/consulting/pro-3.png" alt="" className="size-6 rounded-full object-cover" />
+          <span className="text-[11px] font-semibold text-gray-700">Esther Howard</span>
+          <span className="ml-auto text-[10px] text-gray-400">May 9</span>
+        </div>
+        <p className="mt-2 text-xs font-bold text-gray-900">Backend Engineer (Fintech)</p>
+        <p className="text-[10px] text-gray-400">Remote · Full-time · $80K–$110K/yr</p>
+        <div className="mt-2 flex gap-1.5">
+          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[9px] font-medium text-gray-500">Node.js</span>
+          <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[9px] font-medium text-gray-500">React</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TalentVizMock() {
+  return (
+    <div className="flex flex-col rounded-xl bg-[#2c47b8] p-3 text-center shadow-lg">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-semibold text-white/80">DeepTalent</span>
+        <span className="text-[8px] font-semibold uppercase tracking-wide text-white/40">Powered by AI</span>
+      </div>
+      <p className="mt-3 text-sm font-bold text-white">TalentViz</p>
+      <p className="text-[9px] text-white/60">Candidate recommendation</p>
+      <div className="mt-3 rounded-lg bg-white p-3">
+        <p className="text-[10px] font-semibold text-gray-700">Submit your application</p>
+        <p className="mb-2 mt-0.5 text-[8px] text-gray-400">Scan QR code</p>
+        <div className="mx-auto grid size-16 place-items-center rounded-md bg-gray-900">
+          <QrCode className="size-12 text-white" />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -629,6 +817,209 @@ function PowerfulTools() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   5b. WORKFORCE VISIBILITY — WorkViz (productivity feature rows w/ mock cards)
+   ───────────────────────────────────────────────────────────────────────── */
+
+function WorkforceVisibility() {
+  const rows = [
+    {
+      title: "Daily report of every specialist",
+      desc: "Detailed analysis of each remote hire's day-to-day activity — performance indicators, total working hours, daily efficiency, task logs, and work reports, all in one place.",
+      tags: ["Insight Report", "Task Overview", "Work Logs"],
+      mock: <DailyReportMock />,
+      reverse: false,
+    },
+    {
+      title: "Emoji feedback",
+      desc: "Your team can use emojis to express emotions or stress levels — an intuitive, interactive way to surface how remote members really feel at work before it becomes a problem.",
+      tags: ["Emoji Icon", "Emotion Quote"],
+      mock: <EmojiFeedbackMock />,
+      reverse: true,
+    },
+    {
+      title: "Record of time distribution",
+      desc: "Track and estimate how time is spent across projects and issue types, with an active-time summary and per-project distribution for every specialist on your team.",
+      tags: ["Active Time Summary", "Project Time Distribution"],
+      mock: <TimeDistributionMock />,
+      reverse: false,
+    },
+    {
+      title: "Productivity alerts",
+      desc: "The system flags three types of alerts — on-leave, overcapacity workload, and roadblock detection — so you can step in and support your remote specialists on time.",
+      tags: ["Three Types Alerts"],
+      mock: <ProductivityAlertsMock />,
+      reverse: true,
+    },
+  ];
+
+  return (
+    <section className="bg-[#F0F1FB] px-4 py-24">
+      <div className="mx-auto max-w-6xl">
+        {/* Header */}
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-center">
+          <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-9 w-auto" />
+          <div>
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+              Visualize time allocation &amp; productivity
+              <br />
+              <span className="text-gray-400">for your remote specialists</span>
+            </h2>
+          </div>
+        </div>
+
+        {/* Feature rows */}
+        <div className="mt-16 space-y-6">
+          {rows.map((r) => (
+            <motion.div
+              key={r.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.5 }}
+              className="grid items-center gap-8 rounded-[28px] bg-white p-6 shadow-sm md:grid-cols-2 md:p-10"
+            >
+              <div className={r.reverse ? "md:order-2" : ""}>
+                <h3 className="text-2xl font-bold text-gray-900">{r.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-gray-500">{r.desc}</p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {r.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full bg-[#3B5BDB]/10 px-3 py-1.5 text-xs font-medium text-[#3B5BDB]"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className={r.reverse ? "md:order-1" : ""}>{r.mock}</div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DailyReportMock() {
+  const items = [
+    { label: "Code optimized", time: "6h", color: "bg-red-400" },
+    { label: "General meeting", time: "2.5h", color: "bg-[#3B5BDB]" },
+    { label: "Code writing", time: "30m", color: "bg-emerald-400" },
+    { label: "Project management", time: "1h", color: "bg-amber-400" },
+  ];
+  return (
+    <div className="rounded-2xl bg-gradient-to-br from-slate-800 to-[#3B5BDB] p-4">
+      <div className="rounded-xl bg-white p-3 shadow-lg">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+          <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">Daily Work Report</p>
+          <FileText className="size-3.5 text-gray-300" />
+        </div>
+        <p className="mt-2 text-[11px] font-bold text-gray-900">Wed 24</p>
+        <div className="mt-2 space-y-1.5">
+          {items.map((it) => (
+            <div key={it.label} className="flex items-center gap-2 rounded-lg border border-gray-100 px-2 py-1.5">
+              <span className={`h-4 w-1 rounded-full ${it.color}`} />
+              <span className="flex-1 text-[10px] font-medium text-gray-700">{it.label}</span>
+              <span className="text-[10px] font-bold text-gray-400">{it.time}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EmojiFeedbackMock() {
+  const cards = [
+    { day: "Wed 15", label: "Meeting", time: "9am – 10:30am", emoji: "🙂", tone: "Neutral", bg: "bg-white" },
+    { day: "Fri 17", label: "Fix bugs", time: "1pm – 5pm", emoji: "😣", tone: "Terrible", bg: "bg-red-50" },
+    { day: "", label: "Launch party", time: "2pm – 4pm", emoji: "🥳", tone: "Excited", bg: "bg-amber-50" },
+  ];
+  return (
+    <div className="relative rounded-2xl bg-gradient-to-br from-[#3B5BDB] to-[#8690FD] p-4">
+      <div className="grid gap-2 sm:grid-cols-2">
+        {cards.map((c, i) => (
+          <div key={i} className={`rounded-xl ${c.bg} p-2.5 shadow-md ${i === 2 ? "sm:col-span-2" : ""}`}>
+            {c.day && <p className="text-[9px] font-bold text-gray-400">{c.day}</p>}
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <p className="text-[11px] font-semibold text-gray-900">{c.label}</p>
+                <p className="text-[9px] text-gray-400">{c.time}</p>
+              </div>
+              <span className="text-lg">{c.emoji}</span>
+            </div>
+            <p className="mt-1 text-right text-[8px] font-medium text-gray-400">{c.tone}</p>
+          </div>
+        ))}
+      </div>
+      {/* floating quote chip */}
+      <div className="absolute -bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-lg">
+        <Smile className="size-3.5 text-[#3B5BDB]" />
+        <span className="text-[10px] font-semibold text-gray-700">Required additional care</span>
+      </div>
+    </div>
+  );
+}
+
+function TimeDistributionMock() {
+  const bars = [30, 55, 45, 70, 60, 85, 75];
+  return (
+    <div className="rounded-2xl bg-gradient-to-br from-slate-800 to-[#3B5BDB] p-4">
+      <div className="rounded-xl bg-white p-3 shadow-lg">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+          <p className="text-[10px] font-bold text-gray-900">Time Distribution</p>
+          <Clock className="size-3.5 text-gray-300" />
+        </div>
+        <div className="mt-3 flex h-24 items-end justify-between gap-1.5">
+          {bars.map((h, i) => (
+            <div key={i} className="w-full rounded-t bg-[#3B5BDB]" style={{ height: `${h}%`, opacity: 0.35 + i * 0.09 }} />
+          ))}
+        </div>
+        <div className="mt-2 flex items-center justify-between text-[9px] text-gray-400">
+          <span>Mon</span><span>Wed</span><span>Fri</span><span>Sun</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductivityAlertsMock() {
+  const users = [
+    { name: "Huang", hrs: "13 hrs", w: "90%", color: "bg-red-400" },
+    { name: "Zhou", hrs: "9 hrs", w: "60%", color: "bg-emerald-400" },
+    { name: "Wang", hrs: "7.5 hrs", w: "45%", color: "bg-[#3B5BDB]" },
+  ];
+  return (
+    <div className="rounded-2xl bg-gradient-to-br from-[#2fd9e8] to-[#3B5BDB] p-4">
+      <div className="rounded-xl bg-white p-3 shadow-lg">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+          <p className="text-xs font-bold text-gray-900">Work Hours</p>
+          <span className="flex items-center gap-1 rounded-md bg-[#3B5BDB] px-2 py-1 text-[9px] font-semibold text-white">
+            <Bell className="size-2.5" /> Overwork warning
+          </span>
+        </div>
+        <div className="mt-3 space-y-2.5">
+          {users.map((u) => (
+            <div key={u.name} className="flex items-center gap-2">
+              <span className="w-10 text-[10px] font-medium text-gray-600">{u.name}</span>
+              <div className="h-1.5 flex-1 rounded-full bg-gray-100">
+                <div className={`h-full rounded-full ${u.color}`} style={{ width: u.w }} />
+              </div>
+              <span className="w-10 text-right text-[10px] font-bold text-gray-400">{u.hrs}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex items-center gap-2 rounded-lg bg-red-50 px-2.5 py-1.5">
+          <AlertTriangle className="size-3.5 text-red-500" />
+          <span className="text-[10px] font-semibold text-red-600">Over capacity — 13 hrs today</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -929,27 +1320,40 @@ function DarkStats() {
 
 function FinalCTA() {
   return (
-    <section className="px-4 py-24">
-      <div className="mx-auto max-w-4xl rounded-[28px] bg-[#3B5BDB] px-6 py-16 text-center md:px-12">
-        <Handshake className="mx-auto size-10 text-white/80" />
-        <h2 className="mt-5 text-balance text-3xl font-bold text-white md:text-4xl">
-          Ready to build your team with credentialled talent?
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-sm text-white/70">
-          Tell us the role. We source, vet, and deploy the right specialist into
-          your team in 14–21 days — payroll, compliance, and a 60-day replacement
-          guarantee included.
-        </p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <FluidCTA href="/companies/hire" size="lg" variant="outline" className="!bg-white !text-[#3B5BDB] !border-white">
-            Start hiring today
-          </FluidCTA>
-          <Link
-            href="/contact"
-            className="inline-flex h-14 items-center rounded-full border border-white/40 px-8 text-base font-semibold text-white transition-colors hover:bg-white/10"
-          >
-            Talk to our team
-          </Link>
+    <section className="bg-[#0a0b12] px-4 py-20 md:py-28">
+      <div className="relative mx-auto max-w-5xl">
+        {/* stacked cards peeking behind */}
+        <div aria-hidden className="absolute inset-x-8 -top-3 h-8 rounded-t-[28px] bg-[#3B5BDB]/40" />
+        <div aria-hidden className="absolute inset-x-4 -top-1.5 h-8 rounded-t-[28px] bg-[#3B5BDB]/70" />
+
+        <div className="relative overflow-hidden rounded-[28px] bg-[#3B5BDB] px-6 py-20 text-center md:px-12 md:py-24">
+          <h2 className="mx-auto max-w-3xl text-balance text-3xl font-bold leading-[1.15] text-white md:text-5xl">
+            Hire talents worldwide and maximize work productivity for remote members today
+          </h2>
+          <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-white/70">
+            Shaping the future of work with our AI-driven talent sourcing and
+            management solution.
+          </p>
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/companies/hire"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              Hire Talent <ChevronRight className="size-4" />
+            </Link>
+            <Link
+              href="/consulting"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/40 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              Try Consulting <ChevronRight className="size-4" />
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#3B5BDB] transition-transform hover:scale-[1.03]"
+            >
+              Request A Demo <ChevronRight className="size-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>
