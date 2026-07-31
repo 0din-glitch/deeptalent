@@ -71,6 +71,23 @@ export function ConsultingSolutions() {
               See how it works
             </FluidCTA>
           </div>
+
+          {/* Mobile / tablet portrait grid (desktop uses the floating cards) */}
+          <div className="mt-12 grid grid-cols-3 gap-3 sm:grid-cols-6 lg:hidden">
+            {[...leftCards, ...rightCards].map((c, i) => (
+              <motion.div
+                key={c.src}
+                initial={{ opacity: 0, scale: 0.85 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+                style={{ rotate: `${c.rotate}deg` }}
+                className="aspect-square overflow-hidden rounded-2xl border-4 border-white shadow-[0_12px_30px_rgba(17,24,39,0.14)]"
+              >
+                <img src={c.src || "/placeholder.svg"} alt="" className="size-full object-cover" />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

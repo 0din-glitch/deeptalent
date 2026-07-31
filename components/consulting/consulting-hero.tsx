@@ -74,8 +74,40 @@ export function ConsultingHero() {
           ))}
         </div>
 
+        {/* Mobile diagram — compact animated tile cluster */}
+        <div className="md:hidden">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="mx-auto flex size-20 items-center justify-center rounded-3xl bg-[#3B5BDB] shadow-[0_16px_40px_rgba(59,91,219,0.4)]"
+          >
+            <Check className="size-9 text-white" strokeWidth={2.5} />
+          </motion.div>
+          <div className="mx-auto mt-5 flex max-w-xs flex-wrap justify-center gap-3">
+            {tiles.map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: [12, -6, 0] }}
+                transition={{ duration: 0.6, delay: t.delay, ease: "easeOut" }}
+              >
+                {t.kind === "icon" ? (
+                  <div className={`flex size-14 items-center justify-center rounded-2xl ${t.bg} shadow-[0_10px_28px_rgba(17,24,39,0.15)]`}>
+                    <t.icon className="size-6 text-white" />
+                  </div>
+                ) : (
+                  <div className="size-14 overflow-hidden rounded-2xl border-4 border-white shadow-[0_10px_28px_rgba(17,24,39,0.18)]">
+                    <img src={t.src || "/placeholder.svg"} alt="" className="size-full object-cover" />
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
         {/* Copy */}
-        <div className="mx-auto mt-6 max-w-3xl text-center md:mt-8">
+        <div className="mx-auto mt-8 max-w-3xl text-center md:mt-8">
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}

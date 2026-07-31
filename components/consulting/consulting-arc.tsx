@@ -43,7 +43,7 @@ export function ConsultingArc() {
           Vetted across every discipline in days
         </h2>
 
-        <div className="mt-14 flex items-end justify-center gap-3 md:gap-5">
+        <div className="mt-14 flex items-end justify-center gap-2 sm:gap-3 md:gap-5">
           {disciplines.map((d, i) => {
             const isActive = i === active;
             return (
@@ -53,14 +53,14 @@ export function ConsultingArc() {
                 animate={{ y: isActive ? -12 : d.y, scale: isActive ? 1.1 : 1 }}
                 transition={{ type: "spring", stiffness: 200, damping: 18 }}
                 style={{ rotate: `${d.rotate}deg` }}
-                className={`flex items-center justify-center rounded-3xl transition-shadow ${
+                className={`flex shrink-0 items-center justify-center rounded-2xl transition-shadow md:rounded-3xl ${
                   isActive
-                    ? `${d.bg} size-24 shadow-[0_20px_44px_rgba(59,91,219,0.35)] md:size-28`
-                    : "size-20 bg-[#F3F5FA] shadow-sm md:size-24"
+                    ? `${d.bg} size-16 shadow-[0_20px_44px_rgba(59,91,219,0.35)] sm:size-24 md:size-28`
+                    : "size-14 bg-[#F3F5FA] shadow-sm sm:size-20 md:size-24"
                 }`}
                 aria-label={d.label}
               >
-                <d.icon className={`size-9 md:size-10 ${isActive ? "text-white" : "text-gray-400"}`} />
+                <d.icon className={`size-6 sm:size-9 md:size-10 ${isActive ? "text-white" : "text-gray-400"}`} />
               </motion.button>
             );
           })}
