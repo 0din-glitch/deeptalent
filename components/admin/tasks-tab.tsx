@@ -17,6 +17,8 @@ import {
   Ban,
   User,
   AlertTriangle,
+  LayoutGrid,
+  GanttChart,
 } from "lucide-react";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -67,6 +69,7 @@ export function TasksTab() {
   const { me } = useAdminMe();
   const isSuper = me?.is_super_admin === true;
   const [view, setView] = useState<"mine" | "team">("mine");
+  const [layout, setLayout] = useState<"board" | "timeline">("board");
   const [assignOpen, setAssignOpen] = useState(false);
 
   const scope = isSuper && view === "team" ? "team" : "mine";
@@ -91,36 +94,59 @@ export function TasksTab() {
 
   return (
     <div>
-      {assignOpen && <AssignModal onClose={() => setAssignOpen(false)} ondone={refresh} canPickAssignee={isSuper} me={me} />}
+      {assignOpen && <AssignModal onClose={() => setAssignOpen(false)} ondone={refresh} canPickAssignee me={me} />}
 
       {/* Header row */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100">
-          <button
-            onClick={() => setView("mine")}
-            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              view === "mine" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            My Tasks
-          </button>
-          {isSuper && (
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Scope toggle */}
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100">
             <button
-              onClick={() => setView("team")}
+              onClick={() => setView("mine")}
               className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                view === "team" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                view === "mine" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              Team Board
+              My Tasks
             </button>
-          )}
+            {isSuper && (
+              <button
+                onClick={() => setView("team")}
+                className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  view === "team" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                Team Board
+              </button>
+            )}
+          </div>
+
+          {/* Layout toggle */}
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100">
+            <button
+              onClick={() => setLayout("board")}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                layout === "board" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <LayoutGrid className="size-3.5" /> Board
+            </button>
+            <button
+              onClick={() => setLayout("timeline")}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                layout === "timeline" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              <GanttChart className="size-3.5" /> Timeline
+            </button>
+          </div>
         </div>
 
         <button
           onClick={() => setAssignOpen(true)}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2f49b2] transition-colors"
         >
-          <Plus className="size-4" /> {isSuper ? "Assign task" : "New task"}
+          <Plus className="size-4" /> Assign task
         </button>
       </div>
 
@@ -132,36 +158,241 @@ export function TasksTab() {
         <StatCard label="Overdue" value={stats.overdue} tone={stats.overdue > 0 ? "red" : undefined} />
       </div>
 
-      {/* Board */}
-      <div className="grid lg:grid-cols-4 gap-4">
-        {STATUS_COLUMNS.map((col) => {
-          const colTasks = tasks.filter((t) => t.status === col.key);
-          const Icon = col.icon;
-          return (
-            <div key={col.key} className="bg-gray-50/70 rounded-2xl p-3">
-              <div className="flex items-center gap-2 px-1.5 mb-3">
-                <Icon className={`size-4 ${col.color}`} />
-                <h3 className="text-sm font-semibold text-gray-700">{col.label}</h3>
-                <span className="ml-auto text-xs font-bold text-gray-400 tabular-nums">{colTasks.length}</span>
+      {/* Board / Timeline */}
+      {layout === "timeline" ? (
+        <TaskGantt tasks={tasks} showAssignee={view === "team"} />
+      ) : (
+        <div className="grid lg:grid-cols-4 gap-4">
+          {STATUS_COLUMNS.map((col) => {
+            const colTasks = tasks.filter((t) => t.status === col.key);
+            const Icon = col.icon;
+            return (
+              <div key={col.key} className="bg-gray-50/70 rounded-2xl p-3">
+                <div className="flex items-center gap-2 px-1.5 mb-3">
+                  <Icon className={`size-4 ${col.color}`} />
+                  <h3 className="text-sm font-semibold text-gray-700">{col.label}</h3>
+                  <span className="ml-auto text-xs font-bold text-gray-400 tabular-nums">{colTasks.length}</span>
+                </div>
+                <div className="flex flex-col gap-2.5">
+                  {colTasks.length === 0 && (
+                    <p className="text-xs text-gray-400 text-center py-6">No tasks</p>
+                  )}
+                  {colTasks.map((t) => (
+                    <TaskCard
+                      key={t.id}
+                      task={t}
+                      myId={myId}
+                      isSuper={isSuper}
+                      showAssignee={view === "team"}
+                      onChange={refresh}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-col gap-2.5">
-                {colTasks.length === 0 && (
-                  <p className="text-xs text-gray-400 text-center py-6">No tasks</p>
-                )}
-                {colTasks.map((t) => (
-                  <TaskCard
-                    key={t.id}
-                    task={t}
-                    myId={myId}
-                    isSuper={isSuper}
-                    showAssignee={view === "team"}
-                    onChange={refresh}
-                  />
-                ))}
-              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Gantt-on-calendar timeline ──────────────────────────────────────────────
+   Each task is a rounded bar spanning from its created date to its due date,
+   laid over a scrollable day-by-day calendar grid. Colored by status. */
+
+const GANTT_STATUS: Record<string, { bar: string; label: string }> = {
+  todo: { bar: "bg-gray-300", label: "To Do" },
+  in_progress: { bar: "bg-[#3B5BDB]", label: "In Progress" },
+  blocked: { bar: "bg-red-400", label: "Blocked" },
+  done: { bar: "bg-emerald-400", label: "Done" },
+};
+
+function dayStart(input: string | Date): Date {
+  const d = new Date(input);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function daysBetween(a: Date, b: Date): number {
+  return Math.round((b.getTime() - a.getTime()) / 86_400_000);
+}
+
+function TaskGantt({ tasks, showAssignee }: { tasks: Task[]; showAssignee: boolean }) {
+  const DAY_W = 40; // px per day column
+  const LABEL_W = 148; // px for sticky task label column
+  const ROW_H = 46; // px per task row
+  const HEAD_H = 40; // px header height
+
+  const model = useMemo(() => {
+    const today = dayStart(new Date());
+    if (tasks.length === 0) return null;
+
+    const rows = tasks.map((t) => {
+      const start = dayStart(t.created_at);
+      let end = t.due_date ? dayStart(t.due_date) : start;
+      if (end.getTime() < start.getTime()) end = start;
+      return { task: t, start, end, hasDue: !!t.due_date };
+    });
+
+    let minDate = rows.reduce((m, r) => (r.start < m ? r.start : m), rows[0].start);
+    let maxDate = rows.reduce((m, r) => (r.end > m ? r.end : m), rows[0].end);
+    // Always include today, then pad one day each side.
+    if (today < minDate) minDate = today;
+    if (today > maxDate) maxDate = today;
+    minDate = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate() - 1);
+    maxDate = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate() + 1);
+    // Ensure at least a 2-week window for a readable chart.
+    let totalDays = daysBetween(minDate, maxDate) + 1;
+    if (totalDays < 14) {
+      maxDate = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate() + (14 - totalDays));
+      totalDays = 14;
+    }
+
+    const days: Date[] = [];
+    for (let i = 0; i < totalDays; i++) {
+      days.push(new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate() + i));
+    }
+    return { rows, minDate, days, totalDays, today };
+  }, [tasks]);
+
+  if (!model) {
+    return (
+      <div className="text-center py-16 border border-dashed border-gray-200 rounded-2xl">
+        <GanttChart className="size-8 text-gray-300 mx-auto mb-3" />
+        <p className="text-sm font-medium text-gray-600">No tasks to chart yet</p>
+        <p className="text-xs text-gray-400 mt-1">Assign a task with a due date to see the timeline.</p>
+      </div>
+    );
+  }
+
+  const { rows, minDate, days, totalDays, today } = model;
+  const timelineW = totalDays * DAY_W;
+  const todayIdx = daysBetween(minDate, today);
+
+  // Month header spans (group consecutive days by month)
+  const monthSpans: { label: string; span: number }[] = [];
+  for (const d of days) {
+    const label = d.toLocaleString("en-US", { month: "short", year: "numeric" });
+    const last = monthSpans[monthSpans.length - 1];
+    if (last && last.label === label) last.span += 1;
+    else monthSpans.push({ label, span: 1 });
+  }
+
+  return (
+    <div className="overflow-x-auto rounded-2xl border border-gray-100">
+      <div className="flex min-w-max">
+        {/* Sticky label column */}
+        <div className="sticky left-0 z-20 bg-white border-r border-gray-100" style={{ width: LABEL_W }}>
+          <div className="border-b border-gray-100 px-3 flex items-end" style={{ height: HEAD_H + 22 }}>
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 pb-2">Task</span>
+          </div>
+          {rows.map(({ task }) => (
+            <div
+              key={task.id}
+              className="px-3 border-b border-gray-50 flex flex-col justify-center"
+              style={{ height: ROW_H }}
+            >
+              <p className="text-xs font-semibold text-gray-900 truncate leading-tight">{task.title}</p>
+              {showAssignee && task.assigned_to_name && (
+                <p className="text-[10px] text-gray-400 truncate">{task.assigned_to_name}</p>
+              )}
             </div>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Timeline */}
+        <div className="relative" style={{ width: timelineW }}>
+          {/* Background day-column guides + weekend shading */}
+          <div className="absolute inset-0 flex">
+            {days.map((d, i) => {
+              const weekend = d.getDay() === 0 || d.getDay() === 6;
+              return (
+                <div
+                  key={i}
+                  className={`border-r border-gray-50 ${weekend ? "bg-gray-50/60" : ""}`}
+                  style={{ width: DAY_W }}
+                />
+              );
+            })}
+          </div>
+
+          {/* Today marker line */}
+          {todayIdx >= 0 && todayIdx < totalDays && (
+            <div
+              className="absolute top-0 bottom-0 z-20 w-0.5 bg-[#3B5BDB]/70"
+              style={{ left: todayIdx * DAY_W + DAY_W / 2 }}
+            />
+          )}
+
+          {/* Header: month row + day row */}
+          <div className="relative z-10">
+            <div className="flex h-[22px]">
+              {monthSpans.map((m, i) => (
+                <div
+                  key={i}
+                  className="flex items-center px-2 text-[10px] font-bold uppercase tracking-wide text-gray-500 border-r border-gray-100"
+                  style={{ width: m.span * DAY_W }}
+                >
+                  {m.label}
+                </div>
+              ))}
+            </div>
+            <div className="flex border-b border-gray-100" style={{ height: HEAD_H }}>
+              {days.map((d, i) => {
+                const isToday = d.getTime() === today.getTime();
+                return (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center justify-center"
+                    style={{ width: DAY_W }}
+                  >
+                    <span className="text-[9px] uppercase text-gray-300">
+                      {d.toLocaleString("en-US", { weekday: "narrow" })}
+                    </span>
+                    <span
+                      className={`text-[11px] font-semibold tabular-nums grid place-items-center size-5 rounded-full ${
+                        isToday ? "bg-[#3B5BDB] text-white" : "text-gray-600"
+                      }`}
+                    >
+                      {d.getDate()}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Task bars */}
+          <div className="relative z-10">
+            {rows.map(({ task, start, end, hasDue }) => {
+              const startIdx = daysBetween(minDate, start);
+              const span = daysBetween(start, end) + 1;
+              const style = GANTT_STATUS[task.status] ?? GANTT_STATUS.todo;
+              const todayKey = dayStart(new Date());
+              const overdue = task.status !== "done" && end < todayKey;
+              return (
+                <div key={task.id} className="relative border-b border-gray-50" style={{ height: ROW_H }}>
+                  <div
+                    className={`absolute rounded-full flex items-center px-2 shadow-sm ${style.bar} ${
+                      overdue ? "ring-2 ring-red-300" : ""
+                    } ${task.status === "todo" ? "text-gray-700" : "text-white"}`}
+                    style={{
+                      left: startIdx * DAY_W + 3,
+                      width: Math.max(span * DAY_W - 6, DAY_W - 6),
+                      top: (ROW_H - 24) / 2,
+                      height: 24,
+                    }}
+                    title={`${task.title} · ${style.label}${task.due_date ? ` · due ${new Date(task.due_date).toLocaleDateString()}` : ""}`}
+                  >
+                    <span className="text-[10px] font-semibold truncate">
+                      {!hasDue ? "No due date" : `${span}d`}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
