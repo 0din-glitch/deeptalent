@@ -602,10 +602,10 @@ function TrustedBy() {
 
       {/* Marquee */}
       <div className="relative w-full overflow-hidden marquee-container">
-        <div className="flex animate-marquee gap-8 w-max">
+        <div className="flex animate-marquee gap-10 w-max">
           {[...partners, ...partners, ...partners].map((partner, index) => (
-            <div key={`${partner.id}-${index}`} className="flex-shrink-0 flex items-center justify-center h-20 px-2">
-              <div className="h-16 w-40 rounded-xl bg-white border border-gray-200 flex items-center justify-center px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
+            <div key={`${partner.id}-${index}`} className="flex-shrink-0 flex items-center justify-center h-32 px-2">
+              <div className="h-24 w-60 rounded-2xl bg-white border border-gray-200 flex items-center justify-center px-8 py-5 shadow-sm hover:shadow-lg hover:border-[#3B5BDB]/20 transition-all">
                 <img
                   src={partner.image}
                   alt={partner.name}
@@ -776,94 +776,96 @@ function ServiceShowcase() {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-              {/* Illustration card stack */}
-              <div className="relative h-[260px] md:h-[380px]">
-                {[2, 1].map((offset) => (
-                  <div
-                    key={offset}
-                    className="absolute inset-0 rounded-3xl border border-gray-200 bg-white"
-                    style={{
-                      transform: `translateY(${offset * 8}px) translateX(${offset * 8}px) scale(${1 - offset * 0.03})`,
-                      opacity: 1 - offset * 0.4,
-                    }}
-                  />
-                ))}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeService.id}
-                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0 flex items-center justify-center rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.06)]"
-                  >
-                    <div
-                      className="absolute inset-0 opacity-[0.04]"
-                      style={{ backgroundImage: `radial-gradient(circle at 50% 50%, ${C.primary} 0%, transparent 60%)` }}
-                    />
-                    <Image
-                      src={activeService.illustration}
-                      alt={activeService.title}
-                      width={360}
-                      height={360}
-                      className="max-w-full max-h-full object-contain relative z-10 p-6"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-14 items-stretch">
+              {/* Left: service index navigator */}
+              <ul className="flex flex-col gap-2 self-center">
+                {services.map((s, i) => {
+                  const active = i === activeIndex;
+                  return (
+                    <li key={s.id}>
+                      <div
+                        className={`relative flex items-center gap-4 rounded-2xl border px-5 py-4 transition-all duration-500 ${
+                          active
+                            ? "border-transparent bg-[#3B5BDB] shadow-[0_16px_40px_rgba(59,91,219,0.28)]"
+                            : "border-gray-200 bg-white"
+                        }`}
+                      >
+                        <span className={`font-mono text-sm font-bold ${active ? "text-white/80" : "text-gray-400"}`}>
+                          0{i + 1}
+                        </span>
+                        <span className={`text-base md:text-lg font-semibold tracking-tight ${active ? "text-white" : "text-gray-900"}`}>
+                          {s.title}
+                        </span>
+                        {active && (
+                          <motion.span
+                            layoutId="svc-active-arrow"
+                            className="ml-auto grid size-7 place-items-center rounded-full bg-white/20"
+                          >
+                            <ChevronRight className="size-4 text-white" />
+                          </motion.span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
 
-              {/* Text */}
-              <div className="relative min-h-[280px] md:min-h-[380px]">
+              {/* Right: active service showcase panel */}
+              <div className="relative min-h-[440px]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeService.id}
-                    initial="hidden"
-                    animate="visible"
-                    exit={{ opacity: 0, y: -30 }}
-                    variants={staggerContainer(0.06)}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex h-full flex-col overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-[0_24px_60px_rgba(17,24,39,0.08)]"
                   >
-                    <motion.div variants={fadeInUp()} className="flex items-center gap-3 mb-4">
-                      <span className="font-mono text-xs font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
+                    {/* Illustration header */}
+                    <div className="relative flex h-52 items-center justify-center overflow-hidden bg-gradient-to-br from-[#EEF1FF] to-white md:h-64">
+                      <div
+                        className="absolute inset-0 opacity-[0.05]"
+                        style={{ backgroundImage: `radial-gradient(circle at 50% 40%, ${C.primary} 0%, transparent 60%)` }}
+                      />
+                      <span className="absolute left-6 top-6 font-mono text-xs font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
                         0{activeIndex + 1} / 0{services.length}
                       </span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
-                    </motion.div>
-                    <motion.h3 variants={fadeInUp()} className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-3 text-gray-900">
-                      {activeService.title}
-                    </motion.h3>
-                    <motion.p variants={fadeInUp()} className="text-gray-500 text-base md:text-lg leading-relaxed mb-5">
-                      {activeService.description}
-                    </motion.p>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {activeService.features.map((feature) => (
-                        <motion.li key={feature} variants={fadeInUp()} className="flex items-start gap-2 text-sm text-gray-700">
-                          <Check className="mt-0.5 size-4 shrink-0 text-[#3B5BDB]" />
-                          <span>{feature}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                    <motion.div variants={fadeInUp()} className="mt-6">
-                      <FluidCTA href="/companies/hire" size="md">
-                        Hire a {activeService.title.split(" ")[0]} Specialist
-                      </FluidCTA>
-                    </motion.div>
+                      <Image
+                        src={activeService.illustration}
+                        alt={activeService.title}
+                        width={300}
+                        height={300}
+                        className="relative z-10 max-h-full w-auto object-contain p-6"
+                      />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-1 flex-col p-7 md:p-8">
+                      <motion.div initial="hidden" animate="visible" variants={staggerContainer(0.05)}>
+                        <motion.h3 variants={fadeInUp()} className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+                          {activeService.title}
+                        </motion.h3>
+                        <motion.p variants={fadeInUp()} className="mt-2 text-gray-500 leading-relaxed">
+                          {activeService.description}
+                        </motion.p>
+                        <ul className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                          {activeService.features.map((feature) => (
+                            <motion.li key={feature} variants={fadeInUp()} className="flex items-start gap-2 text-sm text-gray-700">
+                              <Check className="mt-0.5 size-4 shrink-0 text-[#3B5BDB]" />
+                              <span>{feature}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                      <div className="mt-auto pt-6">
+                        <FluidCTA href="/companies/hire" size="md">
+                          Hire a {activeService.title.split(" ")[0]} Specialist
+                        </FluidCTA>
+                      </div>
+                    </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
-            </div>
-
-            {/* Dot progress */}
-            <div className="flex justify-center items-center gap-2 mt-8">
-              {services.map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: i === activeIndex ? 40 : 6, backgroundColor: i === activeIndex ? C.primary : C.border }}
-                />
-              ))}
             </div>
           </div>
         </div>

@@ -16,6 +16,34 @@ export default function ConsultingPage() {
       <ConsultingSolutions />
       <ConsultingFeatures />
       <ConsultingArc />
+
+      {/* ── Brand video (plays just before the testimonials) ───────────── */}
+      <section className="px-3 py-8 md:py-12">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-6 text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#3B5BDB]">
+              See DeepTalent in action
+            </p>
+            <h2 className="mt-2 text-balance text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+              How great teams get built
+            </h2>
+          </div>
+          <div className="relative overflow-hidden rounded-[2rem] bg-black shadow-[0_24px_70px_rgba(17,24,39,0.18)] ring-1 ring-black/5">
+            <video
+              className="aspect-video h-auto w-full object-cover"
+              src="/videos/consulting-appreciation.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              preload="metadata"
+              aria-label="DeepTalent consulting overview video"
+            />
+          </div>
+        </div>
+      </section>
+
       <ConsultingTestimonials />
 
       {/* ── Closing CTA ─────────────────────────────────────────────── */}
