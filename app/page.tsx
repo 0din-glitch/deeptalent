@@ -7,6 +7,7 @@ import {
   Star, Globe, Zap, Check, Paperclip, ArrowUp, Sparkles,
 } from "lucide-react";
 import { ConsentBot } from "@/components/site/consent-bot";
+import { YouTubePopup } from "@/components/site/youtube-popup";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
@@ -60,6 +61,7 @@ export default function Home() {
       <FaqSection />
       <Footer />
       <ConsentBot />
+      <YouTubePopup />
     </main>
   );
 }
@@ -1873,7 +1875,7 @@ function IndustryInsights() {
   const heroImage = heroPost.cover_image_url || `https://placehold.co/1200x800/3B5BDB/FFFFFF?text=${encodeURIComponent(heroPost.category || "Insights")}`;
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#F9FAFB] border-t border-gray-200">
+    <section id="insights" className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#F9FAFB] border-t border-gray-200">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="hidden"
