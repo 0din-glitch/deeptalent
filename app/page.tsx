@@ -1193,9 +1193,9 @@ function HowItWorks() {
               </h2>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-10 lg:gap-16 items-center">
               {/* Card stack — driven by scroll */}
-              <div className="card-stack-scene relative h-[480px] flex items-center justify-center order-2 lg:order-1">
+              <div className="card-stack-scene relative h-[560px] flex items-center justify-center order-2 lg:order-1">
                 {steps.map((item, i) => {
                   const offset = (i - activeCard + steps.length) % steps.length;
                   const isActive = offset === 0;
@@ -1213,18 +1213,18 @@ function HowItWorks() {
                         zIndex,
                       }}
                       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute w-full max-w-md rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
+                      className="absolute w-full max-w-xl rounded-[2rem] border border-gray-200 bg-white overflow-hidden shadow-[0_24px_60px_rgba(17,24,39,0.1)]"
                     >
-                      <div className="relative h-56 overflow-hidden bg-[#3B5BDB]/5">
-                        <Image src={item.image} alt={item.title} fill className="object-contain p-6" />
-                        <div className="absolute top-4 left-4 size-11 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
-                          <Icon className="size-5 text-white" />
+                      <div className="relative h-64 md:h-72 overflow-hidden bg-[#3B5BDB]/5">
+                        <Image src={item.image} alt={item.title} fill className="object-contain p-8" />
+                        <div className="absolute top-6 left-6 size-12 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
+                          <Icon className="size-6 text-white" />
                         </div>
-                        <span className="absolute top-4 right-4 font-mono text-4xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
+                        <span className="absolute top-6 right-6 font-mono text-5xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
                       </div>
-                      <div className="p-7">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                        <p className="text-base text-gray-500 leading-relaxed">{item.description}</p>
+                      <div className="p-8">
+                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                        <p className="text-base md:text-lg text-gray-500 leading-relaxed">{item.description}</p>
                       </div>
                     </motion.div>
                   );
@@ -1367,9 +1367,9 @@ function WhyChooseUs() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-10 lg:gap-16 items-center">
               {/* Card stack — driven by scroll */}
-              <div className="card-stack-scene relative h-[480px] flex items-center justify-center">
+              <div className="card-stack-scene relative h-[560px] flex items-center justify-center">
                 {reasons.map((item, i) => {
                   const offset = (i - activeCard + reasons.length) % reasons.length;
                   const isActive = offset === 0;
@@ -1386,21 +1386,21 @@ function WhyChooseUs() {
                         zIndex,
                       }}
                       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute w-full max-w-md rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
+                      className="absolute w-full max-w-xl rounded-[2rem] border border-gray-200 bg-white overflow-hidden shadow-[0_24px_60px_rgba(17,24,39,0.1)]"
                     >
-                      <div className="relative h-56 overflow-hidden">
+                      <div className="relative h-64 md:h-72 overflow-hidden">
                         <Image src={item.image} alt={item.title} fill className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                        <div className="absolute bottom-4 left-4 right-4">
-                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
-                            <span className="text-2xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
-                            <span className="text-xs text-gray-600">{item.statLabel}</span>
+                        <div className="absolute bottom-6 left-6 right-6">
+                          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
+                            <span className="text-3xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
+                            <span className="text-sm text-gray-600">{item.statLabel}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="p-7">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                        <p className="text-base text-gray-500 leading-relaxed">{item.description}</p>
+                      <div className="p-8">
+                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                        <p className="text-base md:text-lg text-gray-500 leading-relaxed">{item.description}</p>
                       </div>
                     </motion.div>
                   );
