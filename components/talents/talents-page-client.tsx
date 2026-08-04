@@ -21,7 +21,20 @@ import {
   Cpu,
   TrendingUp,
   Quote,
+  Calendar,
 } from "lucide-react";
+
+/* Google "G" mark */
+function GoogleG({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
+      <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.3 17.7 9.5 24 9.5z" />
+      <path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-16.4z" />
+      <path fill="#FBBC05" d="M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.1C1 16.5 0 20.1 0 24s1 7.5 2.6 10.7l7.9-6.1z" />
+      <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.3-4.5 2.1-8.8 2.1-6.3 0-11.6-3.8-13.5-9.1l-7.9 6.1C6.5 42.6 14.6 48 24 48z" />
+    </svg>
+  );
+}
 
 /* ─── data ──────────────────────────────────────────────────────── */
 
@@ -181,172 +194,424 @@ const SALARY_TABLE = [
 
 function TalentHero() {
   return (
-    <section className="relative min-h-screen bg-[#F9FAFB] overflow-hidden pt-28 pb-0">
-      {/* Subtle grid background */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(59,91,219,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(59,91,219,0.04) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
-
-      <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-10 items-end">
+    <section className="relative bg-white overflow-hidden pt-28 lg:pt-32 pb-12">
+      <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-8 lg:gap-6 items-center">
         {/* Left copy */}
-        <div className="pb-16 lg:pb-24">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 bg-white border border-[#3B5BDB]/20 rounded-full px-4 py-1.5 mb-6 shadow-sm"
-          >
-            <span className="size-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-[#3B5BDB] text-xs font-semibold tracking-wide">Accepting applications now</span>
-          </motion.div>
-
-          {/* Headline — NextHire style: huge weight, multi-line */}
+        <div className="relative z-10 order-2 lg:order-1">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-[clamp(3rem,7vw,5.5rem)] font-extrabold leading-[0.9] tracking-tight text-gray-900 mb-6"
+            transition={{ duration: 0.5 }}
+            className="text-[clamp(2.75rem,6vw,4.75rem)] font-extrabold leading-[0.98] tracking-tight text-gray-900 mb-4 text-balance"
           >
-            Discover
-            <br />
-            Your Global
-            <br />
-            <span className="text-[#3B5BDB]">Career Future</span>
+            Get <span className="text-[#3B5BDB]">Hired</span> Faster
+            <br className="hidden sm:block" /> and Smarter
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-gray-600 text-lg leading-relaxed max-w-md mb-8 text-pretty"
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md mb-8 text-pretty"
           >
-            DeepTalent connects Africa&apos;s most credentialled finance, compliance, and technology professionals with demanding global roles — fully managed, no bidding wars.
+            Browse, search and apply for global roles easily — matched to your credentials, not keywords.
           </motion.p>
 
+          {/* Search card */}
+          <motion.form
+            action="/talents/apply"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col sm:flex-row items-stretch gap-3 bg-white rounded-[1.75rem] border border-gray-200 shadow-[0_20px_50px_rgba(17,24,39,0.08)] p-3 max-w-xl"
+          >
+            <label className="flex items-center gap-3 flex-1 px-3 py-2 rounded-2xl hover:bg-gray-50 transition-colors">
+              <span className="grid size-9 place-items-center rounded-xl bg-gray-900 shrink-0">
+                <BriefcaseBusiness className="size-4 text-white" />
+              </span>
+              <span className="min-w-0 text-left">
+                <span className="block text-[11px] font-semibold text-gray-400">Search</span>
+                <input
+                  type="text"
+                  name="q"
+                  placeholder="Job title or keyword"
+                  className="w-full text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400 bg-transparent"
+                />
+              </span>
+            </label>
+
+            <div className="hidden sm:block w-px my-2 bg-gray-100" />
+
+            <label className="flex items-center gap-3 flex-1 px-3 py-2 rounded-2xl hover:bg-gray-50 transition-colors">
+              <span className="grid size-9 place-items-center rounded-xl bg-gray-100 shrink-0">
+                <Globe2 className="size-4 text-gray-500" />
+              </span>
+              <span className="min-w-0 flex-1 text-left">
+                <span className="block text-[11px] font-semibold text-gray-400">Location</span>
+                <span className="flex items-center gap-1 text-sm font-medium text-gray-900">
+                  Select location <ChevronDown className="size-3.5 text-gray-400" />
+                </span>
+              </span>
+            </label>
+
+            <button
+              type="submit"
+              aria-label="Search roles"
+              className="grid place-items-center h-12 sm:h-auto sm:w-14 rounded-2xl bg-gray-900 text-white hover:bg-gray-700 transition-colors shrink-0"
+            >
+              <Search className="size-5" />
+            </button>
+          </motion.form>
+
+          {/* Start your career pill */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-start gap-3 mb-10"
+            className="mt-6 inline-flex flex-col gap-3"
           >
-            <FluidCTA href="/talents/apply" size="lg">
-              Apply to the network
-            </FluidCTA>
-            <FluidCTA href="#how-it-works" variant="outline" size="lg" showArrow={false}>
-              How it works
-            </FluidCTA>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex items-center gap-6 flex-wrap"
-          >
-            <div>
-              <p className="text-2xl font-extrabold text-gray-900">&lt;8%</p>
-              <p className="text-xs text-gray-500 mt-0.5">Acceptance rate</p>
+            <div className="inline-flex items-center gap-3 rounded-2xl bg-gray-100 px-4 py-2.5 w-fit">
+              <span className="grid size-9 place-items-center rounded-xl bg-white shadow-sm">
+                <Layers className="size-4 text-gray-900" />
+              </span>
+              <span className="text-sm">
+                <span className="block text-[11px] text-gray-400 font-medium">Start Your</span>
+                <span className="block font-semibold text-gray-900 -mt-0.5">Career</span>
+              </span>
             </div>
-            <div className="w-px h-8 bg-gray-200" />
-            <div>
-              <p className="text-2xl font-extrabold text-gray-900">14–21 days</p>
-              <p className="text-xs text-gray-500 mt-0.5">Avg. time to placement</p>
-            </div>
-            <div className="w-px h-8 bg-gray-200" />
-            <div>
-              <p className="text-2xl font-extrabold text-gray-900">15+</p>
-              <p className="text-xs text-gray-500 mt-0.5">Role categories</p>
-            </div>
+            <Link href="#how-it-works" className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-900 hover:text-[#3B5BDB] transition-colors">
+              How it works <ArrowRight className="size-4" />
+            </Link>
           </motion.div>
         </div>
 
-        {/* Right — person + floating cards (NextHire layout) */}
-        <div className="relative flex justify-center lg:justify-end items-end h-[520px] lg:h-[640px]">
-          {/* person image */}
+        {/* Right — woman image + accents + stats bracket */}
+        <div className="relative order-1 lg:order-2">
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="absolute bottom-0 right-0 lg:right-10 h-full max-h-[600px] z-10"
+            className="relative mx-auto max-w-md lg:max-w-none"
           >
-            <img
-              src="/images/talents/hero-person.png"
-              alt="DeepTalent professional"
-              className="h-full w-auto object-contain object-bottom select-none"
-            />
+            {/* Framed, rounded image card */}
+            <div className="relative overflow-hidden rounded-[2rem] border border-gray-200 bg-gradient-to-br from-[#EEF1FF] via-white to-[#F4F6FF] shadow-[0_24px_60px_rgba(17,24,39,0.12)]">
+              {/* soft decorative blobs behind the subject */}
+              <div className="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full bg-[#8690FD]/25 blur-2xl" />
+              <div className="pointer-events-none absolute bottom-0 -left-8 size-40 rounded-full bg-[#3B5BDB]/15 blur-2xl" />
+              <img
+                src="/images/talents/hero-woman.png"
+                alt="A professional browsing roles on DeepTalent"
+                className="relative z-10 w-full h-auto object-contain select-none"
+              />
+            </div>
+
+            {/* floating dark icon (top-left, lifts off the frame) */}
+            <div className="absolute z-20 -top-4 left-4 grid size-12 place-items-center rounded-2xl bg-gray-900 shadow-xl ring-4 ring-white">
+              <BriefcaseBusiness className="size-5 text-white" />
+            </div>
+
+            {/* colorful app accent (top right) */}
+            <div className="absolute z-20 top-6 -right-3 grid size-11 place-items-center rounded-full bg-white shadow-xl ring-1 ring-gray-100">
+              <span
+                className="block size-5 rounded-full"
+                style={{ background: "conic-gradient(from 90deg, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335)" }}
+              />
+            </div>
+
+            {/* Floating overlay: new match notification */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 left-3 top-24 hidden sm:flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-gray-100"
+            >
+              <span className="grid size-9 place-items-center rounded-full bg-emerald-100">
+                <CheckCircle2 className="size-5 text-emerald-600" />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-sm font-bold text-gray-900">New match</span>
+                <span className="block text-xs text-gray-400">Finance Analyst · Remote</span>
+              </span>
+            </motion.div>
+
+            {/* Floating overlay: application progress */}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 right-3 bottom-24 hidden sm:block rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-gray-100 w-44"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-gray-500">Profile strength</span>
+                <span className="text-xs font-bold text-[#3B5BDB]">92%</span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "92%" }}
+                  transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
+                  className="h-full rounded-full bg-gradient-to-r from-[#3B5BDB] to-[#8690FD]"
+                />
+              </div>
+            </motion.div>
+
+            {/* Floating overlay: rating chip */}
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 right-6 -bottom-4 flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-2 shadow-xl"
+            >
+              <Star className="size-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-xs font-bold text-white">4.9 talent rating</span>
+            </motion.div>
           </motion.div>
 
-          {/* Floating stat card — companies */}
+          {/* Stats bracket */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="absolute left-0 bottom-24 bg-[#3B5BDB] text-white rounded-2xl p-4 shadow-xl z-20 w-36"
-          >
-            <p className="text-xs font-semibold opacity-75 mb-1">Companies Hiring</p>
-            <p className="text-3xl font-extrabold">150+</p>
-          </motion.div>
-
-          {/* Floating "Apply Easily" card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.65 }}
-            className="absolute right-4 lg:right-16 bottom-32 bg-white rounded-2xl px-4 py-3 shadow-xl z-20 border border-gray-100"
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="relative mt-2"
           >
-            <p className="text-sm font-bold text-gray-900">Apply in Minutes</p>
-            <p className="text-xs text-gray-500 mt-0.5">Grow Your Career Globally</p>
+            <div className="mx-auto h-4 w-3/4 border-x border-t border-gray-200 rounded-t-md" />
+            <div className="flex items-start justify-center gap-10 sm:gap-16 pt-3">
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-extrabold text-gray-900">50K+</p>
+                <p className="text-xs text-gray-500 mt-1">Active job seekers</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-extrabold text-gray-900">20K+</p>
+                <p className="text-xs text-gray-500 mt-1">Verified companies</p>
+              </div>
+            </div>
           </motion.div>
-        </div>
-      </div>
-
-      {/* Search bar strip — VeroApp style */}
-      <div className="relative bg-white border-t border-gray-100 py-4">
-        <div className="max-w-3xl mx-auto px-6 flex items-center gap-3">
-          <Search className="size-4 text-gray-400 shrink-0" />
-          <input
-            type="text"
-            placeholder="Search roles — Finance Analyst, KYC, Full-Stack Developer…"
-            className="flex-1 text-sm text-gray-700 outline-none placeholder:text-gray-400 bg-transparent"
-            readOnly
-            onClick={() => window.location.href = "/talents/apply"}
-          />
-          <Link
-            href="/talents/apply"
-            className="shrink-0 h-9 px-5 inline-flex items-center justify-center rounded-full bg-[#3B5BDB] text-white text-xs font-semibold hover:bg-[#2f49b2] transition-colors"
-          >
-            Get Started
-          </Link>
         </div>
       </div>
     </section>
   );
 }
 
-/* ─── trusted companies strip ───────────────────────────────────── */
+/* ─── Kickstart with AI (gradient promo + stacked search cards) ──── */
 
-function TrustedBy() {
-  const companies = ["Goldman Sachs", "JPMorgan", "Deloitte", "KPMG", "Stripe", "Revolut"];
+function KickstartAI() {
+  const [tab, setTab] = useState(0);
+  const tabs = ["Remote", "Freelance", "Onsite"];
   return (
-    <section className="py-12 bg-white border-b border-gray-100">
-      <div className="max-w-5xl mx-auto px-6">
-        <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-8">
-          Trusted by global financial services &amp; technology firms
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-          {companies.map((c) => (
-            <span key={c} className="text-sm font-bold text-gray-300 tracking-tight">{c}</span>
-          ))}
+    <section className="py-16 lg:py-20 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-6 rounded-[2rem] overflow-hidden">
+          {/* Gradient promo panel */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="relative p-8 lg:p-10 flex flex-col justify-center text-white rounded-[2rem]"
+            style={{ background: "linear-gradient(135deg, #7C3AED 0%, #C026D3 45%, #F97316 100%)" }}
+          >
+            <span className="inline-flex w-fit items-center rounded-full border border-white/40 px-3 py-1 text-xs font-semibold">
+              Best Recommendation Job
+            </span>
+            <h2 className="mt-5 text-4xl lg:text-5xl font-extrabold leading-[0.98] tracking-tight text-balance">
+              Kickstart your career with AI technology!
+            </h2>
+            <p className="mt-4 text-white/85 leading-relaxed max-w-sm text-pretty">
+              AI enhances innovation, boosts productivity, and improves job satisfaction by streamlining the search process for professionals.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link href="/talents/apply" className="h-11 px-6 inline-flex items-center rounded-full bg-white text-gray-900 text-sm font-bold hover:bg-gray-100 transition-colors">
+                Get Started Now
+              </Link>
+              <Link href="#how-it-works" className="h-11 px-6 inline-flex items-center rounded-full border border-white/50 text-white text-sm font-bold hover:bg-white/10 transition-colors">
+                Learn More
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Stacked search-card mockups */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="relative min-h-[340px] bg-gray-50 rounded-[2rem] p-6 flex items-center"
+          >
+            {/* back card */}
+            <div className="absolute right-6 top-6 bottom-10 left-16 rotate-[-6deg] rounded-3xl bg-white/70 border border-gray-100 shadow-sm" />
+            {/* front card */}
+            <div className="relative w-full rounded-3xl bg-white border border-gray-100 shadow-[0_24px_60px_rgba(17,24,39,0.12)] p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <span className="grid size-9 place-items-center rounded-xl bg-gray-900">
+                  <Zap className="size-4 text-white" />
+                </span>
+                <p className="font-bold text-gray-900">AI for Recommendation Jobs</p>
+              </div>
+              <div className="flex gap-1 rounded-full bg-gray-100 p-1 mb-5">
+                {tabs.map((t, i) => (
+                  <button
+                    key={t}
+                    onClick={() => setTab(i)}
+                    className={`flex-1 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                      tab === i ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[11px] font-semibold text-gray-400 mb-1">Location</p>
+                  <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700">
+                    <Globe2 className="size-4 text-gray-400" /> Lagos, Nigeria
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold text-gray-400 mb-1">Job name</p>
+                  <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700">
+                    <BriefcaseBusiness className="size-4 text-gray-400" /> Finance Analyst
+                  </div>
+                </div>
+                <Link href="/talents/apply" className="mt-1 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:bg-gray-700 transition-colors">
+                  <Zap className="size-4" /> Search Now
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
+  );
+}
+
+/* ─── New Startups (carousel of hiring startups) ────────────────── */
+
+const STARTUPS = [
+  { name: "Evolve Credit", jobs: 5, desc: "Helping financial institutions launch and manage credit ventures.", mode: "Remote", loc: "Wilmington", color: "#0EA5E9", icon: BarChart3, dark: false },
+  { name: "GLO", jobs: 2, desc: "GLO helps elevate daily life through mindful wellness.", mode: "On-site", loc: "California", color: "#22C55E", icon: TrendingUp, dark: false },
+  { name: "Eversend", jobs: 8, desc: "Eversend makes transfers, investments, and spending simple.", mode: "Hybrid", loc: "England", color: "#7C3AED", icon: DollarSign, dark: false },
+  { name: "Flux", jobs: 7, desc: "Flux scales from quick prototypes to production-ready systems.", mode: "Hybrid", loc: "Japan", color: "#111827", icon: Zap, dark: true },
+  { name: "HabariPay", jobs: 3, desc: "HabariPay transforms digital payments with advanced technology.", mode: "Remote", loc: "Nigeria", color: "#EF4444", icon: Cpu, dark: false },
+];
+
+function NewStartups() {
+  const [page, setPage] = useState(0);
+  const perPage = 5;
+  const totalPages = Math.ceil(STARTUPS.length / perPage);
+  const paginate = (dir: number) => setPage((p) => (p + dir + totalPages) % totalPages);
+
+  return (
+    <section className="py-16 lg:py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-[300px_1fr] gap-10 items-start">
+        {/* Left heading */}
+        <div className="lg:sticky lg:top-28">
+          <h2 className="text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[0.95] mb-5">
+            New<br />Startups
+          </h2>
+          <p className="text-gray-500 leading-relaxed max-w-xs mb-8 text-pretty">
+            Discover innovative startups and find the role that matches your passion.
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => paginate(-1)}
+              aria-label="Previous startups"
+              className="grid size-10 place-items-center rounded-full border border-gray-200 text-gray-400 hover:text-gray-900 hover:border-gray-900 transition-colors"
+            >
+              <ArrowRight className="size-4 rotate-180" />
+            </button>
+            <button
+              onClick={() => paginate(1)}
+              aria-label="Next startups"
+              className="grid size-12 place-items-center rounded-full border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors"
+            >
+              <ArrowRight className="size-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Cards grid */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={page}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -24 }}
+            transition={{ duration: 0.35 }}
+            className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5"
+          >
+            {STARTUPS.slice(page * perPage, page * perPage + perPage).map((s) => (
+              <div
+                key={s.name}
+                className={`rounded-3xl p-6 flex flex-col transition-shadow hover:shadow-lg ${
+                  s.dark ? "bg-gray-950 text-white" : "bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-5">
+                  <span
+                    className="grid size-11 place-items-center rounded-full"
+                    style={{ backgroundColor: s.dark ? "#ffffff" : s.color + "1A" }}
+                  >
+                    <s.icon className="size-5" style={{ color: s.dark ? s.color : s.color }} />
+                  </span>
+                  <span className={`text-sm font-semibold ${s.dark ? "text-white/60" : "text-gray-400"}`}>{s.jobs} jobs</span>
+                </div>
+                <h3 className="text-lg font-bold mb-2">{s.name}</h3>
+                <p className={`text-sm leading-relaxed mb-6 flex-1 ${s.dark ? "text-white/60" : "text-gray-500"}`}>{s.desc}</p>
+                <div className={`flex items-center gap-4 text-xs font-medium ${s.dark ? "text-white/70" : "text-gray-500"}`}>
+                  <span className="inline-flex items-center gap-1.5"><BriefcaseBusiness className="size-3.5" /> {s.mode}</span>
+                  <span className="inline-flex items-center gap-1.5"><Globe2 className="size-3.5" /> {s.loc}</span>
+                </div>
+              </div>
+            ))}
+
+            {/* Explore all card */}
+            <Link
+              href="/talents/apply"
+              className="rounded-3xl border border-gray-200 p-6 flex flex-col items-center justify-center text-center hover:border-gray-900 transition-colors group"
+            >
+              <p className="text-4xl font-extrabold text-gray-900">180+</p>
+              <p className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-[#3B5BDB]">
+                Explore all startups <ArrowRight className="size-4" />
+              </p>
+            </Link>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
+
+/* ─── Trusted-by footer strip ───────────────────────────────────── */
+
+function TrustedFooter() {
+  const logos = [
+    { name: "Premium Trust Bank", image: "/icons/premium-trust.svg" },
+    { name: "MyGround Crew", image: "/icons/my-groud-crew.svg" },
+    { name: "Tulcan Energy", image: "/icons/tulcan-energy.svg" },
+    { name: "Prowin Services", image: "/icons/pro-win.svg" },
+    { name: "Omiomio TV", image: "/icons/omiomio-tv.svg" },
+    { name: "Sterling Bank", image: "/icons/sterling-bank.svg" },
+  ];
+  return (
+    <footer className="py-16 bg-[#F9FAFB] border-t border-gray-100">
+      <div className="max-w-5xl mx-auto px-6 text-center">
+        <p className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-10 text-balance">
+          Trusted by <span className="inline-flex items-center rounded-xl bg-gray-900 text-white px-3 py-1 mx-1">500+</span> companies
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 opacity-70 grayscale mb-10">
+          {logos.map((c) => (
+            <img key={c.name} src={c.image} alt={c.name} className="h-7 w-auto object-contain" loading="lazy" />
+          ))}
+        </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm">
+          <span className="text-sm font-semibold text-gray-700">Excellent</span>
+          <span className="flex items-center gap-0.5">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className="size-4 fill-[#00B67A] text-[#00B67A]" />
+            ))}
+          </span>
+          <span className="text-xs text-gray-400">390 reviews on Trustpilot</span>
+        </div>
+      </div>
+    </footer>
   );
 }
 
@@ -731,34 +996,56 @@ function FAQSection() {
 
 function Testimonials() {
   return (
-    <section className="py-20 bg-gray-950 overflow-hidden">
+    <section className="py-20 lg:py-24 bg-[#F9FAFB] border-t border-gray-100 overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl font-extrabold text-white text-center mb-12 text-balance">
-          What Our Placed Professionals Are Saying
-        </h2>
+        <div className="text-center mb-12">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#3B5BDB]">Testimonials</p>
+          <h2 className="mt-2 text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 text-balance">
+            What Our Placed Professionals Are Saying
+          </h2>
+        </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className={`rounded-2xl p-6 ${i === 0 ? "bg-[#3B5BDB]" : "bg-white/5 border border-white/10"}`}
-            >
-              <Quote className="size-6 text-white/40 mb-4" />
-              <p className={`text-sm leading-relaxed mb-6 ${i === 0 ? "text-white/90" : "text-white/70"}`}>
-                &ldquo;{t.quote}&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <img src={t.avatar} alt={t.name} className="size-9 rounded-full object-cover border-2 border-white/20" />
-                <div>
-                  <p className="text-white text-sm font-semibold">{t.name}</p>
-                  <p className="text-white/50 text-xs">{t.title}</p>
+          {TESTIMONIALS.map((t, i) => {
+            const featured = i === 0;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className={`rounded-3xl p-7 flex flex-col ${
+                  featured
+                    ? "bg-[#3B5BDB] shadow-[0_24px_60px_rgba(59,91,219,0.28)]"
+                    : "bg-white border border-gray-200 shadow-[0_16px_40px_rgba(17,24,39,0.06)]"
+                }`}
+              >
+                <Quote className={`size-7 mb-4 ${featured ? "text-white/40" : "text-[#3B5BDB]/25"}`} />
+                <div className="flex items-center gap-0.5 mb-3">
+                  {Array.from({ length: 5 }).map((_, s) => (
+                    <Star
+                      key={s}
+                      className={`size-4 ${featured ? "fill-yellow-300 text-yellow-300" : "fill-yellow-400 text-yellow-400"}`}
+                    />
+                  ))}
                 </div>
-              </div>
-            </motion.div>
-          ))}
+                <p className={`text-sm leading-relaxed mb-6 flex-1 ${featured ? "text-white/90" : "text-gray-600"}`}>
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={t.avatar || "/placeholder.svg"}
+                    alt={t.name}
+                    className={`size-10 rounded-full object-cover ${featured ? "ring-2 ring-white/30" : "ring-2 ring-gray-100"}`}
+                  />
+                  <div>
+                    <p className={`text-sm font-semibold ${featured ? "text-white" : "text-gray-900"}`}>{t.name}</p>
+                    <p className={`text-xs ${featured ? "text-white/60" : "text-gray-400"}`}>{t.title}</p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -810,37 +1097,134 @@ function RoleTicker() {
 
 /* ─── final CTA ─────────────────────────────────────────────────── */
 
+const CANDIDATE_AVATARS = [
+  "/images/talents/cand-1.png",
+  "/images/talents/cand-2.png",
+  "/images/talents/cand-3.png",
+  "/images/talents/cand-4.png",
+];
+
 function FinalCTA() {
   return (
-    <section className="py-24 bg-[#3B5BDB] text-center px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl mx-auto"
-      >
-        <h2 className="text-4xl font-extrabold text-white mb-4 text-balance">
-          Ready to Find Your Global Role?
-        </h2>
-        <p className="text-white/75 text-lg mb-8 text-pretty">
-          Join the most selective network of credentialled African professionals and access opportunities you can&apos;t find anywhere else.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/talents/apply"
-            className="h-14 px-10 inline-flex items-center gap-2 rounded-full bg-white text-[#3B5BDB] font-bold text-base hover:bg-gray-100 transition-colors shadow-xl"
+    <section className="px-4 sm:px-6 py-16 lg:py-20 bg-white">
+      <div className="relative max-w-6xl mx-auto rounded-[2.5rem] bg-[#EDEEF6] overflow-hidden px-6 sm:px-10 lg:px-14 py-12 lg:py-16">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
+          {/* Left copy */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="relative z-10"
           >
-            Apply to the network <ArrowRight className="size-5" />
-          </Link>
-          <Link
-            href="/auth/sign-up"
-            className="h-14 px-10 inline-flex items-center gap-2 rounded-full border-2 border-white/40 text-white font-bold text-base hover:bg-white/10 transition-colors"
+            <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold leading-[0.98] tracking-tight text-gray-900 mb-5 text-balance">
+              Your Dream Job
+              <br /> Is Waiting Here
+            </h2>
+            <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md mb-8 text-pretty">
+              Let your talents, personality and potential do the talking. We give you the opportunity to share your story through.
+            </p>
+
+            {/* Search pill */}
+            <form
+              action="/talents/apply"
+              className="flex items-center gap-2 bg-white rounded-full shadow-[0_16px_40px_rgba(17,24,39,0.1)] p-2 max-w-md mb-10"
+            >
+              <span className="grid size-9 place-items-center shrink-0 ml-1">
+                <Search className="size-4 text-gray-400" />
+              </span>
+              <input
+                type="text"
+                name="q"
+                placeholder="Search your job"
+                className="flex-1 min-w-0 text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400 bg-transparent"
+              />
+              <button
+                type="submit"
+                className="shrink-0 h-11 px-6 inline-flex items-center rounded-full bg-[#6D5AE6] text-white text-sm font-semibold hover:bg-[#5b49d1] transition-colors"
+              >
+                Get Started
+              </button>
+            </form>
+
+            {/* Candidates */}
+            <div>
+              <p className="text-lg font-bold text-gray-900 mb-3">Our more candidates</p>
+              <div className="flex items-center">
+                <div className="flex -space-x-3">
+                  {CANDIDATE_AVATARS.map((src, i) => (
+                    <img
+                      key={i}
+                      src={src || "/placeholder.svg"}
+                      alt=""
+                      className="size-9 rounded-full object-cover ring-2 ring-[#EDEEF6]"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+                <span className="ml-2 grid size-9 place-items-center rounded-full bg-gray-900 text-white text-xs font-bold ring-2 ring-[#EDEEF6]">
+                  80+
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right visual */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="relative mx-auto w-full max-w-sm lg:max-w-md"
           >
-            Create free account
-          </Link>
+            <img
+              src="/images/talents/cta-woman-orange.png"
+              alt="A delighted professional using DeepTalent"
+              className="relative z-10 w-full h-auto object-contain select-none"
+            />
+
+            {/* Floating blue calendar icon */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 left-0 top-10 grid size-12 place-items-center rounded-2xl bg-[#3B5BDB] shadow-xl"
+            >
+              <Calendar className="size-5 text-white" />
+            </motion.div>
+
+            {/* Floating Google G */}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 right-2 top-6 grid size-12 place-items-center rounded-full bg-white shadow-xl"
+            >
+              <GoogleG className="size-6" />
+            </motion.div>
+
+            {/* Floating candidate card */}
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 -left-2 sm:left-2 bottom-8 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-gray-100"
+            >
+              <img
+                src="/images/talents/cand-2.png"
+                alt="John Cliventon"
+                className="size-10 rounded-xl object-cover"
+              />
+              <span className="leading-tight">
+                <span className="block text-sm font-bold text-gray-900">John Cliventon</span>
+                <span className="block text-xs text-gray-400 mb-1">Product Designer</span>
+                <span className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className={`size-3 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"}`} />
+                  ))}
+                </span>
+              </span>
+            </motion.div>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -852,7 +1236,8 @@ export function TalentsPageClient() {
     <main className="bg-white">
       <SiteNavbar />
       <TalentHero />
-      <TrustedBy />
+      <KickstartAI />
+      <NewStartups />
       <FeaturesGrid />
       <SkillOrbit />
       <TalentProfileCard />
@@ -862,6 +1247,7 @@ export function TalentsPageClient() {
       <Testimonials />
       <RoleTicker />
       <FinalCTA />
+      <TrustedFooter />
     </main>
   );
 }
