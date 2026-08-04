@@ -1,11 +1,13 @@
 "use client";
 
 import {
-  ArrowUpRight, Menu, X, Mail, Phone, MapPin,
+  ArrowUpRight, ArrowRight, Command, Menu, X, Mail, Phone, MapPin,
   Instagram, Linkedin, HelpCircle, Plus, Minus,
   FileText, Users, ShieldCheck, ChevronRight,
   Star, Globe, Zap, Check, Paperclip, ArrowUp, Sparkles,
 } from "lucide-react";
+import { ConsentBot } from "@/components/site/consent-bot";
+import { YouTubePopup } from "@/components/site/youtube-popup";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
@@ -58,6 +60,8 @@ export default function Home() {
       <IndustryInsights />
       <FaqSection />
       <Footer />
+      <ConsentBot />
+      <YouTubePopup />
     </main>
   );
 }
@@ -303,77 +307,236 @@ function LearningPartnerships() {
 
 function Hero() {
   return (
-    <section className="relative min-h-[720px] md:min-h-[820px] overflow-hidden bg-gradient-to-br from-[#8690FD] to-[#3B5BDB] pt-36 md:pt-44 pb-20 px-4 md:px-8 lg:px-12">
-      {/* 3D illustration sits in the background, behind the text layer */}
-      <motion.div
-        initial={{ opacity: 0, y: 60 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-        className="pointer-events-none absolute inset-x-0 bottom-0 sm:-bottom-24 md:-bottom-48 lg:-bottom-80 z-0"
-        aria-hidden="true"
-      >
-        <Image
-          src="/images/hero-img.png"
-          alt=""
-          width={1200}
-          height={600}
-          className="w-full object-cover opacity-90"
-          priority
-        />
-      </motion.div>
-
-      {/* Soft gradient veil to lift text contrast over the illustration */}
+    <section className="relative overflow-hidden bg-[#F7F8FF] pt-32 md:pt-40 pb-16 md:pb-24 px-4 md:px-8 lg:px-12">
+      {/* soft radial tint */}
       <div
-        className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#3B5BDB]/40 via-[#3B5BDB]/15 to-transparent"
-        aria-hidden="true"
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-70"
+        style={{ backgroundImage: "radial-gradient(60% 50% at 50% 0%, rgba(134,144,253,0.18) 0%, transparent 70%)" }}
       />
 
-      <motion.div
-        className="relative z-10 max-w-7xl mx-auto"
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer(0.15, 0.1)}
-      >
-        <div className="flex flex-col gap-5 md:gap-6 max-w-2xl">
-          <motion.h1
-            variants={fadeInUp()}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-[1.1] text-balance"
-            style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif", letterSpacing: "-0.01em" }}
+      <div className="relative z-10 mx-auto max-w-6xl">
+        {/* ── Playful type-driven headline with floating 3D chips ── */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer(0.08, 0.05)}
+          className="relative"
+        >
+          {/* decorative sparkles */}
+          <Sparkle className="left-[2%] top-[38%]" color="#22C55E" delay={0.2} />
+          <Sparkle className="left-[16%] top-[86%]" color="#3B5BDB" delay={0.5} />
+          <Sparkle className="right-[24%] top-[10%]" color="#F5B400" delay={0.35} />
+          <Sparkle className="right-[6%] top-[70%]" color="#8690FD" delay={0.65} />
+
+          <h1
+            className="relative text-center text-[13vw] font-extrabold leading-[0.92] tracking-tight text-gray-900 sm:text-6xl md:text-7xl lg:text-[5.75rem]"
+            style={{ letterSpacing: "-0.03em" }}
           >
-            Hire Global Talent
-          </motion.h1>
+            <span className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <motion.span variants={fadeInUp()}>Hire</motion.span>
+              <motion.span variants={scaleIn()}>
+                <ChipArrow />
+              </motion.span>
+              <motion.span variants={scaleIn()}>
+                <ChipToggle />
+              </motion.span>
+              <motion.span variants={fadeInUp()}>global</motion.span>
+            </span>
+            <span className="mt-2 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <motion.span variants={scaleIn()}>
+                <ChipYellow />
+              </motion.span>
+              <motion.span variants={fadeInUp()} className="text-[#3B5BDB]">talent,</motion.span>
+              <motion.span variants={scaleIn()}>
+                <ChipCommand />
+              </motion.span>
+            </span>
+            <span className="mt-2 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <motion.span variants={fadeInUp()}>build teams</motion.span>
+            </span>
+            <span className="mt-2 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <motion.span variants={fadeInUp()}>that</motion.span>
+              <motion.span variants={scaleIn()}>
+                <ChipDot />
+              </motion.span>
+              <motion.span variants={fadeInUp()}>deliver</motion.span>
+            </span>
+          </h1>
 
           <motion.p
             variants={fadeInUp()}
-            className="text-lg md:text-xl text-white/90 max-w-xl leading-relaxed text-pretty"
+            className="mx-auto mt-8 max-w-xl text-pretty text-center text-base leading-relaxed text-gray-500 md:text-lg"
           >
-            Connect with accredited and vetted experts in{" "}
-            <span className="font-semibold text-white">finance</span>,{" "}
-            <span className="font-semibold text-white">compliance</span>,{" "}
-            <span className="font-semibold text-white">risk</span>,{" "}
-            <span className="font-semibold text-white">technology</span> and more — all screened and scored by our AI vetting system so every hire performs from day one.
+            DeepTalent connects you with accredited experts in finance, compliance, risk and
+            technology — each screened and scored by our AI vetting system so every hire performs
+            from day one.
           </motion.p>
 
           <motion.div
             variants={fadeInUp()}
-            className="flex flex-wrap gap-3 md:gap-4 pt-2"
+            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
           >
             <Link
               href="/companies/hire"
-              className="inline-flex items-center h-11 px-6 md:px-8 rounded-full bg-white text-[#3B5BDB] font-semibold hover:bg-white/95 hover:scale-105 transition-all shadow-lg"
+              className="inline-flex h-12 items-center rounded-full bg-gray-900 px-8 font-semibold text-white shadow-lg transition-transform hover:scale-[1.03]"
             >
-              Start Hiring
+              Start hiring free
             </Link>
             <a
               href="#howItWorks"
-              className="inline-flex items-center gap-2 h-11 px-6 md:px-8 rounded-full bg-white/10 backdrop-blur-sm border border-white/40 text-white font-semibold hover:bg-white/20 hover:scale-105 transition-all"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-700 underline-offset-4 hover:underline"
             >
-              How it Works <ArrowUpRight className="size-4" />
+              See how it works <ArrowUpRight className="size-4" />
             </a>
           </motion.div>
-        </div>
-      </motion.div>
+        </motion.div>
+
+        {/* ── Enhanced, interactive 3D showcase ── */}
+        <Hero3DShowcase />
+      </div>
     </section>
+  );
+}
+
+/* ─── playful hero pieces ─── */
+
+function Sparkle({ className, color, delay = 0 }: { className?: string; color: string; delay?: number }) {
+  return (
+    <motion.svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      className={`pointer-events-none absolute z-0 hidden size-5 md:block lg:size-6 ${className ?? ""}`}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: [0, 1.15, 1], opacity: 1, rotate: [0, 12, 0] }}
+      transition={{ delay: 0.4 + delay, duration: 0.6, ease: "easeOut" }}
+    >
+      <path d="M12 0c.6 6 5.4 10.8 12 12-6.6 1.2-11.4 6-12 12-.6-6-5.4-10.8-12-12C6.6 10.8 11.4 6 12 0Z" fill={color} />
+    </motion.svg>
+  );
+}
+
+function ChipArrow() {
+  return (
+    <span className="inline-grid size-[0.95em] place-items-center rounded-full bg-emerald-500 align-middle shadow-lg shadow-emerald-500/30">
+      <ArrowRight className="size-[0.5em] text-white" strokeWidth={3} />
+    </span>
+  );
+}
+
+function ChipToggle() {
+  return (
+    <span className="relative inline-flex h-[0.62em] w-[1.25em] items-center rounded-full bg-gradient-to-r from-[#3B5BDB] via-[#8690FD] to-[#F5B400] align-middle shadow-lg">
+      <span className="absolute right-[0.06em] size-[0.5em] rounded-full bg-white shadow-md" />
+    </span>
+  );
+}
+
+function ChipYellow() {
+  return (
+    <span className="relative inline-flex items-center align-middle">
+      <span className="inline-block size-[0.85em] rounded-full bg-[#F5B400] shadow-lg shadow-[#F5B400]/30" />
+      <span className="ml-[-0.28em] inline-flex h-[0.5em] w-[1em] items-center rounded-full bg-white shadow-md ring-1 ring-gray-100">
+        <span className="ml-[0.12em] block h-[0.14em] w-[0.5em] rounded-full bg-gray-300" />
+      </span>
+    </span>
+  );
+}
+
+function ChipCommand() {
+  return (
+    <span className="relative inline-flex items-center align-middle">
+      <span className="inline-block size-[0.9em] rounded-full bg-gradient-to-br from-[#8690FD] to-[#3B5BDB] opacity-90 shadow-lg" />
+      <span className="ml-[-0.45em] grid size-[0.8em] place-items-center rounded-full bg-white shadow-md ring-1 ring-gray-100">
+        <Command className="size-[0.42em] text-[#3B5BDB]" strokeWidth={2.5} />
+      </span>
+    </span>
+  );
+}
+
+function ChipDot() {
+  return (
+    <span className="relative inline-flex h-[0.6em] w-[1.2em] items-center rounded-full bg-white align-middle shadow-md ring-1 ring-gray-200">
+      <span className="absolute left-1/2 size-[0.42em] -translate-x-1/2 rounded-full bg-emerald-500" />
+    </span>
+  );
+}
+
+/** The kept 3D illustration, upgraded with perspective + pointer-driven parallax tilt. */
+function Hero3DShowcase() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
+
+  function handleMove(e: React.MouseEvent<HTMLDivElement>) {
+    const el = wrapRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    setTilt({ ry: px * 12, rx: -py * 10 });
+  }
+
+  return (
+    <motion.div
+      ref={wrapRef}
+      onMouseMove={handleMove}
+      onMouseLeave={() => setTilt({ rx: 0, ry: 0 })}
+      initial={{ opacity: 0, y: 60 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+      className="relative mx-auto mt-12 max-w-5xl md:mt-16"
+      style={{ perspective: "1200px" }}
+    >
+      {/* glow pad */}
+      <div
+        aria-hidden
+        className="absolute inset-x-[10%] bottom-4 top-12 rounded-[40px] bg-gradient-to-br from-[#8690FD]/40 to-[#3B5BDB]/30 blur-3xl"
+      />
+      <motion.div
+        animate={{ rotateX: tilt.rx, rotateY: tilt.ry, y: [0, -10, 0] }}
+        transition={{
+          rotateX: { type: "spring", stiffness: 120, damping: 15 },
+          rotateY: { type: "spring", stiffness: 120, damping: 15 },
+          y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+        }}
+        style={{ transformStyle: "preserve-3d" }}
+        className="relative rounded-[32px] bg-white/70 p-3 shadow-2xl shadow-[#3B5BDB]/20 ring-1 ring-white/60 backdrop-blur-sm"
+      >
+        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#F7F8FF] to-white" style={{ transform: "translateZ(40px)" }}>
+          <Image
+            src="/images/hero-img.png"
+            alt="DeepTalent connects vetted specialists into your team"
+            width={1200}
+            height={600}
+            className="h-auto w-full object-contain"
+            priority
+          />
+        </div>
+
+        {/* floating 3D badges that lift off the surface */}
+        <motion.div
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transform: "translateZ(90px)" }}
+          className="absolute -left-3 top-8 hidden items-center gap-2 rounded-2xl bg-white px-3 py-2 shadow-xl ring-1 ring-gray-100 md:flex"
+        >
+          <span className="grid size-7 place-items-center rounded-full bg-emerald-100">
+            <Check className="size-4 text-emerald-600" strokeWidth={3} />
+          </span>
+          <span className="text-xs font-semibold text-gray-800">AI-vetted talent</span>
+        </motion.div>
+
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transform: "translateZ(110px)" }}
+          className="absolute -right-3 bottom-10 hidden items-center gap-2 rounded-2xl bg-[#3B5BDB] px-3 py-2 shadow-xl md:flex"
+        >
+          <Globe className="size-4 text-white" />
+          <span className="text-xs font-semibold text-white">Hire in 40+ countries</span>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -441,10 +604,10 @@ function TrustedBy() {
 
       {/* Marquee */}
       <div className="relative w-full overflow-hidden marquee-container">
-        <div className="flex animate-marquee gap-8 w-max">
+        <div className="flex animate-marquee gap-10 w-max">
           {[...partners, ...partners, ...partners].map((partner, index) => (
-            <div key={`${partner.id}-${index}`} className="flex-shrink-0 flex items-center justify-center h-20 px-2">
-              <div className="h-16 w-40 rounded-xl bg-white border border-gray-200 flex items-center justify-center px-5 py-3 shadow-sm hover:shadow-md transition-shadow">
+            <div key={`${partner.id}-${index}`} className="flex-shrink-0 flex items-center justify-center h-32 px-2">
+              <div className="h-24 w-60 rounded-2xl bg-white border border-gray-200 flex items-center justify-center px-8 py-5 shadow-sm hover:shadow-lg hover:border-[#3B5BDB]/20 transition-all">
                 <img
                   src={partner.image}
                   alt={partner.name}
@@ -615,94 +778,96 @@ function ServiceShowcase() {
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-              {/* Illustration card stack */}
-              <div className="relative h-[260px] md:h-[380px]">
-                {[2, 1].map((offset) => (
-                  <div
-                    key={offset}
-                    className="absolute inset-0 rounded-3xl border border-gray-200 bg-white"
-                    style={{
-                      transform: `translateY(${offset * 8}px) translateX(${offset * 8}px) scale(${1 - offset * 0.03})`,
-                      opacity: 1 - offset * 0.4,
-                    }}
-                  />
-                ))}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeService.id}
-                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0 flex items-center justify-center rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.06)]"
-                  >
-                    <div
-                      className="absolute inset-0 opacity-[0.04]"
-                      style={{ backgroundImage: `radial-gradient(circle at 50% 50%, ${C.primary} 0%, transparent 60%)` }}
-                    />
-                    <Image
-                      src={activeService.illustration}
-                      alt={activeService.title}
-                      width={360}
-                      height={360}
-                      className="max-w-full max-h-full object-contain relative z-10 p-6"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-14 items-stretch">
+              {/* Left: service index navigator */}
+              <ul className="flex flex-col gap-2 self-center">
+                {services.map((s, i) => {
+                  const active = i === activeIndex;
+                  return (
+                    <li key={s.id}>
+                      <div
+                        className={`relative flex items-center gap-4 rounded-2xl border px-5 py-4 transition-all duration-500 ${
+                          active
+                            ? "border-transparent bg-[#3B5BDB] shadow-[0_16px_40px_rgba(59,91,219,0.28)]"
+                            : "border-gray-200 bg-white"
+                        }`}
+                      >
+                        <span className={`font-mono text-sm font-bold ${active ? "text-white/80" : "text-gray-400"}`}>
+                          0{i + 1}
+                        </span>
+                        <span className={`text-base md:text-lg font-semibold tracking-tight ${active ? "text-white" : "text-gray-900"}`}>
+                          {s.title}
+                        </span>
+                        {active && (
+                          <motion.span
+                            layoutId="svc-active-arrow"
+                            className="ml-auto grid size-7 place-items-center rounded-full bg-white/20"
+                          >
+                            <ChevronRight className="size-4 text-white" />
+                          </motion.span>
+                        )}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
 
-              {/* Text */}
-              <div className="relative min-h-[280px] md:min-h-[380px]">
+              {/* Right: active service showcase panel */}
+              <div className="relative min-h-[440px]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeService.id}
-                    initial="hidden"
-                    animate="visible"
-                    exit={{ opacity: 0, y: -30 }}
-                    variants={staggerContainer(0.06)}
-                    transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -16 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex h-full flex-col overflow-hidden rounded-[2rem] border border-gray-200 bg-white shadow-[0_24px_60px_rgba(17,24,39,0.08)]"
                   >
-                    <motion.div variants={fadeInUp()} className="flex items-center gap-3 mb-4">
-                      <span className="font-mono text-xs font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
+                    {/* Illustration header */}
+                    <div className="relative flex h-52 items-center justify-center overflow-hidden bg-gradient-to-br from-[#EEF1FF] to-white md:h-64">
+                      <div
+                        className="absolute inset-0 opacity-[0.05]"
+                        style={{ backgroundImage: `radial-gradient(circle at 50% 40%, ${C.primary} 0%, transparent 60%)` }}
+                      />
+                      <span className="absolute left-6 top-6 font-mono text-xs font-bold px-3 py-1.5 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
                         0{activeIndex + 1} / 0{services.length}
                       </span>
-                      <div className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
-                    </motion.div>
-                    <motion.h3 variants={fadeInUp()} className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-3 text-gray-900">
-                      {activeService.title}
-                    </motion.h3>
-                    <motion.p variants={fadeInUp()} className="text-gray-500 text-base md:text-lg leading-relaxed mb-5">
-                      {activeService.description}
-                    </motion.p>
-                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {activeService.features.map((feature) => (
-                        <motion.li key={feature} variants={fadeInUp()} className="flex items-start gap-2 text-sm text-gray-700">
-                          <Check className="mt-0.5 size-4 shrink-0 text-[#3B5BDB]" />
-                          <span>{feature}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                    <motion.div variants={fadeInUp()} className="mt-6">
-                      <FluidCTA href="/companies/hire" size="md">
-                        Hire a {activeService.title.split(" ")[0]} Specialist
-                      </FluidCTA>
-                    </motion.div>
+                      <Image
+                        src={activeService.illustration}
+                        alt={activeService.title}
+                        width={300}
+                        height={300}
+                        className="relative z-10 max-h-full w-auto object-contain p-6"
+                      />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-1 flex-col p-7 md:p-8">
+                      <motion.div initial="hidden" animate="visible" variants={staggerContainer(0.05)}>
+                        <motion.h3 variants={fadeInUp()} className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
+                          {activeService.title}
+                        </motion.h3>
+                        <motion.p variants={fadeInUp()} className="mt-2 text-gray-500 leading-relaxed">
+                          {activeService.description}
+                        </motion.p>
+                        <ul className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                          {activeService.features.map((feature) => (
+                            <motion.li key={feature} variants={fadeInUp()} className="flex items-start gap-2 text-sm text-gray-700">
+                              <Check className="mt-0.5 size-4 shrink-0 text-[#3B5BDB]" />
+                              <span>{feature}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                      <div className="mt-auto pt-6">
+                        <FluidCTA href="/companies/hire" size="md">
+                          Hire a {activeService.title.split(" ")[0]} Specialist
+                        </FluidCTA>
+                      </div>
+                    </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
-            </div>
-
-            {/* Dot progress */}
-            <div className="flex justify-center items-center gap-2 mt-8">
-              {services.map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: i === activeIndex ? 40 : 6, backgroundColor: i === activeIndex ? C.primary : C.border }}
-                />
-              ))}
             </div>
           </div>
         </div>
@@ -1710,7 +1875,7 @@ function IndustryInsights() {
   const heroImage = heroPost.cover_image_url || `https://placehold.co/1200x800/3B5BDB/FFFFFF?text=${encodeURIComponent(heroPost.category || "Insights")}`;
 
   return (
-    <section className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#F9FAFB] border-t border-gray-200">
+    <section id="insights" className="py-20 md:py-32 px-4 md:px-8 lg:px-12 bg-[#F9FAFB] border-t border-gray-200">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial="hidden"
