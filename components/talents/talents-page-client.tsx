@@ -306,12 +306,12 @@ function TalentHero() {
             </div>
 
             {/* floating dark icon (top-left, lifts off the frame) */}
-            <div className="absolute -top-4 left-4 grid size-12 place-items-center rounded-2xl bg-gray-900 shadow-xl ring-4 ring-white">
+            <div className="absolute z-20 -top-4 left-4 grid size-12 place-items-center rounded-2xl bg-gray-900 shadow-xl ring-4 ring-white">
               <BriefcaseBusiness className="size-5 text-white" />
             </div>
 
             {/* colorful app accent (top right) */}
-            <div className="absolute top-6 -right-3 grid size-11 place-items-center rounded-full bg-white shadow-xl ring-1 ring-gray-100">
+            <div className="absolute z-20 top-6 -right-3 grid size-11 place-items-center rounded-full bg-white shadow-xl ring-1 ring-gray-100">
               <span
                 className="block size-5 rounded-full"
                 style={{ background: "conic-gradient(from 90deg, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335)" }}
