@@ -996,34 +996,56 @@ function FAQSection() {
 
 function Testimonials() {
   return (
-    <section className="py-20 bg-gray-950 overflow-hidden">
+    <section className="py-20 lg:py-24 bg-[#F9FAFB] border-t border-gray-100 overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-3xl font-extrabold text-white text-center mb-12 text-balance">
-          What Our Placed Professionals Are Saying
-        </h2>
+        <div className="text-center mb-12">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#3B5BDB]">Testimonials</p>
+          <h2 className="mt-2 text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 text-balance">
+            What Our Placed Professionals Are Saying
+          </h2>
+        </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className={`rounded-2xl p-6 ${i === 0 ? "bg-[#3B5BDB]" : "bg-white/5 border border-white/10"}`}
-            >
-              <Quote className="size-6 text-white/40 mb-4" />
-              <p className={`text-sm leading-relaxed mb-6 ${i === 0 ? "text-white/90" : "text-white/70"}`}>
-                &ldquo;{t.quote}&rdquo;
-              </p>
-              <div className="flex items-center gap-3">
-                <img src={t.avatar} alt={t.name} className="size-9 rounded-full object-cover border-2 border-white/20" />
-                <div>
-                  <p className="text-white text-sm font-semibold">{t.name}</p>
-                  <p className="text-white/50 text-xs">{t.title}</p>
+          {TESTIMONIALS.map((t, i) => {
+            const featured = i === 0;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className={`rounded-3xl p-7 flex flex-col ${
+                  featured
+                    ? "bg-[#3B5BDB] shadow-[0_24px_60px_rgba(59,91,219,0.28)]"
+                    : "bg-white border border-gray-200 shadow-[0_16px_40px_rgba(17,24,39,0.06)]"
+                }`}
+              >
+                <Quote className={`size-7 mb-4 ${featured ? "text-white/40" : "text-[#3B5BDB]/25"}`} />
+                <div className="flex items-center gap-0.5 mb-3">
+                  {Array.from({ length: 5 }).map((_, s) => (
+                    <Star
+                      key={s}
+                      className={`size-4 ${featured ? "fill-yellow-300 text-yellow-300" : "fill-yellow-400 text-yellow-400"}`}
+                    />
+                  ))}
                 </div>
-              </div>
-            </motion.div>
-          ))}
+                <p className={`text-sm leading-relaxed mb-6 flex-1 ${featured ? "text-white/90" : "text-gray-600"}`}>
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={t.avatar || "/placeholder.svg"}
+                    alt={t.name}
+                    className={`size-10 rounded-full object-cover ${featured ? "ring-2 ring-white/30" : "ring-2 ring-gray-100"}`}
+                  />
+                  <div>
+                    <p className={`text-sm font-semibold ${featured ? "text-white" : "text-gray-900"}`}>{t.name}</p>
+                    <p className={`text-xs ${featured ? "text-white/60" : "text-gray-400"}`}>{t.title}</p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
