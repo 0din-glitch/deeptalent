@@ -194,8 +194,24 @@ const SALARY_TABLE = [
 
 function TalentHero() {
   return (
-    <section className="relative bg-white overflow-hidden pt-28 lg:pt-32 pb-12">
-      <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-8 lg:gap-6 items-center">
+    <section className="relative bg-white overflow-hidden pt-24 lg:pt-28 pb-12 px-4 sm:px-6">
+      {/* Gradient frame (10px padding) that encapsulates the hero */}
+      <div className="relative max-w-[1400px] mx-auto rounded-[2.75rem] p-2.5 bg-gradient-to-br from-[#3B5BDB] via-[#8690FD] to-white shadow-[0_30px_80px_rgba(59,91,219,0.18)]">
+        {/* Inner surface with wavy background */}
+        <div className="relative overflow-hidden rounded-[2.25rem] bg-white">
+          {/* Wavy decorative background */}
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 w-full h-2/3"
+            viewBox="0 0 1440 420"
+            preserveAspectRatio="none"
+          >
+            <path fill="#3B5BDB" fillOpacity="0.05" d="M0,220 C240,120 480,320 720,240 C960,160 1200,300 1440,200 L1440,420 L0,420 Z" />
+            <path fill="#8690FD" fillOpacity="0.07" d="M0,300 C260,220 520,380 760,300 C1000,220 1220,360 1440,280 L1440,420 L0,420 Z" />
+            <path fill="#3B5BDB" fillOpacity="0.06" d="M0,360 C280,300 520,420 780,360 C1040,300 1240,400 1440,350 L1440,420 L0,420 Z" />
+          </svg>
+
+          <div className="relative z-10 grid lg:grid-cols-2 gap-8 lg:gap-6 items-center px-6 md:px-10 lg:px-14 py-10 lg:py-14">
         {/* Left copy */}
         <div className="relative z-10 order-2 lg:order-1">
           <motion.h1
@@ -383,6 +399,8 @@ function TalentHero() {
               </div>
             </div>
           </motion.div>
+        </div>
+          </div>
         </div>
       </div>
     </section>
