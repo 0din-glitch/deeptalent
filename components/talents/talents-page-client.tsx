@@ -280,24 +280,75 @@ function TalentHero() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="relative mx-auto max-w-md lg:max-w-none"
           >
-            <img
-              src="/images/talents/hero-woman.png"
-              alt="A professional browsing roles on DeepTalent"
-              className="w-full h-auto object-contain select-none"
-            />
+            {/* Framed, rounded image card */}
+            <div className="relative overflow-hidden rounded-[2rem] border border-gray-200 bg-gradient-to-br from-[#EEF1FF] via-white to-[#F4F6FF] shadow-[0_24px_60px_rgba(17,24,39,0.12)]">
+              {/* soft decorative blobs behind the subject */}
+              <div className="pointer-events-none absolute -top-10 -right-10 size-40 rounded-full bg-[#8690FD]/25 blur-2xl" />
+              <div className="pointer-events-none absolute bottom-0 -left-8 size-40 rounded-full bg-[#3B5BDB]/15 blur-2xl" />
+              <img
+                src="/images/talents/hero-woman.png"
+                alt="A professional browsing roles on DeepTalent"
+                className="relative z-10 w-full h-auto object-contain select-none"
+              />
+            </div>
 
-            {/* floating dark icon */}
-            <div className="absolute top-6 left-2 sm:left-6 grid size-12 place-items-center rounded-2xl bg-gray-900 shadow-xl">
+            {/* floating dark icon (top-left, lifts off the frame) */}
+            <div className="absolute -top-4 left-4 grid size-12 place-items-center rounded-2xl bg-gray-900 shadow-xl ring-4 ring-white">
               <BriefcaseBusiness className="size-5 text-white" />
             </div>
 
             {/* colorful app accent (top right) */}
-            <div className="absolute top-10 right-2 sm:right-4 grid size-11 place-items-center rounded-full bg-white shadow-xl">
+            <div className="absolute top-6 -right-3 grid size-11 place-items-center rounded-full bg-white shadow-xl ring-1 ring-gray-100">
               <span
                 className="block size-5 rounded-full"
                 style={{ background: "conic-gradient(from 90deg, #EA4335, #FBBC05, #34A853, #4285F4, #EA4335)" }}
               />
             </div>
+
+            {/* Floating overlay: new match notification */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 left-3 top-24 hidden sm:flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-gray-100"
+            >
+              <span className="grid size-9 place-items-center rounded-full bg-emerald-100">
+                <CheckCircle2 className="size-5 text-emerald-600" />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-sm font-bold text-gray-900">New match</span>
+                <span className="block text-xs text-gray-400">Finance Analyst · Remote</span>
+              </span>
+            </motion.div>
+
+            {/* Floating overlay: application progress */}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 right-3 bottom-24 hidden sm:block rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-gray-100 w-44"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-gray-500">Profile strength</span>
+                <span className="text-xs font-bold text-[#3B5BDB]">92%</span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "92%" }}
+                  transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
+                  className="h-full rounded-full bg-gradient-to-r from-[#3B5BDB] to-[#8690FD]"
+                />
+              </div>
+            </motion.div>
+
+            {/* Floating overlay: rating chip */}
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 right-6 -bottom-4 flex items-center gap-1.5 rounded-full bg-gray-900 px-3 py-2 shadow-xl"
+            >
+              <Star className="size-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-xs font-bold text-white">4.9 talent rating</span>
+            </motion.div>
           </motion.div>
 
           {/* Stats bracket */}
