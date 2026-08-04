@@ -21,7 +21,20 @@ import {
   Cpu,
   TrendingUp,
   Quote,
+  Calendar,
 } from "lucide-react";
+
+/* Google "G" mark */
+function GoogleG({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
+      <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.3 17.7 9.5 24 9.5z" />
+      <path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-16.4z" />
+      <path fill="#FBBC05" d="M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.1C1 16.5 0 20.1 0 24s1 7.5 2.6 10.7l7.9-6.1z" />
+      <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.3-4.5 2.1-8.8 2.1-6.3 0-11.6-3.8-13.5-9.1l-7.9 6.1C6.5 42.6 14.6 48 24 48z" />
+    </svg>
+  );
+}
 
 /* ─── data ──────────────────────────────────────────────────────── */
 
@@ -1062,37 +1075,134 @@ function RoleTicker() {
 
 /* ─── final CTA ─────────────────────────────────────────────────── */
 
+const CANDIDATE_AVATARS = [
+  "/images/talents/cand-1.png",
+  "/images/talents/cand-2.png",
+  "/images/talents/cand-3.png",
+  "/images/talents/cand-4.png",
+];
+
 function FinalCTA() {
   return (
-    <section className="py-24 bg-[#3B5BDB] text-center px-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl mx-auto"
-      >
-        <h2 className="text-4xl font-extrabold text-white mb-4 text-balance">
-          Ready to Find Your Global Role?
-        </h2>
-        <p className="text-white/75 text-lg mb-8 text-pretty">
-          Join the most selective network of credentialled African professionals and access opportunities you can&apos;t find anywhere else.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/talents/apply"
-            className="h-14 px-10 inline-flex items-center gap-2 rounded-full bg-white text-[#3B5BDB] font-bold text-base hover:bg-gray-100 transition-colors shadow-xl"
+    <section className="px-4 sm:px-6 py-16 lg:py-20 bg-white">
+      <div className="relative max-w-6xl mx-auto rounded-[2.5rem] bg-[#EDEEF6] overflow-hidden px-6 sm:px-10 lg:px-14 py-12 lg:py-16">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
+          {/* Left copy */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="relative z-10"
           >
-            Apply to the network <ArrowRight className="size-5" />
-          </Link>
-          <Link
-            href="/auth/sign-up"
-            className="h-14 px-10 inline-flex items-center gap-2 rounded-full border-2 border-white/40 text-white font-bold text-base hover:bg-white/10 transition-colors"
+            <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold leading-[0.98] tracking-tight text-gray-900 mb-5 text-balance">
+              Your Dream Job
+              <br /> Is Waiting Here
+            </h2>
+            <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md mb-8 text-pretty">
+              Let your talents, personality and potential do the talking. We give you the opportunity to share your story through.
+            </p>
+
+            {/* Search pill */}
+            <form
+              action="/talents/apply"
+              className="flex items-center gap-2 bg-white rounded-full shadow-[0_16px_40px_rgba(17,24,39,0.1)] p-2 max-w-md mb-10"
+            >
+              <span className="grid size-9 place-items-center shrink-0 ml-1">
+                <Search className="size-4 text-gray-400" />
+              </span>
+              <input
+                type="text"
+                name="q"
+                placeholder="Search your job"
+                className="flex-1 min-w-0 text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400 bg-transparent"
+              />
+              <button
+                type="submit"
+                className="shrink-0 h-11 px-6 inline-flex items-center rounded-full bg-[#6D5AE6] text-white text-sm font-semibold hover:bg-[#5b49d1] transition-colors"
+              >
+                Get Started
+              </button>
+            </form>
+
+            {/* Candidates */}
+            <div>
+              <p className="text-lg font-bold text-gray-900 mb-3">Our more candidates</p>
+              <div className="flex items-center">
+                <div className="flex -space-x-3">
+                  {CANDIDATE_AVATARS.map((src, i) => (
+                    <img
+                      key={i}
+                      src={src || "/placeholder.svg"}
+                      alt=""
+                      className="size-9 rounded-full object-cover ring-2 ring-[#EDEEF6]"
+                      loading="lazy"
+                    />
+                  ))}
+                </div>
+                <span className="ml-2 grid size-9 place-items-center rounded-full bg-gray-900 text-white text-xs font-bold ring-2 ring-[#EDEEF6]">
+                  80+
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right visual */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="relative mx-auto w-full max-w-sm lg:max-w-md"
           >
-            Create free account
-          </Link>
+            <img
+              src="/images/talents/cta-woman-orange.png"
+              alt="A delighted professional using DeepTalent"
+              className="relative z-10 w-full h-auto object-contain select-none"
+            />
+
+            {/* Floating blue calendar icon */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 left-0 top-10 grid size-12 place-items-center rounded-2xl bg-[#3B5BDB] shadow-xl"
+            >
+              <Calendar className="size-5 text-white" />
+            </motion.div>
+
+            {/* Floating Google G */}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 right-2 top-6 grid size-12 place-items-center rounded-full bg-white shadow-xl"
+            >
+              <GoogleG className="size-6" />
+            </motion.div>
+
+            {/* Floating candidate card */}
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute z-20 -left-2 sm:left-2 bottom-8 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl ring-1 ring-gray-100"
+            >
+              <img
+                src="/images/talents/cand-2.png"
+                alt="John Cliventon"
+                className="size-10 rounded-xl object-cover"
+              />
+              <span className="leading-tight">
+                <span className="block text-sm font-bold text-gray-900">John Cliventon</span>
+                <span className="block text-xs text-gray-400 mb-1">Product Designer</span>
+                <span className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className={`size-3 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"}`} />
+                  ))}
+                </span>
+              </span>
+            </motion.div>
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
