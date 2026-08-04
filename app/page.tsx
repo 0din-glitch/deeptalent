@@ -1195,7 +1195,7 @@ function HowItWorks() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               {/* Card stack — driven by scroll */}
-              <div className="card-stack-scene relative h-[380px] flex items-center justify-center order-2 lg:order-1">
+              <div className="card-stack-scene relative h-[480px] flex items-center justify-center order-2 lg:order-1">
                 {steps.map((item, i) => {
                   const offset = (i - activeCard + steps.length) % steps.length;
                   const isActive = offset === 0;
@@ -1213,18 +1213,18 @@ function HowItWorks() {
                         zIndex,
                       }}
                       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
+                      className="absolute w-full max-w-md rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
                     >
-                      <div className="relative h-44 overflow-hidden bg-[#3B5BDB]/5">
+                      <div className="relative h-56 overflow-hidden bg-[#3B5BDB]/5">
                         <Image src={item.image} alt={item.title} fill className="object-contain p-6" />
-                        <div className="absolute top-4 left-4 size-10 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
+                        <div className="absolute top-4 left-4 size-11 rounded-xl bg-[#3B5BDB] flex items-center justify-center shadow-lg">
                           <Icon className="size-5 text-white" />
                         </div>
-                        <span className="absolute top-4 right-4 font-mono text-3xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
+                        <span className="absolute top-4 right-4 font-mono text-4xl font-extrabold text-[#3B5BDB]/20">{item.n}</span>
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                        <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                      <div className="p-7">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+                        <p className="text-base text-gray-500 leading-relaxed">{item.description}</p>
                       </div>
                     </motion.div>
                   );
@@ -1369,7 +1369,7 @@ function WhyChooseUs() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               {/* Card stack — driven by scroll */}
-              <div className="card-stack-scene relative h-[380px] flex items-center justify-center">
+              <div className="card-stack-scene relative h-[480px] flex items-center justify-center">
                 {reasons.map((item, i) => {
                   const offset = (i - activeCard + reasons.length) % reasons.length;
                   const isActive = offset === 0;
@@ -1386,21 +1386,21 @@ function WhyChooseUs() {
                         zIndex,
                       }}
                       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute w-full max-w-sm rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
+                      className="absolute w-full max-w-md rounded-3xl border border-gray-200 bg-white overflow-hidden shadow-[0_20px_50px_rgba(17,24,39,0.1)]"
                     >
-                      <div className="relative h-44 overflow-hidden">
+                      <div className="relative h-56 overflow-hidden">
                         <Image src={item.image} alt={item.title} fill className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                         <div className="absolute bottom-4 left-4 right-4">
-                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
-                            <span className="text-xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200">
+                            <span className="text-2xl font-extrabold text-[#3B5BDB]">{item.stat}</span>
                             <span className="text-xs text-gray-600">{item.statLabel}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="p-5">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                        <p className="text-sm text-gray-500 leading-relaxed">{item.description}</p>
+                      <div className="p-7">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+                        <p className="text-base text-gray-500 leading-relaxed">{item.description}</p>
                       </div>
                     </motion.div>
                   );
