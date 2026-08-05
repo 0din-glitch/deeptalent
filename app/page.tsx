@@ -5,6 +5,9 @@ import {
   Instagram, Linkedin, HelpCircle, Plus, Minus,
   FileText, Users, ShieldCheck, ChevronRight,
   Star, Globe, Zap, Check, Paperclip, ArrowUp, Sparkles,
+  Search, BadgeCheck, GitMerge, Rocket, Gauge, GraduationCap, BarChart3,
+  Building2, Landmark, Briefcase, Quote, Target, Heart, Layers,
+  Network, Cpu, Scale, Lightbulb, TrendingUp,
 } from "lucide-react";
 import { ConsentBot } from "@/components/site/consent-bot";
 import { YouTubePopup } from "@/components/site/youtube-popup";
@@ -48,21 +51,481 @@ export default function Home() {
     <main className="bg-white text-gray-900 overflow-x-clip">
       <Navbar />
       <Hero />
+      <SupportingStatement />
       <TrustedBy />
+      <WhatWeAre />
+      <ProblemSolve />
+      <SolutionLifecycle />
       <ServiceShowcase />
+      <PlatformPillars />
       <GlobeSection />
       <LearningPartnerships />
       <HowItWorks />
+      <WhoWeServe />
       <WhyChooseUs />
       <StrategicAdvantages />
+      <EnterpriseGovernment />
       <HumanLayer />
+      <FounderMessage />
+      <VisionValues />
       <TestimonialCarousel />
       <IndustryInsights />
       <FaqSection />
+      <FinalCTA />
       <Footer />
       <ConsentBot />
       <YouTubePopup />
     </main>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   SUPPORTING STATEMENT — bold positioning band
+═══════════════════════════════════════════════════════ */
+function SupportingStatement() {
+  return (
+    <section className="relative bg-[#F7F8FF] border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12 overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{ backgroundImage: "radial-gradient(50% 60% at 50% 0%, rgba(134,144,253,0.14) 0%, transparent 70%)" }}
+      />
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewport}
+        variants={staggerContainer(0.12)}
+        className="relative max-w-4xl mx-auto text-center"
+      >
+        <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-5">
+          The Opportunity
+        </motion.p>
+        <motion.h2 variants={fadeInUp()} className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.1] text-balance">
+          The world does not have a talent shortage. It has a talent-access,{" "}
+          <span className="text-[#3B5BDB]">trust and deployment problem.</span>
+        </motion.h2>
+        <motion.p variants={fadeInUp()} className="mt-6 text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto text-pretty">
+          Millions of capable professionals remain disconnected from global opportunities, while
+          organisations struggle with skills shortages, rising costs, slow recruitment and fragmented
+          cross-border systems.
+        </motion.p>
+        <motion.p variants={fadeInUp()} className="mt-6 text-lg md:text-xl font-semibold text-gray-900 max-w-2xl mx-auto text-pretty">
+          Deeptalent is building the infrastructure that connects human potential to economic opportunity.
+        </motion.p>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   WHAT WE ARE — more than a talent platform
+═══════════════════════════════════════════════════════ */
+function WhatWeAre() {
+  const enables = [
+    { icon: Search, label: "Discover", desc: "Exceptional talent across global markets." },
+    { icon: BadgeCheck, label: "Verify", desc: "Skills, experience, identity and credibility." },
+    { icon: GitMerge, label: "Match", desc: "Talent to requirements with intelligent systems." },
+    { icon: Rocket, label: "Deploy", desc: "Individuals and teams across borders." },
+    { icon: Gauge, label: "Manage", desc: "Performance, compliance and workforce quality." },
+    { icon: GraduationCap, label: "Develop", desc: "Structured learning and career pathways." },
+    { icon: BarChart3, label: "Analyse", desc: "Workforce intelligence for better decisions." },
+  ];
+  const notList = ["A recruitment agency", "A freelance marketplace", "An outsourcing company", "A job board", "A staffing database"];
+
+  return (
+    <section className="relative bg-white border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+          variants={staggerContainer(0.12)}
+          className="max-w-3xl mb-12"
+        >
+          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">What Deeptalent Is</motion.p>
+          <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-4">
+            More Than a <span className="text-[#3B5BDB]">Talent Platform</span>
+          </motion.h2>
+          <motion.p variants={fadeInUp()} className="text-gray-500 text-lg leading-relaxed">
+            A global Human Capital Infrastructure company designed to support the full lifecycle of
+            modern workforce deployment — enabling organisations to:
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewport}
+          variants={staggerContainer(0.06)}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {enables.map(({ icon: Icon, label, desc }) => (
+            <motion.div
+              key={label}
+              variants={fadeInUp()}
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:border-[#3B5BDB]/30 hover:shadow-md transition-all"
+            >
+              <div className="size-11 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center mb-4">
+                <Icon className="size-5 text-[#3B5BDB]" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">{label}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+            </motion.div>
+          ))}
+
+          {/* What we are NOT */}
+          <motion.div variants={fadeInUp()} className="rounded-2xl border border-dashed border-gray-300 bg-[#F9FAFB] p-6">
+            <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">What we are not</p>
+            <ul className="space-y-2">
+              {notList.map((n) => (
+                <li key={n} className="flex items-center gap-2 text-sm text-gray-500">
+                  <X className="size-3.5 shrink-0 text-gray-400" />
+                  <span className="line-through decoration-gray-300">{n}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   PROBLEM WE SOLVE — three fragmented audiences
+═══════════════════════════════════════════════════════ */
+function ProblemSolve() {
+  const groups = [
+    { icon: Building2, title: "For Employers", points: ["Critical skills are difficult to source", "Hiring cycles are slow and expensive", "Local labour costs keep rising", "Candidate quality is inconsistent", "Cross-border hiring adds complexity", "Distributed teams lack structured management"] },
+    { icon: Users, title: "For Talent", points: ["Capability is overlooked because of geography", "Qualifications are hard to verify across borders", "Access to credible employers is limited", "Skills don't always align with global demand", "Career and mobility pathways are fragmented"] },
+    { icon: Landmark, title: "For Governments", points: ["Graduate unemployment remains high", "Human capital is underutilised", "Training is disconnected from employer demand", "Diaspora opportunities are poorly coordinated", "Skills data is incomplete or outdated"] },
+  ];
+  return (
+    <section className="relative bg-[#F9FAFB] border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.12)} className="max-w-3xl mb-12">
+          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">The Problem We Solve</motion.p>
+          <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-4">
+            The Global Workforce System <span className="text-[#3B5BDB]">Is Fragmented</span>
+          </motion.h2>
+          <motion.p variants={fadeInUp()} className="text-gray-500 text-lg leading-relaxed">
+            Organisations need talent. Talent needs access. Governments need employment and growth. Yet
+            the systems connecting them remain inefficient, inconsistent and difficult to trust.
+          </motion.p>
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.1)} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {groups.map(({ icon: Icon, title, points }) => (
+            <motion.div key={title} variants={fadeInUp()} className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm">
+              <div className="size-11 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center mb-5">
+                <Icon className="size-5 text-[#3B5BDB]" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{title}</h3>
+              <ul className="space-y-2.5">
+                {points.map((p) => (
+                  <li key={p} className="flex items-start gap-2 text-sm text-gray-600 leading-relaxed">
+                    <span className="mt-1.5 size-1.5 rounded-full bg-[#3B5BDB]/60 shrink-0" />
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   SOLUTION LIFECYCLE — Discover → Analyse
+═══════════════════════════════════════════════════════ */
+function SolutionLifecycle() {
+  const steps = [
+    { icon: Search, title: "Discover", desc: "Access carefully sourced professionals across high-potential global talent corridors." },
+    { icon: BadgeCheck, title: "Verify", desc: "Assess skills, experience, identity, work readiness and professional credibility." },
+    { icon: GitMerge, title: "Match", desc: "Use data, domain expertise and intelligent matching to connect the right people." },
+    { icon: Rocket, title: "Deploy", desc: "Support mobilisation, onboarding, contracting and cross-border engagement." },
+    { icon: Gauge, title: "Manage", desc: "Provide performance oversight, reporting and client success management." },
+    { icon: GraduationCap, title: "Develop", desc: "Equip talent with the capabilities required to perform in global environments." },
+    { icon: BarChart3, title: "Analyse", desc: "Generate workforce intelligence on availability, cost, risk and future skills." },
+  ];
+  return (
+    <section className="relative bg-white border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.12)} className="text-center max-w-3xl mx-auto mb-12">
+          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Our Solution</motion.p>
+          <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05]">
+            One Infrastructure. <span className="text-[#3B5BDB]">Multiple Outcomes.</span>
+          </motion.h2>
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.07)} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {steps.map(({ icon: Icon, title, desc }, i) => (
+            <motion.div key={title} variants={fadeInUp()} className="relative rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:border-[#3B5BDB]/30 hover:shadow-md transition-all">
+              <span className="absolute top-5 right-5 font-mono text-xs font-bold text-[#3B5BDB]/30">0{i + 1}</span>
+              <div className="size-11 rounded-xl bg-[#3B5BDB] flex items-center justify-center mb-4 shadow-md">
+                <Icon className="size-5 text-white" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">{title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   PLATFORM PILLARS — the connected system
+═══════════════════════════════════════════════════════ */
+function PlatformPillars() {
+  const pillars = [
+    { icon: Globe, title: "Global Talent Infrastructure", desc: "A connected system for sourcing, assessing, verifying and deploying professionals across regions." },
+    { icon: ShieldCheck, title: "Trust & Verification", desc: "Structured verification across identity, qualifications, skills, references, communication and role suitability." },
+    { icon: BarChart3, title: "Workforce Intelligence", desc: "Insight on skills availability, compensation benchmarks, hiring demand, capability gaps and retention risk." },
+    { icon: Layers, title: "Managed Workforce Solutions", desc: "Embedded teams, dedicated remote professionals and managed programmes without the full operational burden." },
+    { icon: GraduationCap, title: "Talent Development", desc: "Role-specific training, global work-readiness, digital and AI skills, and career pathway support." },
+    { icon: Cpu, title: "AI-Enabled Operations", desc: "Intelligent discovery, screening, matching and analytics — with human judgement kept central." },
+    { icon: Landmark, title: "Government & Economic Development", desc: "Programmes that convert human capital into measurable local and global economic opportunity." },
+  ];
+  return (
+    <section className="relative bg-[#F9FAFB] border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.12)} className="max-w-3xl mb-12">
+          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Our Platform Pillars</motion.p>
+          <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-4">
+            Seven Systems. <span className="text-[#3B5BDB]">One Operating System.</span>
+          </motion.h2>
+          <motion.p variants={fadeInUp()} className="text-gray-500 text-lg leading-relaxed">
+            The integrated foundations through which talent, organisations and economies participate more
+            effectively in the global workforce.
+          </motion.p>
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.07)} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {pillars.map(({ icon: Icon, title, desc }) => (
+            <motion.div key={title} variants={fadeInUp()} className="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm hover:border-[#3B5BDB]/30 hover:shadow-md transition-all">
+              <div className="size-12 rounded-2xl bg-[#3B5BDB]/10 flex items-center justify-center mb-5">
+                <Icon className="size-6 text-[#3B5BDB]" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2 leading-snug">{title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   WHO WE SERVE — audiences
+═══════════════════════════════════════════════════════ */
+function WhoWeServe() {
+  const audiences = [
+    { icon: Building2, title: "Enterprises", desc: "Reliable, flexible and globally distributed talent for organisations of every size." },
+    { icon: Landmark, title: "Governments & Institutions", desc: "Better employment outcomes, workforce competitiveness and global participation." },
+    { icon: Briefcase, title: "Professional Bodies", desc: "Career pathways, international opportunities and member-value programmes." },
+    { icon: GraduationCap, title: "Universities & Training", desc: "Connecting learning, employability and global workforce demand." },
+    { icon: TrendingUp, title: "Investors & Partners", desc: "Supporting employment, skills, digital economies and inclusive growth." },
+    { icon: Users, title: "Talent", desc: "Access to global work, career development and credible opportunities." },
+  ];
+  return (
+    <section className="relative bg-white border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.12)} className="text-center max-w-3xl mx-auto mb-12">
+          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Who We Serve</motion.p>
+          <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05]">
+            Built for Every Side of the <span className="text-[#3B5BDB]">Workforce</span>
+          </motion.h2>
+        </motion.div>
+
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.07)} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {audiences.map(({ icon: Icon, title, desc }) => (
+            <motion.div key={title} variants={fadeInUp()} className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:border-[#3B5BDB]/30 hover:shadow-md transition-all">
+              <div className="size-11 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center shrink-0">
+                <Icon className="size-5 text-[#3B5BDB]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   ENTERPRISE & GOVERNMENT SOLUTIONS
+═══════════════════════════════════════════════════════ */
+function EnterpriseGovernment() {
+  const enterprise = ["Global talent acquisition", "Managed workforce services", "Dedicated remote teams", "Specialist & technical recruitment", "Executive & strategic appointments", "Workforce advisory & market intelligence"];
+  const government = ["National talent mapping", "Global employability programmes", "Human-capital export strategy", "Youth & graduate employment", "Digital workforce programmes", "Diaspora talent networks"];
+
+  return (
+    <section className="relative bg-[#F9FAFB] border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Enterprise */}
+        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={viewport} transition={{ duration: 0.5 }} className="rounded-[2rem] border border-gray-200 bg-white p-8 md:p-10 shadow-sm">
+          <div className="size-12 rounded-2xl bg-[#3B5BDB]/10 flex items-center justify-center mb-5">
+            <Building2 className="size-6 text-[#3B5BDB]" />
+          </div>
+          <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Enterprise Solutions</p>
+          <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900 mb-3">Build Your Global Workforce with Confidence</h3>
+          <p className="text-gray-500 leading-relaxed mb-6">Solve workforce challenges through talent, technology, operational support and intelligence.</p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-7">
+            {enterprise.map((e) => (
+              <li key={e} className="flex items-start gap-2 text-sm text-gray-700"><Check className="mt-0.5 size-4 shrink-0 text-[#3B5BDB]" /><span>{e}</span></li>
+            ))}
+          </ul>
+          <FluidCTA href="/companies/hire" size="md">Explore enterprise solutions</FluidCTA>
+        </motion.div>
+
+        {/* Government */}
+        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={viewport} transition={{ duration: 0.5, delay: 0.1 }} className="rounded-[2rem] border border-transparent bg-[#3B5BDB] p-8 md:p-10 shadow-[0_24px_60px_rgba(59,91,219,0.28)]">
+          <div className="size-12 rounded-2xl bg-white/15 flex items-center justify-center mb-5">
+            <Landmark className="size-6 text-white" />
+          </div>
+          <p className="text-xs font-semibold tracking-widest uppercase text-white/70 mb-2">Government & Institutions</p>
+          <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white mb-3">Human Capital as Economic Infrastructure</h3>
+          <p className="text-white/75 leading-relaxed mb-6">The most renewable asset any country possesses is its people. We help identify, develop, package and connect human capability to demand.</p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-7">
+            {government.map((g) => (
+              <li key={g} className="flex items-start gap-2 text-sm text-white/90"><Check className="mt-0.5 size-4 shrink-0 text-white" /><span>{g}</span></li>
+            ))}
+          </ul>
+          <Link href="/consulting" className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 font-semibold text-[#3B5BDB] hover:bg-gray-100 transition-colors">
+            Partner with us <ArrowRight className="size-4" />
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   FOUNDER'S MESSAGE
+═══════════════════════════════════════════════════════ */
+function FounderMessage() {
+  return (
+    <section className="relative bg-white border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewport}
+        variants={staggerContainer(0.12)}
+        className="max-w-3xl mx-auto text-center"
+      >
+        <motion.div variants={scaleIn()} className="inline-flex items-center justify-center size-12 rounded-2xl bg-[#3B5BDB]/10 text-[#3B5BDB] mb-6">
+          <Quote className="size-6" />
+        </motion.div>
+        <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-4">Founder&apos;s Message</motion.p>
+        <motion.blockquote variants={fadeInUp()} className="font-serif text-2xl md:text-3xl leading-snug text-gray-900 tracking-tight text-balance">
+          &ldquo;The problem was not always the absence of capability. It was the absence of trusted
+          infrastructure connecting capability to demand. Deeptalent was created to help solve that
+          problem.&rdquo;
+        </motion.blockquote>
+        <motion.p variants={fadeInUp()} className="mt-6 text-gray-500 leading-relaxed text-pretty">
+          We want to help organisations build stronger workforces, professionals build better careers,
+          and institutions turn human capital into economic growth — contributing to a world in which
+          opportunity is determined less by geography and more by capability, integrity and potential.
+        </motion.p>
+        <motion.div variants={fadeInUp()} className="mt-8">
+          <p className="font-bold text-gray-900">Joshua Omoniyi Raymond Onifade</p>
+          <p className="text-sm text-gray-400">Founder &amp; Chief Executive Officer, Deeptalent Platform</p>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   VISION, MISSION, VALUES
+═══════════════════════════════════════════════════════ */
+function VisionValues() {
+  const vmp = [
+    { icon: Target, label: "Vision", text: "To become the global operating system for human capital — connecting talent, organisations and economies through trusted workforce infrastructure." },
+    { icon: Rocket, label: "Mission", text: "To discover, develop, verify, deploy and manage exceptional talent across borders while helping organisations build future-ready workforces." },
+    { icon: Lightbulb, label: "Purpose", text: "To unlock human potential and connect it to meaningful economic opportunity." },
+  ];
+  const values = [
+    { icon: Star, label: "Excellence" },
+    { icon: ShieldCheck, label: "Integrity" },
+    { icon: Globe, label: "Opportunity" },
+    { icon: Lightbulb, label: "Innovation" },
+    { icon: Scale, label: "Accountability" },
+    { icon: Heart, label: "Inclusion" },
+    { icon: TrendingUp, label: "Impact" },
+  ];
+  return (
+    <section className="relative bg-[#F9FAFB] border-t border-gray-200 py-20 md:py-28 px-4 md:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.1)} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+          {vmp.map(({ icon: Icon, label, text }) => (
+            <motion.div key={label} variants={fadeInUp()} className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
+              <div className="size-11 rounded-xl bg-[#3B5BDB]/10 flex items-center justify-center mb-5">
+                <Icon className="size-5 text-[#3B5BDB]" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{label}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed">{text}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <div className="text-center mb-8">
+          <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB]">Our Values</p>
+        </div>
+        <motion.div initial="hidden" whileInView="visible" viewport={viewport} variants={staggerContainer(0.05)} className="flex flex-wrap justify-center gap-3">
+          {values.map(({ icon: Icon, label }) => (
+            <motion.span key={label} variants={scaleIn()} className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-800 shadow-sm">
+              <Icon className="size-4 text-[#3B5BDB]" />
+              {label}
+            </motion.span>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════
+   FINAL CTA — closing band
+═══════════════════════════════════════════════════════ */
+function FinalCTA() {
+  return (
+    <section className="relative bg-white py-16 md:py-20 px-4 md:px-8 lg:px-12 border-t border-gray-200">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={viewport}
+        transition={{ duration: 0.6 }}
+        className="relative max-w-6xl mx-auto overflow-hidden rounded-[2.5rem] bg-[#3B5BDB] px-6 md:px-14 py-14 md:py-20 text-center shadow-[0_30px_80px_rgba(59,91,219,0.3)]"
+      >
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-30" style={{ backgroundImage: "radial-gradient(60% 60% at 50% 0%, rgba(255,255,255,0.35) 0%, transparent 70%)" }} />
+        <div className="relative">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.05] text-balance max-w-3xl mx-auto">
+            Build the workforce your ambition demands.
+          </h2>
+          <p className="mt-5 text-lg text-white/80 max-w-xl mx-auto text-pretty">
+            Connect human potential to global opportunity — with infrastructure built for trust, scale
+            and long-term performance.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link href="/companies/hire" className="inline-flex h-13 items-center gap-2 rounded-full bg-white px-8 py-3.5 font-bold text-[#3B5BDB] hover:bg-gray-100 transition-colors shadow-xl">
+              Build your global workforce <ArrowRight className="size-5" />
+            </Link>
+            <Link href="/talents/apply" className="inline-flex h-13 items-center rounded-full border-2 border-white/40 px-8 py-3.5 font-bold text-white hover:bg-white/10 transition-colors">
+              Join as talent
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+    </section>
   );
 }
 
@@ -273,9 +736,9 @@ function LearningPartnerships() {
           transition={{ duration: 0.35, delay: 0.2 }}
           className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
         >
-          <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Vetted Expertise</p>
+          <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Talent Development</p>
           <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 leading-snug max-w-md text-balance mb-6">
-            Every hire is AI-vetted on the platforms and tools your team actually runs on.
+            Talent developed and verified on the platforms and tools global employers actually run on.
           </h2>
           <Link
             href="/companies/hire"
@@ -288,9 +751,9 @@ function LearningPartnerships() {
 
       {/* Mobile: text + wrapped logos */}
       <div className="md:hidden max-w-md mx-auto text-center">
-        <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Vetted Expertise</p>
+        <p className="text-xs font-semibold tracking-widest uppercase text-gray-400 mb-3">Talent Development</p>
         <h2 className="text-2xl font-bold text-gray-900 leading-snug text-balance mb-6">
-          Every hire is AI-vetted on the platforms and tools your team actually runs on.
+          Talent developed and verified on the platforms and tools global employers actually run on.
         </h2>
         <div className="flex flex-wrap justify-center gap-3 mb-6">
           {logoList.map((logo) => (
@@ -334,43 +797,43 @@ function Hero() {
             style={{ letterSpacing: "-0.03em" }}
           >
             <span className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-              <motion.span variants={fadeInUp()}>Hire</motion.span>
+              <motion.span variants={fadeInUp()}>The</motion.span>
               <motion.span variants={scaleIn()}>
                 <ChipArrow />
               </motion.span>
               <motion.span variants={scaleIn()}>
                 <ChipToggle />
               </motion.span>
-              <motion.span variants={fadeInUp()}>global</motion.span>
+              <motion.span variants={fadeInUp()}>infrastructure</motion.span>
             </span>
             <span className="mt-2 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <motion.span variants={fadeInUp()}>behind the</motion.span>
               <motion.span variants={scaleIn()}>
                 <ChipYellow />
               </motion.span>
-              <motion.span variants={fadeInUp()} className="text-[#3B5BDB]">talent,</motion.span>
+            </span>
+            <span className="mt-2 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <motion.span variants={fadeInUp()} className="text-[#3B5BDB]">global</motion.span>
               <motion.span variants={scaleIn()}>
                 <ChipCommand />
               </motion.span>
             </span>
             <span className="mt-2 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-              <motion.span variants={fadeInUp()}>build teams</motion.span>
-            </span>
-            <span className="mt-2 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-              <motion.span variants={fadeInUp()}>that</motion.span>
+              <motion.span variants={fadeInUp()}>workforce</motion.span>
               <motion.span variants={scaleIn()}>
                 <ChipDot />
               </motion.span>
-              <motion.span variants={fadeInUp()}>deliver</motion.span>
             </span>
           </h1>
 
           <motion.p
             variants={fadeInUp()}
-            className="mx-auto mt-8 max-w-xl text-pretty text-center text-base leading-relaxed text-gray-500 md:text-lg"
+            className="mx-auto mt-8 max-w-2xl text-pretty text-center text-base leading-relaxed text-gray-500 md:text-lg"
           >
-            DeepTalent connects you with accredited experts in finance, compliance, risk and
-            technology — each screened and scored by our AI vetting system so every hire performs
-            from day one.
+            Deeptalent Platform helps enterprises, institutions and governments discover, verify,
+            deploy and manage exceptional talent across borders — combining human expertise,
+            technology and workforce intelligence to build agile, compliant and globally
+            distributed teams with confidence.
           </motion.p>
 
           <motion.div
@@ -381,13 +844,13 @@ function Hero() {
               href="/companies/hire"
               className="inline-flex h-12 items-center rounded-full bg-gray-900 px-8 font-semibold text-white shadow-lg transition-transform hover:scale-[1.03]"
             >
-              Start hiring free
+              Build your global workforce
             </Link>
             <a
               href="#howItWorks"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-700 underline-offset-4 hover:underline"
             >
-              See how it works <ArrowUpRight className="size-4" />
+              Explore Deeptalent Platform <ArrowUpRight className="size-4" />
             </a>
           </motion.div>
         </motion.div>
@@ -706,13 +1169,13 @@ function ServiceShowcase() {
       <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200 py-16 px-4">
         <div className="max-w-xl mx-auto">
           <div className="mb-8">
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Our Capabilities</p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-[1.1] text-gray-900">
-              Every Discipline.<br />
-              <span className="text-[#3B5BDB]">One Platform.</span>
-            </h2>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Industries</p>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-[1.1] text-gray-900">
+                Every Sector.<br />
+                <span className="text-[#3B5BDB]">One Infrastructure.</span>
+              </h2>
             <p className="text-gray-500 text-base mt-3 leading-relaxed">
-              DeepTalent connects you with pre-vetted specialists ready to integrate into your workflow immediately.
+              Access verified professionals across the sectors that power the global economy — each screened, scored and ready to integrate into your workflow immediately.
             </p>
           </div>
 
@@ -768,15 +1231,15 @@ function ServiceShowcase() {
               transition={{ duration: 0.6 }}
               className="mb-10 max-w-2xl"
             >
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Our Capabilities</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Industries</p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gray-900">
-                Every Discipline.<br />
-                <span className="text-[#3B5BDB]">One Platform.</span>
+                Every Sector.<br />
+                <span className="text-[#3B5BDB]">One Infrastructure.</span>
               </h2>
               <p className="text-gray-500 text-base md:text-lg mt-3 leading-relaxed">
-                DeepTalent connects you with pre-vetted specialists ready to integrate into your workflow immediately.
-              </p>
-            </motion.div>
+              Access verified professionals across the sectors that power the global economy — each screened, scored and ready to integrate into your workflow immediately.
+            </p>
+          </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-14 items-stretch">
               {/* Left: service index navigator */}
@@ -1036,22 +1499,22 @@ function GlobeSection() {
             variants={staggerContainer(0.13)}
           >
             <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-3">
-              Global Talent Network
+              Talent Corridors
             </motion.p>
             <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-5 text-balance">
-              Talent from Every Continent.{" "}
-              <span className="text-[#3B5BDB]">Compliant Everywhere.</span>
+              Connecting High-Potential Markets{" "}
+              <span className="text-[#3B5BDB]">to Global Demand.</span>
             </motion.h2>
             <motion.p variants={fadeInUp()} className="text-gray-500 text-lg leading-relaxed mb-8">
-              Our network spans Nigeria, Kenya, Ghana, South Africa, Egypt, the Philippines, India, and beyond. We handle payroll, tax, and local compliance — you just hire.
+              We develop focused talent corridors across Africa, Europe, Asia, Latin America, North America and the Middle East — positioning qualified professionals not as lower-cost labour, but as globally competitive contributors to innovation and growth.
             </motion.p>
 
             <motion.div variants={staggerContainer(0.1)} className="grid grid-cols-2 gap-4 mb-8">
               {[
-                { icon: Globe, label: "50+ Countries", desc: "Active talent presence" },
-                { icon: ShieldCheck, label: "100% Compliant", desc: "Local law covered" },
-                { icon: Zap, label: "14–21 Days", desc: "Average placement speed" },
-                { icon: Users, label: "10,000+ Vetted", desc: "Talent in network" },
+                { icon: Globe, label: "6 Continents", desc: "Active talent corridors" },
+                { icon: ShieldCheck, label: "Structured Vetting", desc: "Verified at every step" },
+                { icon: Zap, label: "14–21 Days", desc: "Average deployment speed" },
+                { icon: Users, label: "10,000+ Vetted", desc: "Professionals in network" },
               ].map(({ icon: Icon, label, desc }) => (
                 <motion.div
                   key={label}
@@ -1071,7 +1534,7 @@ function GlobeSection() {
 
             <motion.div variants={fadeInUp()}>
               <FluidCTA href="/talents" size="md" variant="outline">
-                Explore Talent Pool
+                Explore talent corridors
               </FluidCTA>
             </motion.div>
           </motion.div>
@@ -1108,10 +1571,10 @@ function GlobeSection() {
 ═══════════════════════════════════════════════════════ */
 function HowItWorks() {
   const steps = [
-    { id: "step-1", n: "01", title: "Share Your Requirements", description: "Tell us about the role, skills, timeline, and culture. Our AI maps your brief against thousands of vetted profiles in seconds.", icon: FileText, image: "/images/direct-connection.png" },
-    { id: "step-2", n: "02", title: "Get AI-Matched Talent", description: "Receive a curated shortlist of 3–5 specialists, each with verified skills, work history, and culture-fit signals — ready to interview.", icon: Users, image: "/images/global-talent-mapping.png" },
-    { id: "step-3", n: "03", title: "Interview & Select", description: "Meet your shortlisted candidates in structured interviews. We facilitate and provide scoring assistance so you can decide with confidence.", icon: ShieldCheck, image: "/images/upfront-compensation.png" },
-    { id: "step-4", n: "04", title: "Onboard & Scale", description: "We handle contracting, payroll, and compliance. Your specialist integrates into your stack from day one.", icon: Zap, image: "/images/illustration-72-hrs.png" },
+    { id: "step-1", n: "01", title: "Understand the Requirement", description: "We assess the role, team structure, business objectives, operating environment and success measures — then design the right workforce model, geography and commercial structure.", icon: FileText, image: "/images/direct-connection.png" },
+    { id: "step-2", n: "02", title: "Source & Verify Talent", description: "We identify suitable professionals and complete structured assessment and verification across identity, skills, experience and work readiness before anyone reaches your shortlist.", icon: Users, image: "/images/global-talent-mapping.png" },
+    { id: "step-3", n: "03", title: "Present & Select", description: "You receive carefully matched profiles aligned to technical and organisational needs. We coordinate interviews, assessment and final selection.", icon: ShieldCheck, image: "/images/upfront-compensation.png" },
+    { id: "step-4", n: "04", title: "Deploy & Manage", description: "We support contracting, onboarding and documentation, then monitor performance and workforce success for the long term.", icon: Zap, image: "/images/illustration-72-hrs.png" },
   ];
 
   const isDesktop = useIsDesktop();
@@ -1133,9 +1596,9 @@ function HowItWorks() {
       <section id="howItWorks" className="relative bg-[#F9FAFB] border-t border-gray-200 py-16 px-4">
         <div className="max-w-xl mx-auto">
           <div className="text-center mb-8">
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Process</p>
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">How It Works</p>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
-              From Brief to Billable in <span className="text-[#3B5BDB]">4 Steps</span>
+              From Requirement to <span className="text-[#3B5BDB]">Deployment</span>
             </h2>
           </div>
 
@@ -1186,10 +1649,10 @@ function HowItWorks() {
               viewport={{ once: true, amount: 0, margin: "0px 0px -80px 0px" }}
               className="text-center mb-10 max-w-2xl mx-auto"
             >
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Process</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">How It Works</p>
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.05]">
-                From Brief to Billable in{" "}
-                <span className="text-[#3B5BDB]">4 Steps</span>
+                From Requirement to{" "}
+                <span className="text-[#3B5BDB]">Deployment</span>
               </h2>
             </motion.div>
 
@@ -1280,10 +1743,10 @@ function HowItWorks() {
 ═══════════════════════════════════════════════════════ */
 function WhyChooseUs() {
   const reasons = [
-    { id: "1", title: "Unmatched Vetting & Quality", description: "Fewer than 8% of applicants are accepted — each verified by proprietary AI assessment and human expert review before they enter the network.", image: "/images/vetting-quality.png", stat: "<8%", statLabel: "Acceptance rate" },
-    { id: "2", title: "Speed to Strategic Impact", description: "Eliminate recruiting delays. Receive a curated shortlist of 3–5 experts within 14–21 days — not months.", image: "/images/speed-impact.png", stat: "21d", statLabel: "Max time to hire" },
-    { id: "3", title: "Global Compliance, Zero Risk", description: "We handle all international contracting, payroll, and compliance, making global hiring completely friction-free.", image: "/images/global-compliance.png", stat: "50+", statLabel: "Countries covered" },
-    { id: "4", title: "Expertise Over Overhead", description: "Engage high-value talent on flexible contracts, maximizing ROI without the cost of full-time payroll.", image: "/images/expertise-overhead.png", stat: "60%", statLabel: "Avg. cost saving" },
+    { id: "1", title: "Infrastructure, Not Transactions", description: "We build repeatable workforce systems — talent, trust, technology and management combined — not isolated placements you have to keep re-running.", image: "/images/vetting-quality.png", stat: "1", statLabel: "Connected platform" },
+    { id: "2", title: "Workforce Quality", description: "Fewer than 8% of professionals are accepted. We prioritise capability, communication, professionalism and long-term performance through structured assessment.", image: "/images/speed-impact.png", stat: "<8%", statLabel: "Acceptance rate" },
+    { id: "3", title: "Global Reach, Corridor Depth", description: "We maintain a global mandate while building deep knowledge within selected talent markets across six continents.", image: "/images/global-compliance.png", stat: "6", statLabel: "Talent corridors" },
+    { id: "4", title: "Human Expertise & Technology", description: "We combine professional judgement with intelligent tools. AI enhances decisions on discovery, matching and analytics — human judgement stays central.", image: "/images/expertise-overhead.png", stat: "AI+", statLabel: "Human-led systems" },
   ];
 
   const isDesktop = useIsDesktop();
@@ -1305,13 +1768,13 @@ function WhyChooseUs() {
       <section className="relative bg-white border-t border-gray-200 py-16 px-4">
         <div className="max-w-xl mx-auto">
           <div className="mb-8">
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why Deeptalent</p>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
-              Why Businesses Choose<br />
-              <span className="text-[#3B5BDB]">DeepTalent Platform</span>
+              Global Vision. Local Intelligence.<br />
+              <span className="text-[#3B5BDB]">Trusted Execution.</span>
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
-              Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
+              Global workforce challenges are not solved by technology, databases or recruitment alone. Deeptalent combines institutional thinking with operational agility.
             </p>
           </div>
 
@@ -1357,13 +1820,13 @@ function WhyChooseUs() {
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-7xl mx-auto w-full">
             <div className="mb-10 md:max-w-3xl">
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why Deeptalent</p>
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
-                Why Businesses Choose<br />
-                <span className="text-[#3B5BDB]">DeepTalent Platform</span>
+                Global Vision. Local Intelligence.<br />
+                <span className="text-[#3B5BDB]">Trusted Execution.</span>
               </h2>
               <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-                Stop settling for generalists. DeepTalent delivers the niche expertise required for tomorrow&apos;s challenges, without the hiring delays.
+                Global workforce challenges are not solved by technology, databases or recruitment alone. Deeptalent combines institutional thinking with operational agility.
               </p>
             </div>
 
@@ -1458,12 +1921,12 @@ function WhyChooseUs() {
 ══════════════════════════════����═══════════════════════ */
 function StrategicAdvantages() {
   const advantages = [
-    { title: "AI-Powered Precision Matching", description: "Stop sifting through resumes. Our proprietary AI analyzes thousands of data points to instantly match you with candidates who fit your role requirements and operating environment.", image: "/images/direct-connection.png" },
-    { title: "Credentialled Talent at Competitive Rates", description: "Access senior-level finance, compliance, and technology professionals from Africa's deepest talent pools — the same calibre as onshore hires, at rates that reflect their market, not yours.", image: "/images/upfront-compensation.png" },
-    { title: "Follow-the-Sun Coverage", description: "Lagos is GMT+1. Sydney is GMT+10/11. That nine-hour gap is not a problem — it is your competitive edge. DeepTalent specialists cover your European and US business hours while your APAC-aligned talent keeps work moving overnight.", image: "/images/illustration-72-hrs.png" },
-    { title: "Elastic Scalability", description: "Whether you need a single developer or a full 20-person support pod, our model scales effortlessly. Spin up teams instantly without the HR headache.", image: "/images/illustration-reading.png" },
-    { title: "Global Compliance Handled", description: "Hire across Nigeria, Kenya, Ghana, South Africa, and the Philippines without a legal team. We handle payroll, taxes, and local compliance entirely.", image: "/images/global-talent-mapping.png" },
-    { title: "Invoice in Your Currency", description: "Pay in USD, GBP, EUR, AUD, CAD, and more. We consolidate all your talent into one monthly invoice in your preferred currency and absorb the FX complexity so your finance team never has to think about it.", image: "/images/global-compliance.png" },
+    { title: "Access", description: "Reach qualified professionals far beyond the limitations of traditional local hiring markets, across multiple global talent corridors.", image: "/images/direct-connection.png" },
+    { title: "Quality", description: "Engage talent through structured assessment and verification — identity, skills, experience, references and work readiness — before anyone reaches you.", image: "/images/upfront-compensation.png" },
+    { title: "Speed", description: "Reduce the time required to identify, verify and deploy suitable professionals from months to weeks.", image: "/images/illustration-72-hrs.png" },
+    { title: "Efficiency", description: "Create a more flexible and cost-effective workforce model without carrying the full burden of sourcing, onboarding and managing talent alone.", image: "/images/illustration-reading.png" },
+    { title: "Risk Management", description: "Apply stronger vetting, documentation and operational oversight across every cross-border engagement.", image: "/images/global-talent-mapping.png" },
+    { title: "Scalability & Partnership", description: "Expand teams in line with business demand and work with a managed workforce partner — not a transactional recruiter.", image: "/images/global-compliance.png" },
   ];
 
   const isDesktop = useIsDesktop();
@@ -1651,8 +2114,8 @@ function HumanLayer() {
           transition={{ duration: 0.6 }}
           className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 tracking-tight leading-[1.02] text-balance"
         >
-          AI Vetting That Finds
-          <span className="block italic text-[#3B5BDB]">The Right Hire</span>
+          Technology That Strengthens
+          <span className="block italic text-[#3B5BDB]">Human Decisions</span>
         </motion.h2>
 
         <motion.p
@@ -1662,7 +2125,7 @@ function HumanLayer() {
           transition={{ duration: 0.35, delay: 0.1 }}
           className="mt-6 text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed text-pretty"
         >
-          Every candidate runs through our AI vetting system — skills assessments, a scored interview, and a verified match rating — so the shortlist you hire from is proven, not guessed.
+          Our platform simplifies the workforce lifecycle — talent profiles, skills intelligence, automated screening, intelligent matching, analytics and reporting. AI enhances decision-making; human judgement remains central.
         </motion.p>
 
         <motion.div
@@ -1672,7 +2135,7 @@ function HumanLayer() {
           transition={{ duration: 0.35, delay: 0.2 }}
           className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
         >
-          {["AI-scored skills assessments", "Verified match ratings", "Hire in days, not months"].map((item) => (
+          {["Intelligent matching & screening", "Workforce analytics & insights", "Human judgement at the core"].map((item) => (
             <span key={item} className="inline-flex items-center gap-2 text-sm md:text-base font-medium text-gray-800">
               <Check className="size-4 text-[#3B5BDB]" />
               {item}
@@ -1886,8 +2349,8 @@ function IndustryInsights() {
         >
           <div className="max-w-2xl">
             <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Insights</motion.p>
-            <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-3">Strategic Intelligence</motion.h2>
-            <motion.p variants={fadeInUp()} className="text-gray-500 text-lg">Deep dives into global hiring trends, AI vetting, and remote team scaling.</motion.p>
+            <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-3">Ideas Shaping the Future of Work</motion.h2>
+            <motion.p variants={fadeInUp()} className="text-gray-500 text-lg">Research and practical guidance on global workforce trends, human-capital infrastructure, cross-border hiring and talent-market economics.</motion.p>
           </div>
           <motion.div variants={fadeInUp()}>
             <FluidCTA href="/insights" size="md" variant="outline">View All Articles</FluidCTA>
@@ -1938,7 +2401,7 @@ function IndustryInsights() {
 ═══════════════════════════════════════════════════════ */
 function FaqSection() {
   const faqs = [
-    { question: "What is DeepTalent?", answer: "DeepTalent is a fully managed talent partner — not a marketplace. We handle sourcing, vetting, contracting, payroll, and ongoing management so you get a dedicated specialist without the overhead of a recruitment agency or the unpredictability of a freelance platform." },
+    { question: "What is Deeptalent?", answer: "Deeptalent is a global Human Capital Infrastructure company — not a recruitment agency, freelance marketplace, outsourcing firm or job board. We help enterprises, institutions and governments discover, verify, deploy and manage exceptional talent across borders, combining human expertise, technology, workforce intelligence and managed services in one connected platform." },
     { question: "How does the vetting process work?", answer: "We use a proprietary mix of AI analysis and human expert review. Every candidate undergoes technical assessments, communication screening, and a past-performance audit before entering our network." },
     { question: "What are the fees for hiring?", answer: "We believe in transparency. Hirers pay a flat platform fee or a percentage markup depending on the engagement model. There are no hidden onboarding costs." },
     { question: "Is my data secure?", answer: "Absolutely. We use enterprise-grade encryption (SOC2 compliant standards) for all data, payments, and contract details. Your intellectual property and financial data are protected at all times." },
