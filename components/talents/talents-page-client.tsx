@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { FluidCTA } from "@/components/site/fluid-cta";
@@ -409,9 +409,24 @@ function TalentHero() {
 
 /* ─── Kickstart with AI (gradient promo + stacked search cards) ──── */
 
+const AI_LOCATIONS = ["Lagos, Nigeria", "Nairobi, Kenya", "London, UK", "Remote · Global", "Cape Town, SA"];
+const AI_JOBS = ["Finance Analyst", "KYC / AML Analyst", "Full-Stack Developer", "Product Manager", "DevOps Engineer"];
+
 function KickstartAI() {
   const [tab, setTab] = useState(0);
   const tabs = ["Remote", "Freelance", "Onsite"];
+
+  const [locIdx, setLocIdx] = useState(0);
+  const [jobIdx, setJobIdx] = useState(0);
+  useEffect(() => {
+    const locTimer = setInterval(() => setLocIdx((i) => (i + 1) % AI_LOCATIONS.length), 2200);
+    const jobTimer = setInterval(() => setJobIdx((i) => (i + 1) % AI_JOBS.length), 2800);
+    return () => {
+      clearInterval(locTimer);
+      clearInterval(jobTimer);
+    };
+  }, []);
+
   return (
     <section className="py-16 lg:py-20 bg-white">
       <div className="max-w-6xl mx-auto px-6">
@@ -478,14 +493,36 @@ function KickstartAI() {
               <div className="space-y-3">
                 <div>
                   <p className="text-[11px] font-semibold text-gray-400 mb-1">Location</p>
-                  <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700">
-                    <Globe2 className="size-4 text-gray-400" /> Lagos, Nigeria
+                  <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700 overflow-hidden">
+                    <Globe2 className="size-4 shrink-0 text-gray-400" />
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={locIdx}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.35 }}
+                      >
+                        {AI_LOCATIONS[locIdx]}
+                      </motion.span>
+                    </AnimatePresence>
                   </div>
                 </div>
                 <div>
                   <p className="text-[11px] font-semibold text-gray-400 mb-1">Job name</p>
-                  <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700">
-                    <BriefcaseBusiness className="size-4 text-gray-400" /> Finance Analyst
+                  <div className="flex items-center gap-2 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700 overflow-hidden">
+                    <BriefcaseBusiness className="size-4 shrink-0 text-gray-400" />
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={jobIdx}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.35 }}
+                      >
+                        {AI_JOBS[jobIdx]}
+                      </motion.span>
+                    </AnimatePresence>
                   </div>
                 </div>
                 <Link href="/talents/apply" className="mt-1 flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gray-900 text-white text-sm font-semibold hover:bg-gray-700 transition-colors">
