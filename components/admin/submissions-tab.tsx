@@ -7,6 +7,7 @@ import {
   Briefcase,
   CalendarClock,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   CreditCard,
   ExternalLink,
@@ -33,6 +34,7 @@ import {
   matchSalaryRow,
   rangeForRow,
 } from "@/lib/salary/scale";
+import { externalHref } from "@/lib/utils/url";
 
 type Kind = "talent_application" | "company_inquiry";
 
@@ -172,6 +174,22 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
     globalMutate("/api/admin/users");
   }
 
+  // Company-inquiry pipeline move (no email). Optimistically refreshes the list.
+  const [movingId, setMovingId] = useState<string | null>(null);
+  async function moveStatus(row: Row, status: string) {
+    setMovingId(row.id);
+    try {
+      const res = await fetch("/api/admin/decide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind, id: row.id, action: "set_status", status }),
+      });
+      if (res.ok) refreshAll();
+    } finally {
+      setMovingId(null);
+    }
+  }
+
   return (
     <div className="space-y-4">
       {/* Status filter chips */}
@@ -238,6 +256,12 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
           <div className="p-12 text-center text-gray-400 text-sm">Loading…</div>
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center text-gray-500 text-sm">No submissions match this filter.</div>
+        ) : kind === "talent_application" ? (
+          <SlimTalentList
+            rows={filtered as TalentRow[]}
+            onOpen={(id) => setOpenId(id)}
+            onEmail={(r) => setActionModal({ type: "email", row: r })}
+          />
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -368,7 +392,14 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-end gap-1">
-                      {r.meeting_at ? (
+                      {kind === "company_inquiry" ? (
+                        <InquiryPipelineControls
+                          row={r}
+                          busy={movingId === r.id}
+                          onMove={(status) => moveStatus(r, status)}
+                          onSchedule={() => setActionModal({ type: "schedule", row: r })}
+                        />
+                      ) : r.meeting_at ? (
                         <>
                           <ActionButton
                             title="Forward to next stage"
@@ -424,6 +455,7 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
         row={openRow}
         onClose={() => setOpenId(null)}
         onAction={(t, followUp) => openRow && setActionModal({ type: t, row: openRow, followUp })}
+        onMove={(status) => openRow && moveStatus(openRow, status)}
       />
 
       <ActionModal
@@ -576,6 +608,70 @@ function PaidBadge() {
   );
 }
 
+// Slim vertical list of talent applications. One line per applicant; clicking a
+// row opens the detail drawer with the full record. Keeps the list scannable
+// instead of a wide multi-column table.
+function SlimTalentList({
+  rows,
+  onOpen,
+  onEmail,
+}: {
+  rows: TalentRow[];
+  onOpen: (id: string) => void;
+  onEmail: (row: TalentRow) => void;
+}) {
+  return (
+    <ul className="divide-y divide-gray-100">
+      {rows.map((r) => {
+        const role = r.specialization || r.role_category || r.inferred_role || "—";
+        return (
+          <li key={r.id}>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => onOpen(r.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onOpen(r.id);
+                }
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer text-left focus:outline-none focus:bg-gray-50"
+            >
+              <div className="size-9 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-sm font-bold flex items-center justify-center shrink-0">
+                {(r.full_name || r.email || "?").charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-medium text-gray-900 truncate">{r.full_name}</span>
+                  <StatusBadge status={r.status} />
+                </div>
+                <div className="text-xs text-gray-500 truncate">
+                  {role} · {r.email}
+                </div>
+              </div>
+              <span className="text-xs text-gray-400 shrink-0 hidden sm:block">
+                {new Date(r.created_at).toLocaleDateString()}
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEmail(r);
+                }}
+                title="Send custom email"
+                className="shrink-0 size-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#3B5BDB] hover:bg-blue-50 transition-colors"
+              >
+                <Mail className="size-4" />
+              </button>
+              <ChevronRight className="size-4 text-gray-300 shrink-0" />
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 function ActionButton({
   children,
   title,
@@ -604,6 +700,53 @@ function ActionButton({
   );
 }
 
+// Sales-pipeline controls for a company inquiry row. Moving stage is a direct,
+// email-free status change; "Book meeting" opens the scheduling modal (which
+// does send the branded meeting email).
+const PIPELINE_STAGES: { value: string; label: string }[] = [
+  { value: "new", label: "New" },
+  { value: "contacted", label: "Contacted" },
+  { value: "qualified", label: "Qualified" },
+  { value: "closed", label: "Closed" },
+];
+
+function InquiryPipelineControls({
+  row,
+  busy,
+  onMove,
+  onSchedule,
+}: {
+  row: Row;
+  busy: boolean;
+  onMove: (status: string) => void;
+  onSchedule: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-end gap-1.5">
+      <label className="sr-only" htmlFor={`stage-${row.id}`}>
+        Pipeline stage
+      </label>
+      <select
+        id={`stage-${row.id}`}
+        value={PIPELINE_STAGES.some((s) => s.value === row.status) ? row.status : "new"}
+        disabled={busy}
+        onChange={(e) => onMove(e.target.value)}
+        className="h-8 rounded-lg border border-gray-200 bg-white px-2 text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]/30 disabled:opacity-50"
+        title="Move pipeline stage"
+      >
+        {PIPELINE_STAGES.map((s) => (
+          <option key={s.value} value={s.value}>
+            {s.label}
+          </option>
+        ))}
+      </select>
+      <ActionButton title="Book meeting" onClick={onSchedule} color="blue">
+        <CalendarClock className="size-3.5" />
+      </ActionButton>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Detail Drawer
 // ---------------------------------------------------------------------------
@@ -612,6 +755,7 @@ function DetailDrawer({
   row,
   onClose,
   onAction,
+  onMove,
 }: {
   kind: Kind;
   row: Row | null;
@@ -620,6 +764,7 @@ function DetailDrawer({
     type: "schedule" | "approve" | "reject" | "email" | "next_stage",
     followUp?: boolean
   ) => void;
+  onMove: (status: string) => void;
 }) {
   if (!row) return null;
   const isTalent = kind === "talent_application";
@@ -691,6 +836,9 @@ function DetailDrawer({
             {isTalent && t.linkedin_url && (
               <Field icon={Linkedin} label="LinkedIn" value={t.linkedin_url} href={t.linkedin_url} />
             )}
+            {isTalent && t.portfolio_url && (
+              <Field icon={Globe} label="Portfolio / work" value={t.portfolio_url} href={t.portfolio_url} />
+            )}
           </Section>
 
           {isTalent ? (
@@ -707,11 +855,7 @@ function DetailDrawer({
               />
               <Field icon={Sparkles} label="Category" value={t.role_category || "—"} />
               <Field icon={Sparkles} label="Experience" value={t.years_experience != null ? `${t.years_experience} yrs` : "—"} />
-              {t.bio && (
-                <div className="bg-gray-50 border border-gray-100 rounded-lg p-3 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {t.bio}
-                </div>
-              )}
+              {t.bio && <CollapsibleText label="About / cover note" text={t.bio} />}
               <SalaryScalePanel row={t} />
             </Section>
           ) : (
@@ -720,11 +864,7 @@ function DetailDrawer({
               <Field icon={Sparkles} label="Team size" value={c.team_size || "—"} />
               <Field icon={Sparkles} label="Urgency" value={c.urgency || "—"} />
               <Field icon={Sparkles} label="Budget" value={c.budget_range || "—"} />
-              {c.notes && (
-                <div className="bg-gray-50 border border-gray-100 rounded-lg p-3 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {c.notes}
-                </div>
-              )}
+              {c.notes && <CollapsibleText label="Notes" text={c.notes} />}
             </Section>
           )}
 
@@ -811,7 +951,46 @@ function DetailDrawer({
         </div>
 
         <footer className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-3 flex flex-wrap items-center gap-2">
-          {row.meeting_at ? (
+          {!isTalent ? (
+            <>
+              <div className="w-full">
+                <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold mb-1.5">
+                  Pipeline stage
+                </p>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {PIPELINE_STAGES.map((s) => {
+                    const active = (PIPELINE_STAGES.some((p) => p.value === row.status) ? row.status : "new") === s.value;
+                    return (
+                      <button
+                        key={s.value}
+                        onClick={() => !active && onMove(s.value)}
+                        className={`h-9 px-3 rounded-lg text-xs font-semibold border transition-colors ${
+                          active
+                            ? "bg-[#3B5BDB] text-white border-[#3B5BDB]"
+                            : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                        }`}
+                      >
+                        {s.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <button
+                onClick={() => onAction("schedule")}
+                className="flex-1 min-w-[160px] h-10 rounded-lg bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2d42a6] inline-flex items-center justify-center gap-1.5"
+              >
+                <CalendarClock className="size-4" /> Book meeting
+              </button>
+              <button
+                onClick={() => onAction("email")}
+                className="h-10 px-4 rounded-lg bg-blue-50 text-[#3B5BDB] text-sm font-semibold hover:bg-blue-100 inline-flex items-center gap-1.5"
+                title="Send a custom email"
+              >
+                <Mail className="size-4" /> Email
+              </button>
+            </>
+          ) : row.meeting_at ? (
             <>
               <button
                 onClick={() => onAction("next_stage")}
@@ -868,6 +1047,38 @@ function DetailDrawer({
   );
 }
 
+// Collapsible free-text block (applicant "about" / cover note, company notes).
+// Starts collapsed to a short preview so the approve/decline actions and the
+// rest of the record stay reachable without scrolling past a long essay.
+function CollapsibleText({ label, text }: { label: string; text: string }) {
+  const [open, setOpen] = useState(false);
+  const trimmed = text.trim();
+  const isLong = trimmed.length > 180 || trimmed.includes("\n");
+  const preview = isLong && !open ? `${trimmed.slice(0, 180).trimEnd()}…` : trimmed;
+
+  return (
+    <div className="rounded-lg border border-gray-100 bg-gray-50 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        disabled={!isLong}
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 text-left hover:bg-gray-100 transition-colors disabled:cursor-default disabled:hover:bg-gray-50"
+      >
+        <span className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">{label}</span>
+        {isLong && (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#3B5BDB] shrink-0">
+            {open ? "Show less" : "Read more"}
+            <ChevronDown className={`size-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+          </span>
+        )}
+      </button>
+      <div className="px-3 pb-3 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+        {preview}
+      </div>
+    </div>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
@@ -891,15 +1102,22 @@ function Field({
   const content = (
     <span className="text-sm text-gray-700 truncate">{value}</span>
   );
+  // Normalize bare domains ("linkedin.com/in/…") into absolute URLs so links
+  // open the real site in a new tab instead of resolving relative to the app.
+  const safeHref = href
+    ? /^(mailto:|tel:)/i.test(href)
+      ? href
+      : externalHref(href)
+    : null;
   return (
     <div className="flex items-start gap-2">
       <Icon className="size-4 text-gray-400 shrink-0 mt-0.5" />
       <div className="min-w-0 flex-1">
         <p className="text-[11px] uppercase tracking-wide text-gray-400 font-semibold">{label}</p>
-        {href ? (
+        {safeHref ? (
           <a
-            href={href}
-            target={href.startsWith("http") ? "_blank" : undefined}
+            href={safeHref}
+            target={/^https?:\/\//i.test(safeHref) ? "_blank" : undefined}
             rel="noopener noreferrer"
             className="text-sm text-[#3B5BDB] hover:underline truncate block"
           >
