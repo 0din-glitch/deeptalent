@@ -279,7 +279,7 @@ function SolutionLifecycle() {
 
 /* ════════════════════════════════════════════════════
    PLATFORM PILLARS — the connected system
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════��═══════════════ */
 function PlatformPillars() {
   const pillars = [
     { icon: Globe, title: "Global Talent Infrastructure", desc: "A connected system for sourcing, assessing, verifying and deploying professionals across regions." },
@@ -1382,10 +1382,15 @@ function GlobeSection() {
       if (!canvas || !ctx) return;
       const W = canvas.width;
       const H = canvas.height;
+      // Before the canvas has been sized/laid out, W/H can be 0, which makes
+      // `r` 0 and every z/r ratio below NaN/Infinity — crashing
+      // createRadialGradient. Skip the frame until we have real dimensions.
+      if (W <= 0 || H <= 0) return;
       ctx.clearRect(0, 0, W, H);
       const cx = W / 2;
       const cy = H / 2;
       const r = Math.min(W, H) * 0.38;
+      if (!Number.isFinite(r) || r <= 0) return;
 
       const DOT_ROWS = 24;
       const DOT_COLS = 48;

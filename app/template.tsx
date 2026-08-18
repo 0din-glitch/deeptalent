@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 
 /**
  * Next.js App Router `template.tsx` re-mounts on every navigation, so the
@@ -11,7 +12,20 @@ import { motion, useReducedMotion } from "motion/react";
  * as it retracts — to reveal the freshly loaded page, which fades up beneath.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
-  const reduce = useReducedMotion();
+  // `useReducedMotion()` reads `matchMedia` and returns `null` during SSR,
+  // then a real boolean after mount — branching render on it directly caused
+  // a server/client markup mismatch. Instead we always render the full
+  // (non-reduced) markup for the initial render on both server and client,
+  // then flip to the reduced variant in an effect once mounted, so any swap
+  // happens as a client-only update after hydration completes.
+  const [reduce, setReduce] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduce(media.matches);
+    const onChange = () => setReduce(media.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
 
   // Reduced-motion users still get a quick, gentle cross-fade rather than nothing.
   if (reduce) {
