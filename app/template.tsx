@@ -12,20 +12,30 @@ import { motion } from "motion/react";
  * as it retracts — to reveal the freshly loaded page, which fades up beneath.
  */
 export default function Template({ children }: { children: React.ReactNode }) {
-  // `useReducedMotion()` reads `matchMedia` and returns `null` during SSR,
-  // then a real boolean after mount — branching render on it directly caused
-  // a server/client markup mismatch. Instead we always render the full
-  // (non-reduced) markup for the initial render on both server and client,
-  // then flip to the reduced variant in an effect once mounted, so any swap
-  // happens as a client-only update after hydration completes.
+  // The animated liquid overlay + fading content is animation-only chrome and
+  // must NOT participate in hydration: motion applies inline styles/attributes
+  // (opacity, transform, aria-hidden, class) that differ between the server
+  // HTML and the client's first paint, which throws a hydration mismatch.
+  //
+  // Fix: on both the server and the client's first render we output the plain
+  // children (no motion, no overlay), so the trees match exactly. Only after
+  // mount do we flip `mounted` on and render the animated variant — a
+  // client-only update that happens safely after hydration completes.
+  const [mounted, setMounted] = useState(false);
   const [reduce, setReduce] = useState(false);
   useEffect(() => {
+    setMounted(true);
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduce(media.matches);
     const onChange = () => setReduce(media.matches);
     media.addEventListener("change", onChange);
     return () => media.removeEventListener("change", onChange);
   }, []);
+
+  // Server render + first client render: identical, un-animated markup.
+  if (!mounted) {
+    return <>{children}</>;
+  }
 
   // Reduced-motion users still get a quick, gentle cross-fade rather than nothing.
   if (reduce) {
