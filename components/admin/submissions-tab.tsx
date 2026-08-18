@@ -702,7 +702,8 @@ function ActionButton({
 
 // Sales-pipeline controls for a company inquiry row. Moving stage is a direct,
 // email-free status change; "Book meeting" opens the scheduling modal (which
-// does send the branded meeting email).
+// does send the branded meeting email). Moving to "Qualified" also publishes
+// the role to the public /talents/apply careers page (see /api/public/roles).
 const PIPELINE_STAGES: { value: string; label: string }[] = [
   { value: "new", label: "New" },
   { value: "contacted", label: "Contacted" },
@@ -975,6 +976,9 @@ function DetailDrawer({
                     );
                   })}
                 </div>
+                <p className="text-[11px] text-gray-400 mt-1.5">
+                  Moving to <span className="font-medium text-gray-500">Qualified</span> publishes this role on the public careers page.
+                </p>
               </div>
               <button
                 onClick={() => onAction("schedule")}

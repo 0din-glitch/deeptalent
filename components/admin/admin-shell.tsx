@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { createClient } from "@/lib/supabase/client";
 import { AdminInviteModal } from "@/components/admin/admin-invite-modal";
 import { FilesTab } from "@/components/admin/files-tab";
 import { UsersTab } from "@/components/admin/users-tab";
@@ -103,6 +105,17 @@ export function AdminShell({
   const [tab, setTab] = useState<Tab>("users");
   const [showInvite, setShowInvite] = useState(false);
   const { me } = useAdminMe();
+  const router = useRouter();
+
+  // Client-side sign-out + hard navigation home. A plain `<Link>` to the
+  // `/auth/logout` route handler 404s because Next's client router tries to
+  // soft-navigate to it as if it were a page — there's no page there.
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
 
   const { data: pendingData } = useSWR<{ requests: any[] }>(
     "/api/admin/deletion-requests?status=pending",
@@ -272,13 +285,14 @@ export function AdminShell({
               <p className="text-xs font-semibold text-white/80 truncate">{fullName || "Admin"}</p>
               <p className="text-[10px] text-white/35 truncate">{email}</p>
             </div>
-            <Link
-              href="/auth/logout"
+            <button
+              type="button"
+              onClick={handleSignOut}
               className="text-white/30 hover:text-white/70 transition-colors"
               title="Sign out"
             >
               <LogOut className="size-3.5" />
-            </Link>
+            </button>
           </div>
         </div>
 
