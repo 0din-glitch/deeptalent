@@ -17,8 +17,12 @@ type Action =
   | "reject"
   | "welcome"
   | "custom_email"
-  | "next_stage";
+  | "next_stage"
+  | "set_status";
 type Kind = "talent_application" | "company_inquiry";
+
+// Pipeline statuses an admin can set directly (no email side-effects).
+const COMPANY_STATUSES = ["new", "contacted", "qualified", "closed"] as const;
 
 export async function POST(request: Request) {
   const auth = await requireAdmin();
@@ -39,6 +43,7 @@ export async function POST(request: Request) {
     ctaLabel?: string;
     ctaUrl?: string;
     followUp?: boolean;
+    status?: string;
   };
   try {
     body = await request.json();
@@ -58,6 +63,7 @@ export async function POST(request: Request) {
     ctaLabel,
     ctaUrl,
     followUp,
+    status,
   } = body || ({} as any);
   if (!kind || !id || !action) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -296,6 +302,45 @@ export async function POST(request: Request) {
       metadata: { subject: subject.trim(), recipient: recipientEmail },
     });
     return NextResponse.json({ success: true, email: emailRes });
+  }
+
+  if (action === "set_status") {
+    // Direct pipeline move with no email — used by the company inquiry board.
+    if (kind !== "company_inquiry") {
+      return NextResponse.json(
+        { error: "set_status is only supported for company inquiries" },
+        { status: 400 }
+      );
+    }
+    if (!status || !COMPANY_STATUSES.includes(status as any)) {
+      return NextResponse.json(
+        { error: `status must be one of: ${COMPANY_STATUSES.join(", ")}` },
+        { status: 400 }
+      );
+    }
+    const isDecision = status === "qualified" || status === "closed";
+    const { error: updErr } = await sb
+      .from(table)
+      .update({
+        status,
+        ...(note ? { decision_note: note } : {}),
+        ...(isDecision
+          ? { decision_at: new Date().toISOString(), decided_by: userData.user.id }
+          : {}),
+      })
+      .eq("id", id);
+    if (updErr) return NextResponse.json({ error: updErr.message }, { status: 500 });
+
+    await logAuditEntry(sb, {
+      actor_id: ctx.userId,
+      actor_email: ctx.email,
+      action: `${kind}.set_status`,
+      resource_type: kind,
+      resource_id: id,
+      summary: `Moved ${auditTargetLabel(row)} to "${status}"`,
+      metadata: { status, note: note || null },
+    });
+    return NextResponse.json({ success: true, status });
   }
 
   return NextResponse.json({ error: "Unknown action" }, { status: 400 });

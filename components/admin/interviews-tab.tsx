@@ -1,13 +1,12 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
 import {
   Loader2,
   Play,
   X,
-  ChevronDown,
-  ChevronUp,
+  ChevronRight,
   Trophy,
   Briefcase,
   Clock,
@@ -69,7 +68,7 @@ export function InterviewsTab() {
   const { data, isLoading } = useSWR<{ rows: Interview[] }>("/api/admin/interviews", fetcher, {
     refreshInterval: 30_000,
   });
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const [videoFor, setVideoFor] = useState<Interview | null>(null);
 
   if (isLoading) {
@@ -85,109 +84,148 @@ export function InterviewsTab() {
     return <div className="p-12 text-center text-gray-500">No interviews yet.</div>;
   }
 
+  const openInterview = openId ? rows.find((r) => r.id === openId) ?? null : null;
+
   return (
     <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          <tr>
-            <th className="px-6 py-3">Candidate</th>
-            <th className="px-6 py-3">Role</th>
-            <th className="px-6 py-3">Score</th>
-            <th className="px-6 py-3">Qualified roles</th>
-            <th className="px-6 py-3">Status</th>
-            <th className="px-6 py-3">Date</th>
-            <th className="px-6 py-3 text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {rows.map((r) => {
-            const isOpen = expanded === r.id;
-            return (
-              <Fragment key={r.id}>
-                <tr className="hover:bg-gray-50 align-top">
-                  <td className="px-6 py-4">
-                    <p className="font-medium text-gray-900">{r.candidate_name}</p>
-                    <p className="text-xs text-gray-500">{r.email || "—"}</p>
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    <p>{r.specialization || "—"}</p>
-                    <p className="text-xs text-gray-400 capitalize">{r.seniority || ""}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    {r.overall_score != null ? (
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold text-gray-900">{r.overall_score}</span>
-                          <span
-                            className={`text-xs px-2 py-0.5 rounded-full capitalize ${
-                              bandStyles[r.score_band ?? ""] || "bg-gray-100 text-gray-600"
-                            }`}
-                          >
-                            {r.score_band || "—"}
-                          </span>
-                        </div>
-                        {r.tab_switch_count != null && r.tab_switch_count > 0 && (
-                          <span
-                            title={`Candidate switched tabs ${r.tab_switch_count} time(s) during interview`}
-                            className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full"
-                          >
-                            <AlertTriangle className="size-3" />
-                            {r.tab_switch_count} tab switch{r.tab_switch_count > 1 ? "es" : ""}
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400 text-sm">—</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600 text-sm">
-                    {r.qualified_roles?.length ? `${r.qualified_roles.length} roles` : "0"}
-                  </td>
-                  <td className="px-6 py-4">
+      <ul className="divide-y divide-gray-100">
+        {rows.map((r) => (
+          <li key={r.id}>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => setOpenId(r.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setOpenId(r.id);
+                }
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer text-left focus:outline-none focus:bg-gray-50"
+            >
+              <div className="size-9 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-sm font-bold flex items-center justify-center shrink-0">
+                {(r.candidate_name || r.email || "?").charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-medium text-gray-900 truncate">{r.candidate_name}</span>
+                  <span
+                    className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium shrink-0 ${
+                      r.status === "completed" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                    }`}
+                  >
+                    {r.status === "completed" ? "Completed" : "In progress"}
+                  </span>
+                  {r.tab_switch_count != null && r.tab_switch_count > 0 && (
                     <span
-                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
-                        r.status === "completed" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                      }`}
+                      title={`Switched tabs ${r.tab_switch_count} time(s) during interview`}
+                      className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-full shrink-0"
                     >
-                      {r.status === "completed" ? "Completed" : "In progress"}
+                      <AlertTriangle className="size-3" />
+                      {r.tab_switch_count}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-500 text-sm">
-                    {new Date(r.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      {r.video_path && (
-                        <button
-                          onClick={() => setVideoFor(r)}
-                          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#3B5BDB] hover:underline"
-                        >
-                          <Play className="size-3.5" /> Video
-                        </button>
-                      )}
-                      <button
-                        onClick={() => setExpanded(isOpen ? null : r.id)}
-                        className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 hover:text-gray-900"
-                      >
-                        Details {isOpen ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                {isOpen && (
-                  <tr className="bg-gray-50/60">
-                    <td colSpan={7} className="px-6 py-5">
-                      <InterviewDetails interview={r} />
-                    </td>
-                  </tr>
-                )}
-              </Fragment>
-            );
-          })}
-        </tbody>
-      </table>
+                  )}
+                </div>
+                <div className="text-xs text-gray-500 truncate">
+                  {r.specialization || "—"}
+                  {r.seniority ? ` · ${r.seniority}` : ""} · {r.email || "no email"}
+                </div>
+              </div>
+              {r.overall_score != null && (
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-base font-bold text-gray-900">{r.overall_score}</span>
+                  <span
+                    className={`text-[11px] px-2 py-0.5 rounded-full capitalize hidden sm:inline ${
+                      bandStyles[r.score_band ?? ""] || "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {r.score_band || "—"}
+                  </span>
+                </div>
+              )}
+              <span className="text-xs text-gray-400 shrink-0 hidden md:block">
+                {new Date(r.created_at).toLocaleDateString()}
+              </span>
+              <ChevronRight className="size-4 text-gray-300 shrink-0" />
+            </div>
+          </li>
+        ))}
+      </ul>
 
+      {openInterview && (
+        <InterviewDrawer
+          interview={openInterview}
+          onClose={() => setOpenId(null)}
+          onPlayVideo={() => setVideoFor(openInterview)}
+        />
+      )}
       {videoFor && <VideoModal interview={videoFor} onClose={() => setVideoFor(null)} />}
+    </div>
+  );
+}
+
+function InterviewDrawer({
+  interview,
+  onClose,
+  onPlayVideo,
+}: {
+  interview: Interview;
+  onClose: () => void;
+  onPlayVideo: () => void;
+}) {
+  const r = interview;
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <aside className="relative w-full max-w-2xl bg-white shadow-2xl overflow-y-auto">
+        <header className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold">AI interview</p>
+            <h2 className="text-lg font-bold text-gray-900 truncate">{r.candidate_name}</h2>
+            <p className="text-xs text-gray-500 truncate">
+              {r.specialization || "—"}
+              {r.seniority ? ` · ${r.seniority}` : ""} · {r.email || "no email"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            {r.video_path && (
+              <button
+                onClick={onPlayVideo}
+                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-[#3B5BDB] text-white text-sm font-semibold hover:bg-[#2d42a6]"
+              >
+                <Play className="size-3.5" /> Video
+              </button>
+            )}
+            <button onClick={onClose} className="size-8 rounded-lg hover:bg-gray-100 flex items-center justify-center">
+              <X className="size-4 text-gray-500" />
+            </button>
+          </div>
+        </header>
+
+        <div className="px-6 py-5 space-y-5">
+          <div className="flex flex-wrap items-center gap-3">
+            {r.overall_score != null && (
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold text-gray-900">{r.overall_score}</span>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full capitalize ${
+                    bandStyles[r.score_band ?? ""] || "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {r.score_band || "—"}
+                </span>
+              </div>
+            )}
+            {r.tab_switch_count != null && r.tab_switch_count > 0 && (
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                <AlertTriangle className="size-3" />
+                {r.tab_switch_count} tab switch{r.tab_switch_count > 1 ? "es" : ""}
+              </span>
+            )}
+          </div>
+          <InterviewDetails interview={r} />
+        </div>
+      </aside>
     </div>
   );
 }

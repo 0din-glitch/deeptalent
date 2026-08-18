@@ -11,14 +11,17 @@ export async function GET() {
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 
-  // Public-safe role listing: only approved + active company inquiries,
-  // and we deliberately omit any contact info (email/phone/contact_name).
+  // Public-safe role listing: only inquiries an admin has approved/qualified
+  // are shown, and we deliberately omit any contact info (email/phone/contact_name).
+  // "qualified" is the admin pipeline's terminal positive stage (see
+  // /api/admin/decide's set_status action) — it publishes the role here
+  // exactly like "approved"/"active"/"open" (used by the quick "Post a role" form).
   const { data, error } = await sb
     .from("company_inquiries")
     .select(
       "id, company_name, role_title, role_category, team_size, urgency, budget_range, notes, status, created_at"
     )
-    .in("status", ["approved", "active", "open"])
+    .in("status", ["approved", "active", "open", "qualified"])
     .order("decision_at", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
     .limit(60);

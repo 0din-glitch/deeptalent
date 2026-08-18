@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SENIORITY_LEVELS, inferSeniority } from "@/lib/salary/scale";
+import { externalHref } from "@/lib/utils/url";
 import {
   Loader2,
   CheckCircle2,
@@ -288,8 +289,8 @@ function FormContent() {
       role_category: form.role_category || null,
       specialization: form.specialization || null,
       years_experience: form.years_experience ? Number(form.years_experience) : null,
-      linkedin_url: form.linkedin_url || null,
-      portfolio_url: form.portfolio_url || null,
+      linkedin_url: externalHref(form.linkedin_url),
+      portfolio_url: externalHref(form.portfolio_url),
       cv_url: form.cv_url || null,
       bio: fullBio || null,
     });
@@ -635,13 +636,30 @@ function StepAbout({ form, update }: StepProps) {
             autoComplete="address-level2"
           />
         </Field>
-        <Field label="LinkedIn URL" hint="Strongly recommended">
+        <Field label="LinkedIn URL" hint="Optional">
           <input
             value={form.linkedin_url}
             onChange={(e) => update("linkedin_url", e.target.value)}
             className="form-input"
             placeholder="linkedin.com/in/..."
           />
+        </Field>
+        <Field
+          label="Portfolio or work sample"
+          hint="Any link that shows your work — site, Behance, GitHub, Notion, Drive, a deck…"
+        >
+          <div className="relative">
+            <Globe className="size-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              value={form.portfolio_url}
+              onChange={(e) => update("portfolio_url", e.target.value)}
+              className="form-input pl-9"
+              placeholder="yourwork.com / behance.net/you / drive.google.com/…"
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-gray-500">
+            {"Not everyone keeps their work on LinkedIn — share whatever best represents you. It helps us process your application faster."}
+          </p>
         </Field>
       </div>
     </div>
@@ -839,18 +857,7 @@ function StepDetails({ form, update }: StepProps) {
             <option value="Maybe — for the right role">Maybe — for the right role</option>
           </select>
         </Field>
-        <Field label="Portfolio / website">
-          <div className="relative">
-            <Globe className="size-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              value={form.portfolio_url}
-              onChange={(e) => update("portfolio_url", e.target.value)}
-              className="form-input pl-9"
-              placeholder="yourdomain.com"
-            />
-          </div>
-        </Field>
-        <Field label="GitHub (engineers only)">
+        <Field label="GitHub" hint="Engineers — optional">
           <input
             value={form.github_url}
             onChange={(e) => update("github_url", e.target.value)}
