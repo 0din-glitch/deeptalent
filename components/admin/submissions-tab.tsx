@@ -266,7 +266,7 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <tr>
-                <th className="px-6 py-3">{kind === "talent_application" ? "Applicant" : "Company"}</th>
+                <th className="px-6 py-3">Company</th>
                 <th className="px-6 py-3">Role</th>
                 <th className="px-6 py-3">Status</th>
                 <th className="px-6 py-3">Meeting</th>
@@ -275,81 +275,56 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((r) => (
+              {(filtered as CompanyRow[]).map((r) => (
                 <tr
                   key={r.id}
                   onClick={() => setOpenId(r.id)}
                   className="hover:bg-gray-50 cursor-pointer"
                 >
                   <td className="px-6 py-4">
-                    {kind === "talent_application" ? (
-                      <div className="flex items-center gap-2">
-                        <div className="min-w-0">
-                          <div className="font-medium text-gray-900 truncate">{(r as TalentRow).full_name}</div>
-                          <div className="text-xs text-gray-500 truncate">{r.email}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="min-w-0">
+                        <div className="font-medium text-gray-900 truncate">{r.company_name}</div>
+                        <div className="text-xs text-gray-500 truncate">
+                          {r.contact_name} · {r.email}
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActionModal({ type: "email", row: r });
-                          }}
-                          className="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-blue-50 text-[#3B5BDB] hover:bg-blue-100 text-[11px] font-semibold transition-colors"
-                          title="Send custom email"
-                        >
-                          <Mail className="size-3" />
-                          Email
-                        </button>
                       </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div className="min-w-0">
-                          <div className="font-medium text-gray-900 truncate">{(r as CompanyRow).company_name}</div>
-                          <div className="text-xs text-gray-500 truncate">
-                            {(r as CompanyRow).contact_name} · {r.email}
-                          </div>
-                        </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActionModal({ type: "email", row: r });
-                          }}
-                          className="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-blue-50 text-[#3B5BDB] hover:bg-blue-100 text-[11px] font-semibold transition-colors"
-                          title="Send custom email"
-                        >
-                          <Mail className="size-3" />
-                          Email
-                        </button>
-                      </div>
-                    )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActionModal({ type: "email", row: r });
+                        }}
+                        className="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-blue-50 text-[#3B5BDB] hover:bg-blue-100 text-[11px] font-semibold transition-colors"
+                        title="Send custom email"
+                      >
+                        <Mail className="size-3" />
+                        Email
+                      </button>
+                    </div>
                   </td>
                   <td className="px-6 py-4">
-                    {kind === "talent_application" ? (
-                      <RoleAndRateCell row={r as TalentRow} />
-                    ) : (
-                      <div className="flex flex-col gap-1.5">
-                        {(r as CompanyRow).role_title && (
-                          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#3B5BDB]/8 border border-[#3B5BDB]/20">
-                            <Briefcase className="size-3.5 text-[#3B5BDB]" />
-                            <span className="text-sm font-medium text-gray-900">{(r as CompanyRow).role_title}</span>
-                          </div>
-                        )}
-                        {(r as CompanyRow).role_category && (
-                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/50">
-                            <span className="text-xs font-medium text-amber-900">{(r as CompanyRow).role_category}</span>
-                          </div>
-                        )}
-                        {!(r as CompanyRow).role_title && !(r as CompanyRow).role_category && (
-                          <span className="text-gray-400 text-sm">—</span>
-                        )}
-                      </div>
-                    )}
+                    <div className="flex flex-col gap-1.5">
+                      {r.role_title && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#3B5BDB]/8 border border-[#3B5BDB]/20">
+                          <Briefcase className="size-3.5 text-[#3B5BDB]" />
+                          <span className="text-sm font-medium text-gray-900">{r.role_title}</span>
+                        </div>
+                      )}
+                      {r.role_category && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/50">
+                          <span className="text-xs font-medium text-amber-900">{r.role_category}</span>
+                        </div>
+                      )}
+                      {!r.role_title && !r.role_category && (
+                        <span className="text-gray-400 text-sm">—</span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1">
                       <div className="flex flex-wrap items-center gap-1.5">
                         <StatusBadge status={r.status} />
-                        {kind === "company_inquiry" &&
-                          (r as CompanyRow).payment_status === "paid" && <PaidBadge />}
+                        {r.payment_status === "paid" && <PaidBadge />}
                       </div>
                       {r.decision_at && (r as any).decided_by_name && (
                         <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
@@ -392,55 +367,12 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-end gap-1">
-                      {kind === "company_inquiry" ? (
-                        <InquiryPipelineControls
-                          row={r}
-                          busy={movingId === r.id}
-                          onMove={(status) => moveStatus(r, status)}
-                          onSchedule={() => setActionModal({ type: "schedule", row: r })}
-                        />
-                      ) : r.meeting_at ? (
-                        <>
-                          <ActionButton
-                            title="Forward to next stage"
-                            onClick={() => setActionModal({ type: "next_stage", row: r })}
-                            color="emerald"
-                          >
-                            <ChevronRight className="size-3.5" />
-                          </ActionButton>
-                          <ActionButton
-                            title="Schedule another interview"
-                            onClick={() => setActionModal({ type: "schedule", row: r, followUp: true })}
-                            color="blue"
-                          >
-                            <CalendarClock className="size-3.5" />
-                          </ActionButton>
-                        </>
-                      ) : (
-                        <>
-                          <ActionButton
-                            title="Schedule meeting"
-                            onClick={() => setActionModal({ type: "schedule", row: r })}
-                            color="blue"
-                          >
-                            <CalendarClock className="size-3.5" />
-                          </ActionButton>
-                          <ActionButton
-                            title="Approve & send welcome email"
-                            onClick={() => setActionModal({ type: "approve", row: r })}
-                            color="emerald"
-                          >
-                            <CheckCircle2 className="size-3.5" />
-                          </ActionButton>
-                          <ActionButton
-                            title="Reject"
-                            onClick={() => setActionModal({ type: "reject", row: r })}
-                            color="rose"
-                          >
-                            <XCircle className="size-3.5" />
-                          </ActionButton>
-                        </>
-                      )}
+                      <InquiryPipelineControls
+                        row={r}
+                        busy={movingId === r.id}
+                        onMove={(status) => moveStatus(r, status)}
+                        onSchedule={() => setActionModal({ type: "schedule", row: r })}
+                      />
                     </div>
                   </td>
                 </tr>

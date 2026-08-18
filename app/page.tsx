@@ -279,7 +279,7 @@ function SolutionLifecycle() {
 
 /* ════════════════════════════════════════════════════
    PLATFORM PILLARS — the connected system
-═══════════════════════════════════════��═══════════════ */
+═══════════════════════════════════════���═══════════════ */
 function PlatformPillars() {
   const pillars = [
     { icon: Globe, title: "Global Talent Infrastructure", desc: "A connected system for sourcing, assessing, verifying and deploying professionals across regions." },
@@ -1437,7 +1437,11 @@ function GlobeSection() {
       CITIES.forEach(([lat, lng, label]) => {
         const { x, y, z } = latLngToXY(lat, lng, r, cx, cy, rotation);
         if (z < -r * 0.1) return;
-        const scale = 0.5 + (z / r) * 0.5;
+        // Clamp scale so glow/dot radii are always finite and positive —
+        // createRadialGradient throws on any non-finite radius.
+        const rawScale = 0.5 + (z / r) * 0.5;
+        const scale = Number.isFinite(rawScale) ? Math.max(rawScale, 0.01) : 0.5;
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
 
         const gradient = ctx.createRadialGradient(x, y, 0, x, y, 14 * scale);
         gradient.addColorStop(0, `rgba(59,91,219,${0.4 * scale})`);
