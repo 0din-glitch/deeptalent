@@ -18,6 +18,8 @@ import {
   Sparkles,
   CheckCircle2,
   ExternalLink,
+  Send,
+  Loader2,
 } from "lucide-react";
 
 type ExternalJob = {
@@ -72,34 +74,32 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
   const [active, setActive] = useState<ExternalJob | null>(null);
   const [alt, setAlt] = useState<Alternative | null>(null);
   const [altLoading, setAltLoading] = useState(false);
+  // Modal step: choose an action, fill the DeepTalent submit form, or success.
+  const [mode, setMode] = useState<"choice" | "dt-form" | "success">("choice");
+  const [form, setForm] = useState({ name: "", email: "" });
+  const [submitting, setSubmitting] = useState(false);
 
   const jobs = (data?.jobs || []).slice(0, limit);
   const perPage = 5;
   const totalPages = Math.max(1, Math.ceil(jobs.length / perPage));
   const paginate = (dir: number) => setPage((p) => (p + dir + totalPages) % totalPages);
 
-  // Open the "before you go" modal, record the outbound application, and fetch
-  // the in-network alternative to surface to the user. The external listing is
-  // opened only after the user chooses to continue.
+  // Open the "before you go" modal and PREVIEW the in-network alternative
+  // (no record is written yet). Recording happens only when the visitor picks
+  // one of the three actions below.
   async function handleApply(job: ExternalJob) {
     setActive(job);
+    setMode("choice");
+    setForm({ name: "", email: "" });
     setAlt(null);
     setAltLoading(true);
     try {
-      const res = await fetch("/api/public/external-apply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          externalJobId: job.id,
-          title: job.title,
-          company: job.company,
-          source: job.source,
-          url: job.url,
-          location: job.location,
-          category: job.category,
-          salary: job.salary,
-        }),
+      const params = new URLSearchParams({
+        title: job.title,
+        category: job.category || "",
+        salary: job.salary || "",
       });
+      const res = await fetch(`/api/public/external-apply?${params.toString()}`);
       const json = await res.json();
       setAlt({
         matchedRole: json.matchedRole ?? null,
@@ -112,9 +112,48 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
     }
   }
 
-  function continueToExternal() {
-    if (active?.url) window.open(active.url, "_blank", "noopener,noreferrer");
+  // Record the outbound application. `viaDeepTalent` distinguishes an assisted
+  // submission (DeepTalent applies on the visitor's behalf) from a direct one.
+  async function recordApplication(viaDeepTalent: boolean) {
+    if (!active) return;
+    try {
+      await fetch("/api/public/external-apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          externalJobId: active.id,
+          title: active.title,
+          company: active.company,
+          source: active.source,
+          url: active.url,
+          location: active.location,
+          category: active.category,
+          salary: active.salary,
+          viaDeepTalent,
+          name: form.name || undefined,
+          email: form.email || undefined,
+        }),
+      });
+    } catch {
+      // best-effort — never block the user's action on tracking
+    }
+  }
+
+  // Direct apply: record, then open the external listing in a new tab.
+  async function applyDirectly() {
+    const url = active?.url;
+    await recordApplication(false);
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
     setActive(null);
+  }
+
+  // Assisted apply: DeepTalent submits on the visitor's behalf.
+  async function submitThroughDeepTalent() {
+    if (!form.name.trim() || !/.+@.+\..+/.test(form.email)) return;
+    setSubmitting(true);
+    await recordApplication(true);
+    setSubmitting(false);
+    setMode("success");
   }
 
   const pageJobs = jobs.slice(page * perPage, page * perPage + perPage);
@@ -140,8 +179,8 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
             Beyond<br />the Network
           </h2>
           <p className="text-gray-500 leading-relaxed max-w-xs mb-8 text-pretty">
-            Live roles aggregated from public job boards. Explore opportunities across the web — and
-            see the in-network alternative before you apply.
+            Live remote roles aggregated from public job boards. Explore opportunities across the web
+            — apply directly, or let DeepTalent submit for you.
           </p>
           <div className="flex items-center gap-3">
             <button
@@ -216,7 +255,7 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
                     </p>
                     <div className={`flex items-center gap-4 text-xs font-medium ${dark ? "text-white/70" : "text-gray-500"}`}>
                       <span className="inline-flex items-center gap-1.5">
-                        <BriefcaseBusiness className="size-3.5" /> {job.remote ? "Remote" : "On-site"}
+                        <BriefcaseBusiness className="size-3.5" /> Remote
                       </span>
                       <span className="inline-flex items-center gap-1.5 truncate">
                         <Globe2 className="size-3.5 shrink-0" /> <span className="truncate">{job.location || "Global"}</span>
@@ -241,9 +280,9 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
         )}
       </div>
 
-      {/* Before-you-go modal: records the application + shows the in-network
-          alternative. Deliberately shows NO salary amounts — only the role
-          match, available talent, and the up-to-30%-below-market message. */}
+      {/* Before-you-go modal: previews the in-network alternative, then offers
+          three actions — submit through DeepTalent, apply directly, or hire
+          in-network. Deliberately shows NO salary amounts. */}
       <AnimatePresence>
         {active && (
           <motion.div
@@ -263,7 +302,8 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
             >
               <div className="flex items-start justify-between mb-4">
                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-xs font-semibold">
-                  <Sparkles className="size-3.5" /> In-network alternative
+                  <Sparkles className="size-3.5" />
+                  {mode === "success" ? "Submitted" : "In-network alternative"}
                 </span>
                 <button
                   onClick={() => setActive(null)}
@@ -274,36 +314,21 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
                 </button>
               </div>
 
-              {altLoading ? (
-                <div className="py-8 space-y-3">
-                  <div className="h-5 w-2/3 rounded bg-gray-100 animate-pulse" />
-                  <div className="h-4 w-full rounded bg-gray-100 animate-pulse" />
-                  <div className="h-4 w-4/5 rounded bg-gray-100 animate-pulse" />
-                </div>
-              ) : alt?.matchedRole ? (
-                <>
+              {/* SUCCESS ---------------------------------------------------- */}
+              {mode === "success" ? (
+                <div className="text-center py-2">
+                  <span className="grid size-14 mx-auto place-items-center rounded-full bg-emerald-50 text-emerald-600 mb-4">
+                    <CheckCircle2 className="size-7" />
+                  </span>
                   <h3 className="text-xl font-bold text-gray-900 mb-1 text-balance">
-                    Hire a vetted {alt.matchedRole.label} in-network
+                    DeepTalent will take it from here
                   </h3>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-5 text-pretty">
-                    Before applying to <span className="font-medium text-gray-700">{active.title}</span> at{" "}
-                    {active.company}, consider DeepTalent&apos;s pre-vetted specialists — typically{" "}
-                    <span className="font-semibold text-gray-900">up to 30% below the market rate</span> for
-                    this role, with no cold applications.
+                  <p className="text-sm text-gray-500 leading-relaxed mb-6 text-pretty">
+                    We&apos;ll review <span className="font-medium text-gray-700">{active.title}</span> at{" "}
+                    {active.company} and submit on your behalf, then email{" "}
+                    <span className="font-medium text-gray-700">{form.email}</span> with next steps and any
+                    in-network alternatives.
                   </p>
-                  <div className="rounded-2xl bg-gray-50 p-4 mb-5 flex items-center gap-3">
-                    <span className="grid size-10 place-items-center rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
-                      <CheckCircle2 className="size-5" />
-                    </span>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        {alt.inNetworkCount > 0
-                          ? `${alt.inNetworkCount} vetted ${alt.inNetworkCount === 1 ? "specialist" : "specialists"} available`
-                          : "Vetted specialists on request"}
-                      </p>
-                      <p className="text-xs text-gray-500">Matched to {alt.matchedRole.label}</p>
-                    </div>
-                  </div>
                   <div className="flex flex-col gap-2">
                     <a
                       href="/hire"
@@ -312,35 +337,129 @@ export function ExternalRoles({ limit = 12, bare = false }: { limit?: number; ba
                       Explore in-network talent
                     </a>
                     <button
-                      onClick={continueToExternal}
-                      className="h-11 rounded-full border border-gray-200 text-gray-600 text-sm font-medium inline-flex items-center justify-center gap-1.5 hover:border-gray-900 hover:text-gray-900 transition-colors"
+                      onClick={() => setActive(null)}
+                      className="h-11 rounded-full border border-gray-200 text-gray-600 text-sm font-medium hover:border-gray-900 hover:text-gray-900 transition-colors"
                     >
-                      Continue to {active.source} <ExternalLink className="size-3.5" />
+                      Done
+                    </button>
+                  </div>
+                </div>
+              ) : mode === "dt-form" ? (
+                /* DEEPTALENT SUBMIT FORM ----------------------------------- */
+                <>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1 text-balance">
+                    Submit through DeepTalent
+                  </h3>
+                  <p className="text-sm text-gray-500 leading-relaxed mb-5 text-pretty">
+                    We&apos;ll apply to <span className="font-medium text-gray-700">{active.title}</span> at{" "}
+                    {active.company} for you — and flag any vetted in-network alternative at up to 30% below
+                    market. Where should we send updates?
+                  </p>
+                  <div className="space-y-3 mb-5">
+                    <input
+                      value={form.name}
+                      onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                      placeholder="Full name"
+                      className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]/30 focus:border-[#3B5BDB]"
+                    />
+                    <input
+                      value={form.email}
+                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                      type="email"
+                      placeholder="Email address"
+                      className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3B5BDB]/30 focus:border-[#3B5BDB]"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={submitThroughDeepTalent}
+                      disabled={submitting || !form.name.trim() || !/.+@.+\..+/.test(form.email)}
+                      className="h-11 rounded-full bg-[#3B5BDB] text-white text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-[#2f49b0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="size-4 animate-spin" /> Submitting…
+                        </>
+                      ) : (
+                        <>
+                          <Send className="size-4" /> Submit my application
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setMode("choice")}
+                      className="h-11 rounded-full border border-gray-200 text-gray-600 text-sm font-medium hover:border-gray-900 hover:text-gray-900 transition-colors"
+                    >
+                      Back
                     </button>
                   </div>
                 </>
+              ) : altLoading ? (
+                /* LOADING PREVIEW ------------------------------------------ */
+                <div className="py-8 space-y-3">
+                  <div className="h-5 w-2/3 rounded bg-gray-100 animate-pulse" />
+                  <div className="h-4 w-full rounded bg-gray-100 animate-pulse" />
+                  <div className="h-4 w-4/5 rounded bg-gray-100 animate-pulse" />
+                </div>
               ) : (
+                /* CHOICE (default) ----------------------------------------- */
                 <>
-                  <h3 className="text-xl font-bold text-gray-900 mb-1 text-balance">
-                    Opening {active.company}
-                  </h3>
-                  <p className="text-sm text-gray-500 leading-relaxed mb-5 text-pretty">
-                    We don&apos;t have a direct in-network match for{" "}
-                    <span className="font-medium text-gray-700">{active.title}</span> yet — but DeepTalent
-                    can source vetted talent for almost any role at up to 30% below market.
-                  </p>
+                  {alt?.matchedRole ? (
+                    <>
+                      <h3 className="text-xl font-bold text-gray-900 mb-1 text-balance">
+                        Hire a vetted {alt.matchedRole.label} in-network
+                      </h3>
+                      <p className="text-sm text-gray-500 leading-relaxed mb-5 text-pretty">
+                        Before applying to <span className="font-medium text-gray-700">{active.title}</span> at{" "}
+                        {active.company}, consider DeepTalent&apos;s pre-vetted specialists — typically{" "}
+                        <span className="font-semibold text-gray-900">up to 30% below the market rate</span> for
+                        this role, with no cold applications.
+                      </p>
+                      <div className="rounded-2xl bg-gray-50 p-4 mb-5 flex items-center gap-3">
+                        <span className="grid size-10 place-items-center rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB]">
+                          <CheckCircle2 className="size-5" />
+                        </span>
+                        <div>
+                          <p className="text-sm font-bold text-gray-900">
+                            {alt.inNetworkCount > 0
+                              ? `${alt.inNetworkCount} vetted ${alt.inNetworkCount === 1 ? "specialist" : "specialists"} available`
+                              : "Vetted specialists on request"}
+                          </p>
+                          <p className="text-xs text-gray-500">Matched to {alt.matchedRole.label}</p>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-xl font-bold text-gray-900 mb-1 text-balance">
+                        Apply to {active.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 leading-relaxed mb-5 text-pretty">
+                        This role at {active.company} is outside the DeepTalent network. You can apply directly,
+                        or let DeepTalent submit for you and source vetted alternatives at up to 30% below market.
+                      </p>
+                    </>
+                  )}
+
+                  {/* Three actions */}
                   <div className="flex flex-col gap-2">
                     <button
-                      onClick={continueToExternal}
-                      className="h-11 rounded-full bg-[#3B5BDB] text-white text-sm font-semibold inline-flex items-center justify-center gap-1.5 hover:bg-[#2f49b0] transition-colors"
+                      onClick={() => setMode("dt-form")}
+                      className="h-11 rounded-full bg-[#3B5BDB] text-white text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-[#2f49b0] transition-colors"
                     >
-                      Continue to {active.source} <ExternalLink className="size-3.5" />
+                      <Send className="size-4" /> Submit through DeepTalent
+                    </button>
+                    <button
+                      onClick={applyDirectly}
+                      className="h-11 rounded-full border border-gray-300 text-gray-700 text-sm font-medium inline-flex items-center justify-center gap-1.5 hover:border-gray-900 hover:text-gray-900 transition-colors"
+                    >
+                      Apply directly on {active.source} <ExternalLink className="size-3.5" />
                     </button>
                     <a
                       href="/hire"
-                      className="h-11 rounded-full border border-gray-200 text-gray-600 text-sm font-medium grid place-items-center hover:border-gray-900 hover:text-gray-900 transition-colors"
+                      className="h-11 rounded-full text-gray-500 text-sm font-medium grid place-items-center hover:text-[#3B5BDB] transition-colors"
                     >
-                      Talk to DeepTalent instead
+                      Or hire in-network instead
                     </a>
                   </div>
                 </>

@@ -28,6 +28,7 @@ export async function GET() {
     total: rows.length,
     uniqueApplicants: new Set(rows.map((r: any) => r.applicant_email || r.id)).size,
     matched: rows.filter((r: any) => r.matched_role_id).length,
+    viaDeepTalent: rows.filter((r: any) => r.via_deeptalent).length,
     totalMarketMonthlyUsd: totalMarket,
     totalDtMonthlyUsd: totalDt,
     totalMonthlySavingsUsd: totalMarket - totalDt,

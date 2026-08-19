@@ -95,6 +95,7 @@ export async function POST(request: Request) {
     salary,
     name,
     email,
+    viaDeepTalent,
   } = body || {};
 
   if (!title || typeof title !== "string") {
@@ -148,6 +149,7 @@ export async function POST(request: Request) {
     market_salary_usd: econ.marketMonthlyUsd,
     dt_rate_usd: econ.dtMonthlyUsd,
     in_network_count: inNetworkCount,
+    via_deeptalent: viaDeepTalent === true,
   });
 
   if (error) {
