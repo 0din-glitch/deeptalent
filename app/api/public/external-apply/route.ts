@@ -43,7 +43,7 @@ async function countInNetwork(
 }
 
 /**
- * GET /api/public/external-alternatives?title=...&category=...&salary=...
+ * GET /api/public/external-apply?title=...&category=...&salary=...
  * Returns the in-network alternative (matched role, DeepTalent -30% rate,
  * available talent count) WITHOUT recording anything. Used to preview the
  * alternative before the user commits to applying.
