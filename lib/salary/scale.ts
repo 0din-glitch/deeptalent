@@ -270,6 +270,54 @@ export function isSeniority(v: unknown): v is Seniority {
   return v === "junior" || v === "mid" || v === "senior";
 }
 
+/** DeepTalent in-network discount vs. the stated/market salary. */
+export const IN_NETWORK_DISCOUNT = 0.3;
+
+/**
+ * Parse a free-text salary string from an external job board into a monthly
+ * USD figure. Handles annual figures (÷12), "k" suffixes and ranges (uses the
+ * midpoint). Returns null when nothing usable is found.
+ */
+export function parseStatedSalaryUsd(raw?: string | null): number | null {
+  if (!raw) return null;
+  const text = raw.toLowerCase().replace(/,/g, "");
+  const nums = [...text.matchAll(/\$?\s*(\d+(?:\.\d+)?)\s*(k)?/g)]
+    .map((m) => Number(m[1]) * (m[2] ? 1000 : 1))
+    .filter((n) => n >= 500); // drop stray small numbers (e.g. "401k" leftovers)
+  if (nums.length === 0) return null;
+  const avg = nums.reduce((a, b) => a + b, 0) / nums.length;
+  // Annual salaries are typically > 30k; convert to monthly.
+  const monthly = avg > 30000 ? avg / 12 : avg;
+  return Math.round(monthly);
+}
+
+/**
+ * Given an external job title/category (and optional stated salary text),
+ * resolve the salary economics used for outbound-application pitches:
+ * the market/stated monthly USD and DeepTalent's in-network rate at -30%.
+ * Falls back to the canonical scale's senior tier as a market benchmark when
+ * the listing doesn't state a salary.
+ */
+export function outboundEconomics(opts: {
+  title?: string | null;
+  category?: string | null;
+  statedSalaryText?: string | null;
+}): {
+  row: SalaryRow | null;
+  marketMonthlyUsd: number | null;
+  dtMonthlyUsd: number | null;
+} {
+  const row = matchSalaryRow(opts.title) || matchSalaryRow(opts.category);
+  const parsed = parseStatedSalaryUsd(opts.statedSalaryText);
+  // Prefer a real stated salary; else benchmark against the senior scale tier.
+  const marketMonthlyUsd = parsed ?? (row ? row.usd.senior : null);
+  const dtMonthlyUsd =
+    marketMonthlyUsd != null
+      ? Math.round(marketMonthlyUsd * (1 - IN_NETWORK_DISCOUNT))
+      : null;
+  return { row, marketMonthlyUsd, dtMonthlyUsd };
+}
+
 /**
  * Resolve the monthly price (USD) a company pays for a role at a given level.
  * Derived server-side from the canonical salary scale so it can never be
