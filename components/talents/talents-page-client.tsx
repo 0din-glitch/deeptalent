@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import useSWR from "swr";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { FluidCTA } from "@/components/site/fluid-cta";
+import { ExternalRoles } from "@/components/talents/external-roles";
 import {
   Search,
   ChevronDown,
@@ -547,10 +549,61 @@ const STARTUPS = [
   { name: "HabariPay", jobs: 3, desc: "HabariPay transforms digital payments with advanced technology.", mode: "Remote", loc: "Nigeria", color: "#EF4444", icon: Cpu, dark: false },
 ];
 
+const startupsFetcher = (url: string) => fetch(url).then((r) => r.json());
+const STARTUP_ICONS = [BarChart3, TrendingUp, DollarSign, Zap, Cpu] as const;
+const STARTUP_COLORS = ["#0EA5E9", "#22C55E", "#7C3AED", "#EF4444", "#3B5BDB"];
+
+type DerivedStartup = (typeof STARTUPS)[number];
+
+/**
+ * Turn the flat external-jobs feed into "startup" cards by grouping live
+ * listings under the company that posted them — companies with the most open
+ * roles surface first, so this doubles as a real hiring leaderboard.
+ */
+function deriveStartups(
+  jobs: Array<{ company: string; title: string; location: string | null; remote: boolean }>
+): DerivedStartup[] {
+  const byCompany = new Map<string, typeof jobs>();
+  for (const j of jobs) {
+    if (!j.company) continue;
+    if (!byCompany.has(j.company)) byCompany.set(j.company, []);
+    byCompany.get(j.company)!.push(j);
+  }
+  return [...byCompany.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .slice(0, 12)
+    .map(([name, list], i) => {
+      const remote = list.some((j) => j.remote);
+      const loc = (list.find((j) => j.location)?.location || (remote ? "Remote" : "Global")).slice(0, 18);
+      const extra = list.length - 1;
+      return {
+        name,
+        jobs: list.length,
+        desc:
+          extra > 0
+            ? `Hiring for ${list[0].title} and ${extra} more role${extra > 1 ? "s" : ""}.`
+            : `Hiring for ${list[0].title}.`,
+        mode: remote ? "Remote" : "On-site",
+        loc,
+        color: STARTUP_COLORS[i % STARTUP_COLORS.length],
+        icon: STARTUP_ICONS[i % STARTUP_ICONS.length],
+        dark: i % 6 === 3,
+      };
+    });
+}
+
 function NewStartups() {
   const [page, setPage] = useState(0);
+  const { data } = useSWR<{ jobs: Parameters<typeof deriveStartups>[0] }>(
+    "/api/public/external-jobs",
+    startupsFetcher,
+    { revalidateOnFocus: false }
+  );
+  // Real scraped startups when the feed is available; the curated list is the
+  // graceful fallback while loading or if every upstream source is down.
+  const startups = data?.jobs?.length ? deriveStartups(data.jobs) : STARTUPS;
   const perPage = 5;
-  const totalPages = Math.ceil(STARTUPS.length / perPage);
+  const totalPages = Math.ceil(startups.length / perPage);
   const paginate = (dir: number) => setPage((p) => (p + dir + totalPages) % totalPages);
 
   return (
@@ -592,7 +645,7 @@ function NewStartups() {
             transition={{ duration: 0.35 }}
             className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5"
           >
-            {STARTUPS.slice(page * perPage, page * perPage + perPage).map((s) => (
+            {startups.slice(page * perPage, page * perPage + perPage).map((s) => (
               <div
                 key={s.name}
                 className={`rounded-3xl p-6 flex flex-col transition-shadow hover:shadow-lg ${
@@ -1293,6 +1346,11 @@ export function TalentsPageClient() {
       <TalentHero />
       <KickstartAI />
       <NewStartups />
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <ExternalRoles limit={12} />
+        </div>
+      </section>
       <FeaturesGrid />
       <SkillOrbit />
       <TalentProfileCard />

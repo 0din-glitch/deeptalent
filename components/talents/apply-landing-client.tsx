@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { SiteFooter } from "@/components/site/site-footer";
 import { OpenRoles } from "@/components/talents/open-roles";
+import { ExternalRoles } from "@/components/talents/external-roles";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 
 function ApplyLanding() {
@@ -71,6 +72,11 @@ function ApplyLanding() {
           {/* Open roles */}
           <div className="mb-16">
             <OpenRoles />
+          </div>
+
+          {/* External roles aggregated from public job boards */}
+          <div className="mb-16">
+            <ExternalRoles limit={12} />
           </div>
 
           {/* Final CTA */}
