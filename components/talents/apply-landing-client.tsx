@@ -76,7 +76,7 @@ function ApplyLanding() {
 
           {/* External roles aggregated from public job boards */}
           <div className="mb-16">
-            <ExternalRoles limit={12} />
+            <ExternalRoles limit={12} bare />
           </div>
 
           {/* Final CTA */}

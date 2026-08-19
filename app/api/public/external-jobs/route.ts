@@ -16,6 +16,9 @@ export type ExternalJob = {
   source: string;
   posted_at: string;
   tags: string[];
+  /** Raw stated salary text from the board, when provided. Never rendered on
+   *  public cards — used server-side to compute in-network economics. */
+  salary: string | null;
 };
 
 /**
@@ -53,6 +56,7 @@ async function fetchRemotive(): Promise<ExternalJob[]> {
       tags?: string[];
       candidate_required_location?: string;
       publication_date?: string;
+      salary?: string;
     }>;
   };
   return (json.jobs || []).map((j) => ({
@@ -66,6 +70,7 @@ async function fetchRemotive(): Promise<ExternalJob[]> {
     source: "Remotive",
     posted_at: j.publication_date || new Date().toISOString(),
     tags: (j.tags || []).slice(0, 4),
+    salary: j.salary || null,
   }));
 }
 
@@ -101,6 +106,7 @@ async function fetchArbeitnow(): Promise<ExternalJob[]> {
       ? new Date(j.created_at * 1000).toISOString()
       : new Date().toISOString(),
     tags: (j.tags || []).slice(0, 4),
+    salary: null,
   }));
 }
 

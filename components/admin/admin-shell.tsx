@@ -20,6 +20,7 @@ import { MassEmailTab } from "@/components/admin/mass-email-tab";
 import { TasksTab } from "@/components/admin/tasks-tab";
 import { CalendarTab } from "@/components/admin/calendar-tab";
 import { SocialTab } from "@/components/admin/social-tab";
+import { OutboundTab } from "@/components/admin/outbound-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 import {
   Activity,
@@ -30,6 +31,7 @@ import {
   ChevronRight,
   FileText,
   Folder,
+  Globe,
   LayoutDashboard,
   ListChecks,
   LogOut,
@@ -79,6 +81,7 @@ type Tab =
   | "tasks"
   | "calendar"
   | "social"
+  | "outbound"
   | "placements";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -139,6 +142,12 @@ export function AdminShell({
     fetcher,
     { refreshInterval: 60_000 }
   );
+  const { data: outboundData } = useSWR<{ summary?: { total: number } }>(
+    "/api/admin/outbound-applications",
+    fetcher,
+    { refreshInterval: 60_000 }
+  );
+  const outboundCount = outboundData?.summary?.total ?? 0;
 
   const appCount = appData?.rows?.length ?? applications.length;
   const inqCount = inqData?.rows?.length ?? inquiries.length;
@@ -156,6 +165,7 @@ export function AdminShell({
         { id: "approved_talent" as Tab, label: "Approved Talent", icon: UserCheck, count: approvedCount },
         { id: "inquiries" as Tab, label: "Company Inquiries", icon: Building2, count: inqCount },
         { id: "placements" as Tab, label: "Placements", icon: Briefcase, count: null },
+        { id: "outbound" as Tab, label: "Outbound Jobs", icon: Globe, count: outboundCount > 0 ? outboundCount : null },
       ],
     },
     {
@@ -320,6 +330,7 @@ export function AdminShell({
           <div className="max-w-6xl mx-auto">
             {tab === "users" && <UsersTab />}
             {tab === "placements" && <PlacementsTab />}
+            {tab === "outbound" && <OutboundTab />}
             {tab === "files" && <FilesTab initialFiles={files} />}
             {tab === "applications" && <SubmissionsTab kind="talent_application" />}
             {tab === "approved_talent" && <ApprovedTalentTab />}
