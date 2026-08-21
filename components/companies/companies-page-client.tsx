@@ -33,6 +33,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { SiteNavbar } from "@/components/site/site-navbar";
+import { SiteFooter } from "@/components/site/site-footer";
 import { FluidCTA } from "@/components/site/fluid-cta";
 
 export function CompaniesPageClient() {
@@ -51,7 +52,7 @@ export function CompaniesPageClient() {
       <RetentionMetric />
       <DarkStats />
       <FinalCTA />
-      <Footer />
+      <SiteFooter />
     </main>
   );
 }
@@ -76,11 +77,11 @@ function Hero() {
               transition={{ duration: 0.6, ease: "easeOut" }}
               className="text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl"
             >
-              AI-Driven
+              Credential-Verified
               <br />
-              Talent Sourcing
+              Finance &amp; Compliance
               <br />
-              <span className="text-white/35">Solution</span>
+              <span className="text-white/35">Talent, Fully Managed</span>
             </motion.h1>
 
             <motion.div
@@ -93,31 +94,29 @@ function Hero() {
                 href="/companies/hire"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0a0b12] transition-transform hover:scale-[1.03]"
               >
-                Try for FREE
+                Book a discovery call
                 <ArrowRight className="size-4 -rotate-45" />
               </Link>
             </motion.div>
 
             <p className="mt-40 hidden max-w-sm text-sm leading-relaxed text-white/60 lg:block">
-              Hire credentialled finance, compliance &amp; technology specialists
-              across 120+ countries and maximize output for your remote team.
-              Save cost and time today!
+              We place ACCA-, ICAN- and CFA-track finance, compliance and technology
+              professionals into demanding roles &mdash; verified, payrolled and managed
+              by us, with a replacement guarantee if a placement doesn&apos;t work out.
             </p>
 
-            {/* Product Hunt-style badge */}
+            {/* Managed-model markers */}
             <div className="mt-8 hidden items-center gap-5 border-t border-white/10 pt-6 lg:flex">
               <div className="flex items-center gap-2 rounded-lg border border-white/15 px-3 py-1.5">
                 <span className="text-[10px] font-semibold uppercase leading-tight text-white/70">
-                  Talent partner
+                  Credentials
                   <br />
-                  of the year
+                  verified
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="grid size-6 place-items-center rounded-full bg-white/10 text-xs font-bold text-white">
-                  D
-                </div>
-                <span className="text-xs font-medium text-white/70">DeepTalent Awards</span>
+                <ShieldCheck className="size-5 text-white/70" />
+                <span className="text-xs font-medium text-white/70">Payroll &amp; compliance handled</span>
               </div>
             </div>
           </div>
@@ -128,8 +127,8 @@ function Hero() {
 
         {/* Mobile paragraph */}
         <p className="relative z-10 mt-10 max-w-sm text-sm leading-relaxed text-white/60 lg:hidden">
-          Hire credentialled finance, compliance &amp; technology specialists across
-          120+ countries. Save cost and time today!
+          Credential-verified finance, compliance and technology professionals &mdash;
+          verified, payrolled and managed by us, with a replacement guarantee.
         </p>
       </div>
     </section>
@@ -1255,10 +1254,10 @@ function ChartBlock({ label, values, captions }: { label: string; values: number
 
 function DarkStats() {
   const stats = [
-    { v: "500+", l: "Specialists placed" },
-    { v: "70%", l: "Faster time-to-hire" },
-    { v: "3x", l: "Pipeline quality" },
-    { v: "98%", l: "Client satisfaction" },
+    { v: "<8%", l: "Acceptance rate" },
+    { v: "14–21", l: "Days to deployment" },
+    { v: "60-day", l: "Free replacement" },
+    { v: "Published", l: "Salary bands" },
   ];
   return (
     <section className="bg-[#0a0b12] px-4 py-24">
@@ -1277,8 +1276,8 @@ function DarkStats() {
             <div className="flex items-center gap-3 border-b border-white/10 pb-3">
               <img src="/images/consulting/pro-6.png" alt="" className="size-9 rounded-full object-cover" />
               <div>
-                <p className="text-sm font-semibold text-white">Jordan Perez</p>
-                <p className="text-[10px] text-white/40">UI/UX Designer · $40–$60 / hr</p>
+                <p className="text-sm font-semibold text-white">Sample profile</p>
+                <p className="text-[10px] text-white/40">Management Accountant · ACCA-qualified</p>
               </div>
             </div>
             <div className="mt-3 space-y-2">
@@ -1328,11 +1327,11 @@ function FinalCTA() {
 
         <div className="relative overflow-hidden rounded-[28px] bg-[#3B5BDB] px-6 py-20 text-center md:px-12 md:py-24">
           <h2 className="mx-auto max-w-3xl text-balance text-3xl font-bold leading-[1.15] text-white md:text-5xl">
-            Hire talents worldwide and maximize work productivity for remote members today
+            Add credential-verified finance, compliance &amp; technology talent to your team
           </h2>
           <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-white/70">
-            Shaping the future of work with our AI-driven talent sourcing and
-            management solution.
+            Fully managed: we verify, payroll and support every placement — with a
+            replacement guarantee if it doesn&apos;t work out.
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -1360,34 +1359,4 @@ function FinalCTA() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="bg-gray-900 px-6 py-12 text-white">
-      <div className="mx-auto mb-8 grid max-w-6xl gap-8 md:grid-cols-4">
-        <div>
-          <h3 className="mb-4 font-bold">DeepTalent</h3>
-          <p className="text-sm text-gray-400">Connecting top talent with world-class opportunities.</p>
-        </div>
-        <div>
-          <h4 className="mb-4 font-bold">Product</h4>
-          <Link href="/talents" className="mb-2 block text-sm text-gray-400 hover:text-white">For Talents</Link>
-          <Link href="/companies" className="mb-2 block text-sm text-gray-400 hover:text-white">For Companies</Link>
-          <Link href="/consulting" className="mb-2 block text-sm text-gray-400 hover:text-white">Consulting</Link>
-        </div>
-        <div>
-          <h4 className="mb-4 font-bold">Company</h4>
-          <Link href="/about" className="mb-2 block text-sm text-gray-400 hover:text-white">About</Link>
-          <Link href="/contact" className="mb-2 block text-sm text-gray-400 hover:text-white">Contact</Link>
-        </div>
-        <div>
-          <h4 className="mb-4 font-bold">Legal</h4>
-          <Link href="/privacy" className="mb-2 block text-sm text-gray-400 hover:text-white">Privacy</Link>
-          <Link href="/terms" className="mb-2 block text-sm text-gray-400 hover:text-white">Terms</Link>
-        </div>
-      </div>
-      <div className="border-t border-gray-700 pt-8 text-center text-sm text-gray-400">
-        <p>&copy; 2026 DeepTalent Platform. All rights reserved.</p>
-      </div>
-    </footer>
-  );
-}
+

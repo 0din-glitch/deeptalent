@@ -279,7 +279,7 @@ function SolutionLifecycle() {
 
 /* ════════════════════════════════════════════════════
    PLATFORM PILLARS — the connected system
-═══════════════════════════════════════����═══════════════ */
+═══════════════════════════════════════�����═══════════════ */
 function PlatformPillars() {
   const pillars = [
     { icon: Globe, title: "Global Talent Infrastructure", desc: "A connected system for sourcing, assessing, verifying and deploying professionals across regions." },
@@ -1034,34 +1034,6 @@ function TrustedBy() {
               Companies that trust DeepTalent
             </h2>
           </motion.div>
-
-          {/* Trustpilot badge */}
-          <motion.a
-            href="https://www.trustpilot.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={viewport}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="inline-flex flex-col items-start gap-1.5 px-5 py-4 rounded-2xl border border-gray-200 bg-white hover:border-[#3B5BDB]/30 hover:shadow-md transition-all"
-          >
-            <div className="flex items-center gap-2">
-              <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
-                <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/>
-              </svg>
-              <span className="text-sm font-bold text-gray-900 tracking-wide">Trustpilot</span>
-            </div>
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <svg key={i} viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-                  <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/>
-                </svg>
-              ))}
-              <span className="text-xs text-gray-500 ml-1">4.8 / 5.0</span>
-            </div>
-            <p className="text-[10px] text-gray-400">Based on 120+ reviews</p>
-          </motion.a>
         </div>
       </div>
 
@@ -1522,8 +1494,8 @@ function GlobeSection() {
               {[
                 { icon: Globe, label: "6 Continents", desc: "Active talent corridors" },
                 { icon: ShieldCheck, label: "Structured Vetting", desc: "Verified at every step" },
-                { icon: Zap, label: "14–21 Days", desc: "Average deployment speed" },
-                { icon: Users, label: "10,000+ Vetted", desc: "Professionals in network" },
+                { icon: Zap, label: "14–21 Days", desc: "Average deployment window" },
+                { icon: Users, label: "Replacement Guarantee", desc: "If a placement doesn't work out" },
               ].map(({ icon: Icon, label, desc }) => (
                 <motion.div
                   key={label}
@@ -2268,7 +2240,7 @@ function HumanLayer() {
 ═══════════════════════════════════════════════════════ */
 function TestimonialCarousel() {
   const testimonials = [
-    { id: "t1", quote: "DeepTalent transformed the way I run my business. The VA they matched me with was trained, proactive, and integrated into my workflow from day one. What impressed me most was the cost advantage — I'm getting Fortune-500-level support at half the traditional price.", name: "Dianitte Erilus", location: "Orlando, Florida, USA", title: "Founder & Operations Lead", initials: "DE", rating: 5 },
+    { id: "t1", quote: "DeepTalent transformed the way I run my business. The support they matched me with was trained, proactive, and integrated into my workflow from day one. The calibre of the professional and the structure around the placement is what impressed me most.", name: "Dianitte Erilus", location: "Orlando, Florida, USA", title: "Founder & Operations Lead", initials: "DE", rating: 5 },
     { id: "t2", quote: "We needed reliable administrative and customer-support help, and DeepTalent delivered beyond expectations. Their talent is disciplined, well-trained, and incredibly responsive — exactly what a fast-moving hospitality brand like ours needs.", name: "CRI Lounge", location: "South Croydon, London, UK", title: "Hospitality & Events", initials: "CL", rating: 5 },
     { id: "t3", quote: "The operational burden in our clinic was overwhelming until DeepTalent stepped in. Their Executive Assistant support has completely reshaped our scheduling, client communication, and admin processes. Professional, discreet, tech-savvy, and consistent.", name: "Al Ahad MD", location: "Sharjah, Dubai, UAE", title: "Medical & Wellness Practice", initials: "AA", rating: 5 },
     { id: "t4", quote: "In social care, consistency and reliability are critical. DeepTalent helped us secure trained support staff who understood our compliance-heavy environment from day one. They've improved our documentation, scheduling, and family communication turnarounds significantly.", name: "Peculiar Care Home", location: "Erith, London, UK", title: "Social Care Management", initials: "PC", rating: 5 },
@@ -2279,19 +2251,12 @@ function TestimonialCarousel() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12 gap-6">
           <div className="space-y-3">
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB]">Testimonials</p>
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB]">Operations Support</p>
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
-              Loved by Users{" "}
-              <span className="text-[#3B5BDB]">Around the World</span>
+              Early clients on our{" "}
+              <span className="text-[#3B5BDB]">operations support</span>
             </h2>
-            <p className="text-gray-500 text-lg">See how DeepTalent is reshaping operations for businesses everywhere.</p>
-          </div>
-          <div className="inline-flex items-center gap-3 px-4 py-3 rounded-2xl border border-gray-200 bg-white shadow-sm shrink-0">
-            <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/></svg>
-            <div>
-              <p className="text-sm font-bold text-gray-900">4.8 / 5.0</p>
-              <div className="flex gap-0.5">{[...Array(5)].map((_, i) => (<svg key={i} viewBox="0 0 24 24" className="size-3" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/></svg>))}</div>
-            </div>
+            <p className="text-gray-500 text-lg">A selection of businesses we&apos;ve supported with trained administrative, customer and executive-support talent.</p>
           </div>
         </div>
 

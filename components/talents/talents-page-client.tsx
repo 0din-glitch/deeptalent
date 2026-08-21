@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import useSWR from "swr";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { FluidCTA } from "@/components/site/fluid-cta";
-import { ExternalRoles } from "@/components/talents/external-roles";
 import {
   Search,
   ChevronDown,
@@ -172,7 +170,7 @@ const TESTIMONIALS = [
   {
     name: "Thibaud Beaudin",
     title: "Full-Stack Developer · placed remotely at a New York FinTech",
-    quote: "Our employees are the best — driven by passion, accuracy, and dedication to deliver exceptional work. I wouldn't have found this opportunity without DeepTalent's network.",
+    quote: "I'd applied to dozens of roles on my own and heard nothing. Through DeepTalent I was verified once, then matched to a role that actually fit my experience — remote, well-paid, and with a team that took me seriously.",
     avatar: "/images/consulting/pro-7.png",
   },
   {
@@ -392,12 +390,12 @@ function TalentHero() {
             <div className="mx-auto h-4 w-3/4 border-x border-t border-gray-200 rounded-t-md" />
             <div className="flex items-start justify-center gap-10 sm:gap-16 pt-3">
               <div className="text-center">
-                <p className="text-3xl md:text-4xl font-extrabold text-gray-900">50K+</p>
-                <p className="text-xs text-gray-500 mt-1">Active job seekers</p>
+                <p className="text-3xl md:text-4xl font-extrabold text-gray-900">14–21</p>
+                <p className="text-xs text-gray-500 mt-1">Days to deployment</p>
               </div>
               <div className="text-center">
-                <p className="text-3xl md:text-4xl font-extrabold text-gray-900">20K+</p>
-                <p className="text-xs text-gray-500 mt-1">Verified companies</p>
+                <p className="text-3xl md:text-4xl font-extrabold text-gray-900">Published</p>
+                <p className="text-xs text-gray-500 mt-1">Salary bands, every role</p>
               </div>
             </div>
           </motion.div>
@@ -539,154 +537,6 @@ function KickstartAI() {
   );
 }
 
-/* ─── New Startups (carousel of hiring startups) ────────────────── */
-
-const STARTUPS = [
-  { name: "Evolve Credit", jobs: 5, desc: "Helping financial institutions launch and manage credit ventures.", mode: "Remote", loc: "Wilmington", color: "#0EA5E9", icon: BarChart3, dark: false },
-  { name: "GLO", jobs: 2, desc: "GLO helps elevate daily life through mindful wellness.", mode: "On-site", loc: "California", color: "#22C55E", icon: TrendingUp, dark: false },
-  { name: "Eversend", jobs: 8, desc: "Eversend makes transfers, investments, and spending simple.", mode: "Hybrid", loc: "England", color: "#7C3AED", icon: DollarSign, dark: false },
-  { name: "Flux", jobs: 7, desc: "Flux scales from quick prototypes to production-ready systems.", mode: "Hybrid", loc: "Japan", color: "#111827", icon: Zap, dark: true },
-  { name: "HabariPay", jobs: 3, desc: "HabariPay transforms digital payments with advanced technology.", mode: "Remote", loc: "Nigeria", color: "#EF4444", icon: Cpu, dark: false },
-];
-
-const startupsFetcher = (url: string) => fetch(url).then((r) => r.json());
-const STARTUP_ICONS = [BarChart3, TrendingUp, DollarSign, Zap, Cpu] as const;
-const STARTUP_COLORS = ["#0EA5E9", "#22C55E", "#7C3AED", "#EF4444", "#3B5BDB"];
-
-type DerivedStartup = (typeof STARTUPS)[number];
-
-/**
- * Turn the flat external-jobs feed into "startup" cards by grouping live
- * listings under the company that posted them — companies with the most open
- * roles surface first, so this doubles as a real hiring leaderboard.
- */
-function deriveStartups(
-  jobs: Array<{ company: string; title: string; location: string | null; remote: boolean }>
-): DerivedStartup[] {
-  const byCompany = new Map<string, typeof jobs>();
-  for (const j of jobs) {
-    if (!j.company) continue;
-    if (!byCompany.has(j.company)) byCompany.set(j.company, []);
-    byCompany.get(j.company)!.push(j);
-  }
-  return [...byCompany.entries()]
-    .sort((a, b) => b[1].length - a[1].length)
-    .slice(0, 12)
-    .map(([name, list], i) => {
-      const remote = list.some((j) => j.remote);
-      const loc = (list.find((j) => j.location)?.location || (remote ? "Remote" : "Global")).slice(0, 18);
-      const extra = list.length - 1;
-      return {
-        name,
-        jobs: list.length,
-        desc:
-          extra > 0
-            ? `Hiring for ${list[0].title} and ${extra} more role${extra > 1 ? "s" : ""}.`
-            : `Hiring for ${list[0].title}.`,
-        mode: remote ? "Remote" : "On-site",
-        loc,
-        color: STARTUP_COLORS[i % STARTUP_COLORS.length],
-        icon: STARTUP_ICONS[i % STARTUP_ICONS.length],
-        dark: i % 6 === 3,
-      };
-    });
-}
-
-function NewStartups() {
-  const [page, setPage] = useState(0);
-  const { data } = useSWR<{ jobs: Parameters<typeof deriveStartups>[0] }>(
-    "/api/public/external-jobs",
-    startupsFetcher,
-    { revalidateOnFocus: false }
-  );
-  // Real scraped startups when the feed is available; the curated list is the
-  // graceful fallback while loading or if every upstream source is down.
-  const startups = data?.jobs?.length ? deriveStartups(data.jobs) : STARTUPS;
-  const perPage = 5;
-  const totalPages = Math.ceil(startups.length / perPage);
-  const paginate = (dir: number) => setPage((p) => (p + dir + totalPages) % totalPages);
-
-  return (
-    <section className="py-16 lg:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-[300px_1fr] gap-10 items-start">
-        {/* Left heading */}
-        <div className="lg:sticky lg:top-28">
-          <h2 className="text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[0.95] mb-5">
-            New<br />Startups
-          </h2>
-          <p className="text-gray-500 leading-relaxed max-w-xs mb-8 text-pretty">
-            Discover innovative startups and find the role that matches your passion.
-          </p>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => paginate(-1)}
-              aria-label="Previous startups"
-              className="grid size-10 place-items-center rounded-full border border-gray-200 text-gray-400 hover:text-gray-900 hover:border-gray-900 transition-colors"
-            >
-              <ArrowRight className="size-4 rotate-180" />
-            </button>
-            <button
-              onClick={() => paginate(1)}
-              aria-label="Next startups"
-              className="grid size-12 place-items-center rounded-full border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors"
-            >
-              <ArrowRight className="size-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Cards grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={page}
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -24 }}
-            transition={{ duration: 0.35 }}
-            className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5"
-          >
-            {startups.slice(page * perPage, page * perPage + perPage).map((s) => (
-              <div
-                key={s.name}
-                className={`rounded-3xl p-6 flex flex-col transition-shadow hover:shadow-lg ${
-                  s.dark ? "bg-gray-950 text-white" : "bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-5">
-                  <span
-                    className="grid size-11 place-items-center rounded-full"
-                    style={{ backgroundColor: s.dark ? "#ffffff" : s.color + "1A" }}
-                  >
-                    <s.icon className="size-5" style={{ color: s.dark ? s.color : s.color }} />
-                  </span>
-                  <span className={`text-sm font-semibold ${s.dark ? "text-white/60" : "text-gray-400"}`}>{s.jobs} jobs</span>
-                </div>
-                <h3 className="text-lg font-bold mb-2">{s.name}</h3>
-                <p className={`text-sm leading-relaxed mb-6 flex-1 ${s.dark ? "text-white/60" : "text-gray-500"}`}>{s.desc}</p>
-                <div className={`flex items-center gap-4 text-xs font-medium ${s.dark ? "text-white/70" : "text-gray-500"}`}>
-                  <span className="inline-flex items-center gap-1.5"><BriefcaseBusiness className="size-3.5" /> {s.mode}</span>
-                  <span className="inline-flex items-center gap-1.5"><Globe2 className="size-3.5" /> {s.loc}</span>
-                </div>
-              </div>
-            ))}
-
-            {/* Explore all card */}
-            <Link
-              href="/talents/apply"
-              className="rounded-3xl border border-gray-200 p-6 flex flex-col items-center justify-center text-center hover:border-gray-900 transition-colors group"
-            >
-              <p className="text-4xl font-extrabold text-gray-900">180+</p>
-              <p className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-[#3B5BDB]">
-                Explore all startups <ArrowRight className="size-4" />
-              </p>
-            </Link>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </section>
-  );
-}
-
 /* ─── Trusted-by footer strip ───────────────────────────────────── */
 
 function TrustedFooter() {
@@ -702,21 +552,12 @@ function TrustedFooter() {
     <footer className="py-16 bg-[#F9FAFB] border-t border-gray-100">
       <div className="max-w-5xl mx-auto px-6 text-center">
         <p className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-10 text-balance">
-          Trusted by <span className="inline-flex items-center rounded-xl bg-gray-900 text-white px-3 py-1 mx-1">500+</span> companies
+          Organisations we&apos;ve worked with
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 opacity-70 grayscale mb-10">
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 opacity-70 grayscale">
           {logos.map((c) => (
             <img key={c.name} src={c.image} alt={c.name} className="h-7 w-auto object-contain" loading="lazy" />
           ))}
-        </div>
-        <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm">
-          <span className="text-sm font-semibold text-gray-700">Excellent</span>
-          <span className="flex items-center gap-0.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className="size-4 fill-[#00B67A] text-[#00B67A]" />
-            ))}
-          </span>
-          <span className="text-xs text-gray-400">390 reviews on Trustpilot</span>
         </div>
       </div>
     </footer>
@@ -848,7 +689,7 @@ function TalentProfileCard() {
           </div>
           {/* Skills bar */}
           <div className="flex flex-wrap gap-2 px-5 py-4 border-b border-gray-100">
-            {["Figma", "Prototyping", "Design Systems", "Interaction Design", "Wireframing", "User Research", "Usability Testing"].map((s, i) => (
+            {["ACCA", "Financial Modelling", "FP&A", "IFRS", "Variance Analysis", "Excel / SQL", "Board Reporting"].map((s, i) => (
               <span
                 key={s}
                 className={`text-[11px] px-2.5 py-1 rounded-full font-medium ${
@@ -865,8 +706,8 @@ function TalentProfileCard() {
             <div className="col-span-2 p-5 flex flex-col items-center text-center gap-3">
               <img src="/images/consulting/pro-2.png" alt="Profile" className="size-16 rounded-full object-cover border-4 border-white shadow" />
               <div>
-                <div className="text-xs font-bold text-gray-900 mb-0.5">Kwame Asante</div>
-                <div className="text-[10px] text-gray-400">UX / UI Designer</div>
+                <div className="text-xs font-bold text-gray-900 mb-0.5">Sample profile</div>
+                <div className="text-[10px] text-gray-400">FP&amp;A Analyst · ACCA</div>
               </div>
               <span className="px-3 py-1 bg-[#EEF1FF] text-[#3B5BDB] text-[10px] font-bold rounded-full">Available for Work</span>
               <Link href="/talents/apply" className="w-full flex items-center justify-center gap-1.5 py-2 bg-gray-900 text-white text-[11px] font-semibold rounded-xl hover:bg-gray-700 transition-colors">
@@ -876,9 +717,9 @@ function TalentProfileCard() {
             {/* right: role history */}
             <div className="col-span-3 p-5 space-y-4">
               {[
-                { role: "Product Designer", year: "2023", active: true },
-                { role: "UI / UX Designer", year: "2020", active: false },
-                { role: "Junior Visual Designer", year: "2018", active: false },
+                { role: "Senior FP&A Analyst", year: "2023", active: true },
+                { role: "Management Accountant", year: "2020", active: false },
+                { role: "Assistant Accountant", year: "2018", active: false },
               ].map((r) => (
                 <div key={r.role} className={`flex items-center justify-between text-xs py-2 border-b border-gray-50 ${r.active ? "font-bold text-gray-900" : "text-gray-500"}`}>
                   <span>{r.role}</span>
@@ -902,7 +743,7 @@ function TalentProfileCard() {
           <div className="space-y-5">
             {[
               { label: "Verified Profile", desc: "Your credentials, work history, and competencies are verified and visible to hiring companies — no cold pitching required." },
-              { label: "Thousands of Opportunities", desc: "Access a rich ecosystem of global financial services, FinTech, and technology opportunities you would never reach alone." },
+              { label: "Curated Opportunities", desc: "Access global financial services, FinTech, and technology roles matched to your verified profile — opportunities you would never reach through cold applications alone." },
               { label: "Easy Application Process", desc: "Our streamlined application lets you submit your profile and preferences in under five minutes, with automatic saving." },
               { label: "Career Support", desc: "From interview preparation to compensation advice, DeepTalent supports you through every step of the process." },
             ].map((item) => (
@@ -1175,7 +1016,7 @@ function RoleTicker() {
   return (
     <section className="py-12 bg-gray-950 border-t border-white/10">
       <p className="text-center text-xs font-semibold text-white/30 uppercase tracking-widest mb-8">
-        Live Opportunities in the Network
+        Representative roles we place — with published monthly rates
       </p>
       <div className="overflow-x-auto hide-scrollbar">
         <div className="flex gap-4 px-6 min-w-max pb-2">
@@ -1230,7 +1071,7 @@ function FinalCTA() {
               <br /> Is Waiting Here
             </h2>
             <p className="text-gray-500 text-base md:text-lg leading-relaxed max-w-md mb-8 text-pretty">
-              Let your talents, personality and potential do the talking. We give you the opportunity to share your story through.
+              Let your credentials, experience and potential do the talking. Get verified once, and we&apos;ll match you to roles that fit.
             </p>
 
             {/* Search pill */}
@@ -1257,7 +1098,7 @@ function FinalCTA() {
 
             {/* Candidates */}
             <div>
-              <p className="text-lg font-bold text-gray-900 mb-3">Our more candidates</p>
+              <p className="text-lg font-bold text-gray-900 mb-3">Join a verified network</p>
               <div className="flex items-center">
                 <div className="flex -space-x-3">
                   {CANDIDATE_AVATARS.map((src, i) => (
@@ -1270,9 +1111,6 @@ function FinalCTA() {
                     />
                   ))}
                 </div>
-                <span className="ml-2 grid size-9 place-items-center rounded-full bg-gray-900 text-white text-xs font-bold ring-2 ring-[#EDEEF6]">
-                  80+
-                </span>
               </div>
             </div>
           </motion.div>
@@ -1317,12 +1155,12 @@ function FinalCTA() {
             >
               <img
                 src="/images/talents/cand-2.png"
-                alt="John Cliventon"
+                alt="Sample verified professional"
                 className="size-10 rounded-xl object-cover"
               />
               <span className="leading-tight">
-                <span className="block text-sm font-bold text-gray-900">John Cliventon</span>
-                <span className="block text-xs text-gray-400 mb-1">Product Designer</span>
+                <span className="block text-sm font-bold text-gray-900">Verified talent</span>
+                <span className="block text-xs text-gray-400 mb-1">KYC / AML Analyst</span>
                 <span className="flex items-center gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} className={`size-3 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"}`} />
@@ -1345,8 +1183,6 @@ export function TalentsPageClient() {
       <SiteNavbar />
       <TalentHero />
       <KickstartAI />
-      <NewStartups />
-      <ExternalRoles limit={12} />
       <FeaturesGrid />
       <SkillOrbit />
       <TalentProfileCard />
