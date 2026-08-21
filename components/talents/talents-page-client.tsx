@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import useSWR from "swr";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SiteNavbar } from "@/components/site/site-navbar";
 import { FluidCTA } from "@/components/site/fluid-cta";
+import { ExternalRoles } from "@/components/talents/external-roles";
 import {
   Search,
   ChevronDown,
@@ -532,6 +534,154 @@ function KickstartAI() {
             </div>
           </motion.div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── New Startups (carousel of hiring startups) ────────────────── */
+
+const STARTUPS = [
+  { name: "Evolve Credit", jobs: 5, desc: "Helping financial institutions launch and manage credit ventures.", mode: "Remote", loc: "Wilmington", color: "#0EA5E9", icon: BarChart3, dark: false },
+  { name: "GLO", jobs: 2, desc: "GLO helps elevate daily life through mindful wellness.", mode: "On-site", loc: "California", color: "#22C55E", icon: TrendingUp, dark: false },
+  { name: "Eversend", jobs: 8, desc: "Eversend makes transfers, investments, and spending simple.", mode: "Hybrid", loc: "England", color: "#7C3AED", icon: DollarSign, dark: false },
+  { name: "Flux", jobs: 7, desc: "Flux scales from quick prototypes to production-ready systems.", mode: "Hybrid", loc: "Japan", color: "#111827", icon: Zap, dark: true },
+  { name: "HabariPay", jobs: 3, desc: "HabariPay transforms digital payments with advanced technology.", mode: "Remote", loc: "Nigeria", color: "#EF4444", icon: Cpu, dark: false },
+];
+
+const startupsFetcher = (url: string) => fetch(url).then((r) => r.json());
+const STARTUP_ICONS = [BarChart3, TrendingUp, DollarSign, Zap, Cpu] as const;
+const STARTUP_COLORS = ["#0EA5E9", "#22C55E", "#7C3AED", "#EF4444", "#3B5BDB"];
+
+type DerivedStartup = (typeof STARTUPS)[number];
+
+/**
+ * Turn the flat external-jobs feed into "startup" cards by grouping live
+ * listings under the company that posted them — companies with the most open
+ * roles surface first, so this doubles as a real hiring leaderboard.
+ */
+function deriveStartups(
+  jobs: Array<{ company: string; title: string; location: string | null; remote: boolean }>
+): DerivedStartup[] {
+  const byCompany = new Map<string, typeof jobs>();
+  for (const j of jobs) {
+    if (!j.company) continue;
+    if (!byCompany.has(j.company)) byCompany.set(j.company, []);
+    byCompany.get(j.company)!.push(j);
+  }
+  return [...byCompany.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .slice(0, 12)
+    .map(([name, list], i) => {
+      const remote = list.some((j) => j.remote);
+      const loc = (list.find((j) => j.location)?.location || (remote ? "Remote" : "Global")).slice(0, 18);
+      const extra = list.length - 1;
+      return {
+        name,
+        jobs: list.length,
+        desc:
+          extra > 0
+            ? `Hiring for ${list[0].title} and ${extra} more role${extra > 1 ? "s" : ""}.`
+            : `Hiring for ${list[0].title}.`,
+        mode: remote ? "Remote" : "On-site",
+        loc,
+        color: STARTUP_COLORS[i % STARTUP_COLORS.length],
+        icon: STARTUP_ICONS[i % STARTUP_ICONS.length],
+        dark: i % 6 === 3,
+      };
+    });
+}
+
+function NewStartups() {
+  const [page, setPage] = useState(0);
+  const { data } = useSWR<{ jobs: Parameters<typeof deriveStartups>[0] }>(
+    "/api/public/external-jobs",
+    startupsFetcher,
+    { revalidateOnFocus: false }
+  );
+  // Real scraped startups when the feed is available; the curated list is the
+  // graceful fallback while loading or if every upstream source is down.
+  const startups = data?.jobs?.length ? deriveStartups(data.jobs) : STARTUPS;
+  const perPage = 5;
+  const totalPages = Math.ceil(startups.length / perPage);
+  const paginate = (dir: number) => setPage((p) => (p + dir + totalPages) % totalPages);
+
+  return (
+    <section className="py-16 lg:py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-[300px_1fr] gap-10 items-start">
+        {/* Left heading */}
+        <div className="lg:sticky lg:top-28">
+          <h2 className="text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-[0.95] mb-5">
+            New<br />Startups
+          </h2>
+          <p className="text-gray-500 leading-relaxed max-w-xs mb-8 text-pretty">
+            Discover innovative startups and find the role that matches your passion.
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => paginate(-1)}
+              aria-label="Previous startups"
+              className="grid size-10 place-items-center rounded-full border border-gray-200 text-gray-400 hover:text-gray-900 hover:border-gray-900 transition-colors"
+            >
+              <ArrowRight className="size-4 rotate-180" />
+            </button>
+            <button
+              onClick={() => paginate(1)}
+              aria-label="Next startups"
+              className="grid size-12 place-items-center rounded-full border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors"
+            >
+              <ArrowRight className="size-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Cards grid */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={page}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -24 }}
+            transition={{ duration: 0.35 }}
+            className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5"
+          >
+            {startups.slice(page * perPage, page * perPage + perPage).map((s) => (
+              <div
+                key={s.name}
+                className={`rounded-3xl p-6 flex flex-col transition-shadow hover:shadow-lg ${
+                  s.dark ? "bg-gray-950 text-white" : "bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-5">
+                  <span
+                    className="grid size-11 place-items-center rounded-full"
+                    style={{ backgroundColor: s.dark ? "#ffffff" : s.color + "1A" }}
+                  >
+                    <s.icon className="size-5" style={{ color: s.dark ? s.color : s.color }} />
+                  </span>
+                  <span className={`text-sm font-semibold ${s.dark ? "text-white/60" : "text-gray-400"}`}>{s.jobs} jobs</span>
+                </div>
+                <h3 className="text-lg font-bold mb-2">{s.name}</h3>
+                <p className={`text-sm leading-relaxed mb-6 flex-1 ${s.dark ? "text-white/60" : "text-gray-500"}`}>{s.desc}</p>
+                <div className={`flex items-center gap-4 text-xs font-medium ${s.dark ? "text-white/70" : "text-gray-500"}`}>
+                  <span className="inline-flex items-center gap-1.5"><BriefcaseBusiness className="size-3.5" /> {s.mode}</span>
+                  <span className="inline-flex items-center gap-1.5"><Globe2 className="size-3.5" /> {s.loc}</span>
+                </div>
+              </div>
+            ))}
+
+            {/* Explore all card */}
+            <Link
+              href="/talents/apply"
+              className="rounded-3xl border border-gray-200 p-6 flex flex-col items-center justify-center text-center hover:border-gray-900 transition-colors group"
+            >
+              <p className="text-4xl font-extrabold text-gray-900">180+</p>
+              <p className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-[#3B5BDB]">
+                Explore all startups <ArrowRight className="size-4" />
+              </p>
+            </Link>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );
@@ -1183,6 +1333,8 @@ export function TalentsPageClient() {
       <SiteNavbar />
       <TalentHero />
       <KickstartAI />
+      <NewStartups />
+      <ExternalRoles limit={12} />
       <FeaturesGrid />
       <SkillOrbit />
       <TalentProfileCard />
