@@ -29,7 +29,7 @@ export function DashboardHeader({
     <header className="bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-10 w-auto" />
+          <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-10 w-auto" />
         </Link>
         <div className="flex items-center gap-4">
           <div className="hidden md:flex flex-col items-end leading-tight">

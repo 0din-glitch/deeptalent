@@ -101,7 +101,7 @@ export function SiteFooter() {
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-12 w-auto" />
+              <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-12 w-auto" />
             </div>
             <p className="text-white/70 max-w-md text-pretty">
               Elite talent. Accredited and vetted professionals in finance, compliance, and technology — deployed globally.
@@ -186,9 +186,17 @@ export function SiteFooter() {
 
         <FooterFAQ />
 
-        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
-          <p>© {new Date().getFullYear()} DeepTalent. All rights reserved.</p>
-          <p>Built for the future of work.</p>
+        <div className="border-t border-white/10 pt-6 flex flex-col gap-3">
+          <p className="text-xs text-white/40 leading-relaxed text-balance">
+            DeepTalent is a trading name of Deeptalent Platform Limited, a company
+            registered in England &amp; Wales (company no.{" "}
+            <span className="text-white/60">17377493</span>). Registered office:
+            110 Ruscote Avenue, Banbury, Oxfordshire, OX16 2NN.
+          </p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
+            <p>© {new Date().getFullYear()} Deeptalent Platform Limited. All rights reserved.</p>
+            <p>Built for the future of work.</p>
+          </div>
         </div>
       </div>
     </footer>

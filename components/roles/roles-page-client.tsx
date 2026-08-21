@@ -250,7 +250,7 @@ function Navbar() {
   return (
     <nav className="fixed top-4 left-1/2 z-50 w-[90%] max-w-7xl -translate-x-1/2 flex items-center justify-between rounded-2xl p-4 shadow-lg md:px-8 bg-[#3B5BDB]">
       <Link href="/">
-        <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-12 w-auto" />
+        <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-12 w-auto" />
       </Link>
       <div className="hidden md:flex items-center gap-1">
         {links.map((l) => (

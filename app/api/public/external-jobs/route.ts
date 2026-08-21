@@ -1,142 +1,75 @@
 import { NextResponse } from "next/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
+import { aggregateRemoteJobs, type ExternalJob } from "@/lib/jobs/sources";
 
 export const runtime = "nodejs";
-// Revalidate hourly so we serve a cached snapshot rather than hammering the
-// upstream job boards on every page view.
+// Serve a cached snapshot; the daily cron keeps the underlying table fresh.
 export const revalidate = 3600;
 
-export type ExternalJob = {
-  id: string;
-  company: string;
-  title: string;
-  category: string | null;
-  location: string | null;
-  remote: boolean;
-  url: string;
-  source: string;
-  posted_at: string;
-  tags: string[];
-  /** Raw stated salary text from the board, when provided. Never rendered on
-   *  public cards — used server-side to compute in-network economics. */
-  salary: string | null;
-};
+export type { ExternalJob };
+
+function serviceClient() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+}
 
 /**
- * Map a raw category/tag string onto the same high-level buckets DeepTalent
- * uses internally, so the "Outside DeepTalent" filter chips line up with the
- * in-house Open Roles filters.
+ * Public feed of REMOTE-ONLY external jobs. Reads from the external_jobs cache
+ * table (refreshed daily by /api/cron/external-jobs). If the cache is still
+ * empty — e.g. before the first cron run — it falls back to a live aggregation
+ * so the section is never empty, and best-effort seeds the cache.
  */
-function normalizeCategory(raw?: string | null): string | null {
-  if (!raw) return null;
-  const v = raw.toLowerCase();
-  if (/(engineer|developer|software|backend|frontend|full.?stack|devops|programming|data|machine|ai)/.test(v))
-    return "Engineering";
-  if (/(design|ux|ui|product design)/.test(v)) return "Design";
-  if (/(product manager|product)/.test(v)) return "Product";
-  if (/(market|growth|seo|content|social)/.test(v)) return "Marketing";
-  if (/(sales|account|business development|bd)/.test(v)) return "Sales";
-  if (/(finance|account|fp&a|analyst)/.test(v)) return "Finance";
-  if (/(support|success|operations|ops)/.test(v)) return "Operations";
-  return raw.replace(/\b\w/g, (c) => c.toUpperCase()).slice(0, 24);
-}
-
-async function fetchRemotive(): Promise<ExternalJob[]> {
-  const res = await fetch("https://remotive.com/api/remote-jobs?limit=60", {
-    headers: { Accept: "application/json" },
-    next: { revalidate: 3600 },
-  });
-  if (!res.ok) throw new Error(`Remotive ${res.status}`);
-  const json = (await res.json()) as {
-    jobs?: Array<{
-      id: number;
-      url: string;
-      title: string;
-      company_name: string;
-      category?: string;
-      tags?: string[];
-      candidate_required_location?: string;
-      publication_date?: string;
-      salary?: string;
-    }>;
-  };
-  return (json.jobs || []).map((j) => ({
-    id: `remotive-${j.id}`,
-    company: j.company_name,
-    title: j.title,
-    category: normalizeCategory(j.category),
-    location: j.candidate_required_location || "Remote",
-    remote: true,
-    url: j.url,
-    source: "Remotive",
-    posted_at: j.publication_date || new Date().toISOString(),
-    tags: (j.tags || []).slice(0, 4),
-    salary: j.salary || null,
-  }));
-}
-
-async function fetchArbeitnow(): Promise<ExternalJob[]> {
-  const res = await fetch("https://www.arbeitnow.com/api/job-board-api", {
-    headers: { Accept: "application/json" },
-    next: { revalidate: 3600 },
-  });
-  if (!res.ok) throw new Error(`Arbeitnow ${res.status}`);
-  const json = (await res.json()) as {
-    data?: Array<{
-      slug: string;
-      company_name: string;
-      title: string;
-      tags?: string[];
-      job_types?: string[];
-      location?: string;
-      remote?: boolean;
-      url: string;
-      created_at?: number;
-    }>;
-  };
-  return (json.data || []).map((j) => ({
-    id: `arbeitnow-${j.slug}`,
-    company: j.company_name,
-    title: j.title,
-    category: normalizeCategory(j.tags?.[0] || j.job_types?.[0]),
-    location: j.location || (j.remote ? "Remote" : null),
-    remote: Boolean(j.remote),
-    url: j.url,
-    source: "Arbeitnow",
-    posted_at: j.created_at
-      ? new Date(j.created_at * 1000).toISOString()
-      : new Date().toISOString(),
-    tags: (j.tags || []).slice(0, 4),
-    salary: null,
-  }));
-}
-
 export async function GET() {
-  // Fetch every source independently so one upstream outage can't take down
-  // the whole endpoint.
-  const results = await Promise.allSettled([fetchRemotive(), fetchArbeitnow()]);
+  const sb = serviceClient();
 
-  const jobs: ExternalJob[] = [];
-  for (const r of results) {
-    if (r.status === "fulfilled") jobs.push(...r.value);
-    else console.log("[v0] external-jobs source failed:", r.reason?.message || r.reason);
+  const { data, error } = await sb
+    .from("external_jobs")
+    .select("id, company, title, category, location, remote, url, source, salary, tags, posted_at")
+    .eq("remote", true)
+    .order("posted_at", { ascending: false })
+    .limit(90);
+
+  if (!error && data && data.length > 0) {
+    return NextResponse.json(
+      { jobs: data, fetchedAt: new Date().toISOString(), cached: true },
+      { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } }
+    );
   }
 
-  // De-dupe on company + title (same role often syndicated to multiple boards).
-  const seen = new Set<string>();
-  const deduped = jobs.filter((j) => {
-    const key = `${j.company.toLowerCase()}::${j.title.toLowerCase()}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  // Cache empty (or read failed) — aggregate live so the UI still has content.
+  const live = await aggregateRemoteJobs(90);
 
-  // Newest first.
-  deduped.sort(
-    (a, b) => new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime()
-  );
+  // Best-effort seed so subsequent requests hit the cache.
+  if (live.length > 0) {
+    const now = new Date().toISOString();
+    sb.from("external_jobs")
+      .upsert(
+        live.map((j) => ({
+          id: j.id,
+          company: j.company,
+          title: j.title,
+          category: j.category,
+          location: j.location,
+          remote: j.remote,
+          url: j.url,
+          source: j.source,
+          salary: j.salary,
+          tags: j.tags,
+          posted_at: j.posted_at,
+          refreshed_at: now,
+        })),
+        { onConflict: "id" }
+      )
+      .then(({ error: seedErr }) => {
+        if (seedErr) console.log("[v0] external-jobs seed failed:", seedErr.message);
+      });
+  }
 
   return NextResponse.json(
-    { jobs: deduped.slice(0, 90), fetchedAt: new Date().toISOString() },
-    { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } }
+    { jobs: live, fetchedAt: new Date().toISOString(), cached: false },
+    { headers: { "Cache-Control": "public, s-maxage=600, stale-while-revalidate=3600" } }
   );
 }

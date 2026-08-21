@@ -110,7 +110,7 @@ function SupportingStatement() {
           cross-border systems.
         </motion.p>
         <motion.p variants={fadeInUp()} className="mt-6 text-lg md:text-xl font-semibold text-gray-900 max-w-2xl mx-auto text-pretty">
-          Deeptalent is building the infrastructure that connects human potential to economic opportunity.
+          DeepTalent is building the infrastructure that connects human potential to economic opportunity.
         </motion.p>
       </motion.div>
     </section>
@@ -142,7 +142,7 @@ function WhatWeAre() {
           variants={staggerContainer(0.12)}
           className="max-w-3xl mb-12"
         >
-          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">What Deeptalent Is</motion.p>
+          <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">What DeepTalent Is</motion.p>
           <motion.h2 variants={fadeInUp()} className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.05] mb-4">
             More Than a <span className="text-[#3B5BDB]">Talent Platform</span>
           </motion.h2>
@@ -279,7 +279,7 @@ function SolutionLifecycle() {
 
 /* ════════════════════════════════════════════════════
    PLATFORM PILLARS — the connected system
-═══════════════════════════════════════���═══════════════ */
+═══════════════════════════════════════������═══════════════ */
 function PlatformPillars() {
   const pillars = [
     { icon: Globe, title: "Global Talent Infrastructure", desc: "A connected system for sourcing, assessing, verifying and deploying professionals across regions." },
@@ -427,7 +427,7 @@ function FounderMessage() {
         <motion.p variants={fadeInUp()} className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-4">Founder&apos;s Message</motion.p>
         <motion.blockquote variants={fadeInUp()} className="font-serif text-2xl md:text-3xl leading-snug text-gray-900 tracking-tight text-balance">
           &ldquo;The problem was not always the absence of capability. It was the absence of trusted
-          infrastructure connecting capability to demand. Deeptalent was created to help solve that
+          infrastructure connecting capability to demand. DeepTalent was created to help solve that
           problem.&rdquo;
         </motion.blockquote>
         <motion.p variants={fadeInUp()} className="mt-6 text-gray-500 leading-relaxed text-pretty">
@@ -437,7 +437,7 @@ function FounderMessage() {
         </motion.p>
         <motion.div variants={fadeInUp()} className="mt-8">
           <p className="font-bold text-gray-900">Joshua Omoniyi Raymond Onifade</p>
-          <p className="text-sm text-gray-400">Founder &amp; Chief Executive Officer, Deeptalent Platform</p>
+          <p className="text-sm text-gray-400">Founder &amp; Chief Executive Officer, DeepTalent Platform</p>
         </motion.div>
       </motion.div>
     </section>
@@ -560,7 +560,7 @@ function Navbar() {
     >
       <Link href="/" className="flex items-center gap-2">
         <span className="inline-flex items-center rounded-xl bg-white px-2.5 py-1.5 shadow-[0_4px_14px_rgba(0,0,0,0.12)]">
-          <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-7 w-auto" />
+          <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-7 w-auto" />
         </span>
       </Link>
 
@@ -830,7 +830,7 @@ function Hero() {
             variants={fadeInUp()}
             className="mx-auto mt-8 max-w-2xl text-pretty text-center text-base leading-relaxed text-gray-500 md:text-lg"
           >
-            Deeptalent Platform helps enterprises, institutions and governments discover, verify,
+            DeepTalent Platform helps enterprises, institutions and governments discover, verify,
             deploy and manage exceptional talent across borders — combining human expertise,
             technology and workforce intelligence to build agile, compliant and globally
             distributed teams with confidence.
@@ -850,7 +850,7 @@ function Hero() {
               href="#howItWorks"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-700 underline-offset-4 hover:underline"
             >
-              Explore Deeptalent Platform <ArrowUpRight className="size-4" />
+              Explore DeepTalent Platform <ArrowUpRight className="size-4" />
             </a>
           </motion.div>
         </motion.div>
@@ -1034,34 +1034,6 @@ function TrustedBy() {
               Companies that trust DeepTalent
             </h2>
           </motion.div>
-
-          {/* Trustpilot badge */}
-          <motion.a
-            href="https://www.trustpilot.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={viewport}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="inline-flex flex-col items-start gap-1.5 px-5 py-4 rounded-2xl border border-gray-200 bg-white hover:border-[#3B5BDB]/30 hover:shadow-md transition-all"
-          >
-            <div className="flex items-center gap-2">
-              <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true">
-                <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/>
-              </svg>
-              <span className="text-sm font-bold text-gray-900 tracking-wide">Trustpilot</span>
-            </div>
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <svg key={i} viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-                  <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/>
-                </svg>
-              ))}
-              <span className="text-xs text-gray-500 ml-1">4.8 / 5.0</span>
-            </div>
-            <p className="text-[10px] text-gray-400">Based on 120+ reviews</p>
-          </motion.a>
         </div>
       </div>
 
@@ -1112,44 +1084,30 @@ function ServiceShowcase() {
     {
       id: "finance",
       title: "Finance & Accounting",
-      description: "Ensure financial accuracy and strategic insight with experienced finance professionals vetted at the highest standard.",
-      features: ["Bookkeeping & Financial Reporting", "Accounts Payable & Receivable", "Financial Planning & Analysis", "Credit Risk Assessment", "KYC / AML Compliance", "External & Internal Audit"],
+      description: "Ensure financial accuracy and strategic insight with ACCA-, ICAN- and CFA-track finance professionals vetted at the highest standard.",
+      features: ["Bookkeeping & Financial Reporting", "Accounts Payable & Receivable", "Financial Planning & Analysis (FP&A)", "Management & Statutory Accounts", "External & Internal Audit", "Treasury & Cash-Flow Management"],
       illustration: "/images/accounting-illustration.png",
+    },
+    {
+      id: "compliance",
+      title: "Compliance & Risk",
+      description: "Meet regulatory obligations with credentialled compliance, risk and financial-crime specialists experienced in regulated environments.",
+      features: ["KYC / AML & Financial Crime", "Regulatory Reporting", "Credit & Operational Risk Assessment", "Compliance Monitoring & Testing", "Sanctions & Fraud Screening", "Policy & Controls Documentation"],
+      illustration: "/images/ai-support-illustration.png",
     },
     {
       id: "engineering",
       title: "Engineering & Cloud",
-      description: "Build scalable applications and infrastructure with engineers experienced in modern systems and cloud environments.",
+      description: "Build scalable applications and infrastructure with engineers experienced in modern systems and regulated fintech environments.",
       features: ["Full Stack Application Development", "Cloud Infrastructure & DevOps", "API Development & Integration", "System Architecture Design", "CI/CD Pipeline Implementation", "Performance Optimization"],
       illustration: "/images/creative-roles-illustration.png",
     },
     {
       id: "data-ai",
       title: "Data & AI",
-      description: "Turn data into insights and automate workflows using modern analytics and AI tools.",
+      description: "Turn financial and operational data into insight and automation using modern analytics and AI tooling.",
       features: ["Data Analysis & Visualization", "Business Intelligence Dashboards", "AI Workflow Automation", "Predictive Reporting & Insights", "Data Cleaning & Transformation", "Process Automation Systems"],
       illustration: "/images/data-entry-illustration.png",
-    },
-    {
-      id: "security",
-      title: "Cybersecurity & Risk",
-      description: "Protect systems and data with experts focused on security, compliance, and risk mitigation.",
-      features: ["Threat Detection & Prevention", "Security Audits & Risk Assessment", "Compliance Monitoring", "Identity & Access Management", "Incident Response", "Vulnerability Testing"],
-      illustration: "/images/ai-support-illustration.png",
-    },
-    {
-      id: "operations",
-      title: "Executive & Business Operations",
-      description: "Streamline execution with experienced operators managing coordination, workflows, and executive support.",
-      features: ["Executive Calendar & Priority Management", "Cross-Team Coordination", "Project & Task Oversight", "Operational Workflow Optimization", "Internal Communication Systems", "Process Documentation & Reporting"],
-      illustration: "/images/virtual-assistant-illustration.png",
-    },
-    {
-      id: "customer-support",
-      title: "Customer Experience",
-      description: "Deliver fast, reliable, and high-quality customer interactions that improve retention and satisfaction.",
-      features: ["Multi-Channel Support", "Customer Success & Retention", "CRM Management & Optimization", "Customer Feedback Analysis", "Issue Resolution Handling", "Support Process Improvement"],
-      illustration: "/images/customer-service-illustration.png",
     },
   ];
 
@@ -1169,13 +1127,13 @@ function ServiceShowcase() {
       <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200 py-16 px-4">
         <div className="max-w-xl mx-auto">
           <div className="mb-8">
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Industries</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Where we specialise</p>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-[1.1] text-gray-900">
-                Every Sector.<br />
-                <span className="text-[#3B5BDB]">One Infrastructure.</span>
+                Finance &amp; Compliance first.<br />
+                <span className="text-[#3B5BDB]">Then the tech around it.</span>
               </h2>
             <p className="text-gray-500 text-base mt-3 leading-relaxed">
-              Access verified professionals across the sectors that power the global economy — each screened, scored and ready to integrate into your workflow immediately.
+              We go deep in finance, accounting, compliance and risk — and the engineering and data roles that support regulated businesses. Every professional is credential-verified before you ever meet them.
             </p>
           </div>
 
@@ -1231,13 +1189,13 @@ function ServiceShowcase() {
               transition={{ duration: 0.6 }}
               className="mb-10 max-w-2xl"
             >
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Industries</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Where we specialise</p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gray-900">
-                Every Sector.<br />
-                <span className="text-[#3B5BDB]">One Infrastructure.</span>
+                Finance &amp; Compliance first.<br />
+                <span className="text-[#3B5BDB]">Then the tech around it.</span>
               </h2>
               <p className="text-gray-500 text-base md:text-lg mt-3 leading-relaxed">
-              Access verified professionals across the sectors that power the global economy — each screened, scored and ready to integrate into your workflow immediately.
+              We go deep in finance, accounting, compliance and risk — and the engineering and data roles that support regulated businesses. Every professional is credential-verified before you ever meet them.
             </p>
           </motion.div>
 
@@ -1522,8 +1480,8 @@ function GlobeSection() {
               {[
                 { icon: Globe, label: "6 Continents", desc: "Active talent corridors" },
                 { icon: ShieldCheck, label: "Structured Vetting", desc: "Verified at every step" },
-                { icon: Zap, label: "14–21 Days", desc: "Average deployment speed" },
-                { icon: Users, label: "10,000+ Vetted", desc: "Professionals in network" },
+                { icon: Zap, label: "14–21 Days", desc: "Average deployment window" },
+                { icon: Users, label: "Replacement Guarantee", desc: "If a placement doesn't work out" },
               ].map(({ icon: Icon, label, desc }) => (
                 <motion.div
                   key={label}
@@ -1747,7 +1705,7 @@ function HowItWorks() {
   );
 }
 
-/* ════════════════════════��═══════════════════════════
+/* ══════��═════════════════��═══════════════════════════
    WHY CHOOSE US — interactive card stack
 ═══════════════════════════════════════════════════════ */
 function WhyChooseUs() {
@@ -1777,13 +1735,13 @@ function WhyChooseUs() {
       <section className="relative bg-white border-t border-gray-200 py-16 px-4">
         <div className="max-w-xl mx-auto">
           <div className="mb-8">
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why Deeptalent</p>
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
               Global Vision. Local Intelligence.<br />
               <span className="text-[#3B5BDB]">Trusted Execution.</span>
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
-              Global workforce challenges are not solved by technology, databases or recruitment alone. Deeptalent combines institutional thinking with operational agility.
+              Global workforce challenges are not solved by technology, databases or recruitment alone. DeepTalent combines institutional thinking with operational agility.
             </p>
           </div>
 
@@ -1829,13 +1787,13 @@ function WhyChooseUs() {
         <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-center pt-24 pb-10 px-4 md:px-8 lg:px-12">
           <div className="max-w-7xl mx-auto w-full">
             <div className="mb-10 md:max-w-3xl">
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why Deeptalent</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Why DeepTalent</p>
               <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-4">
                 Global Vision. Local Intelligence.<br />
                 <span className="text-[#3B5BDB]">Trusted Execution.</span>
               </h2>
               <p className="text-gray-500 text-lg md:text-xl leading-relaxed">
-                Global workforce challenges are not solved by technology, databases or recruitment alone. Deeptalent combines institutional thinking with operational agility.
+                Global workforce challenges are not solved by technology, databases or recruitment alone. DeepTalent combines institutional thinking with operational agility.
               </p>
             </div>
 
@@ -2268,10 +2226,10 @@ function HumanLayer() {
 ═══════════════════════════════════════════════════════ */
 function TestimonialCarousel() {
   const testimonials = [
-    { id: "t1", quote: "Deeptalent transformed the way I run my business. The VA they matched me with was trained, proactive, and integrated into my workflow from day one. What impressed me most was the cost advantage — I'm getting Fortune-500-level support at half the traditional price.", name: "Dianitte Erilus", location: "Orlando, Florida, USA", title: "Founder & Operations Lead", initials: "DE", rating: 5 },
-    { id: "t2", quote: "We needed reliable administrative and customer-support help, and Deeptalent delivered beyond expectations. Their talent is disciplined, well-trained, and incredibly responsive — exactly what a fast-moving hospitality brand like ours needs.", name: "CRI Lounge", location: "South Croydon, London, UK", title: "Hospitality & Events", initials: "CL", rating: 5 },
-    { id: "t3", quote: "The operational burden in our clinic was overwhelming until Deeptalent stepped in. Their Executive Assistant support has completely reshaped our scheduling, client communication, and admin processes. Professional, discreet, tech-savvy, and consistent.", name: "Al Ahad MD", location: "Sharjah, Dubai, UAE", title: "Medical & Wellness Practice", initials: "AA", rating: 5 },
-    { id: "t4", quote: "In social care, consistency and reliability are critical. Deeptalent helped us secure trained support staff who understood our compliance-heavy environment from day one. They've improved our documentation, scheduling, and family communication turnarounds significantly.", name: "Peculiar Care Home", location: "Erith, London, UK", title: "Social Care Management", initials: "PC", rating: 5 },
+    { id: "t1", quote: "DeepTalent transformed the way I run my business. The support they matched me with was trained, proactive, and integrated into my workflow from day one. The calibre of the professional and the structure around the placement is what impressed me most.", name: "Dianitte Erilus", location: "Orlando, Florida, USA", title: "Founder & Operations Lead", initials: "DE", rating: 5 },
+    { id: "t2", quote: "We needed reliable administrative and customer-support help, and DeepTalent delivered beyond expectations. Their talent is disciplined, well-trained, and incredibly responsive — exactly what a fast-moving hospitality brand like ours needs.", name: "CRI Lounge", location: "South Croydon, London, UK", title: "Hospitality & Events", initials: "CL", rating: 5 },
+    { id: "t3", quote: "The operational burden in our clinic was overwhelming until DeepTalent stepped in. Their Executive Assistant support has completely reshaped our scheduling, client communication, and admin processes. Professional, discreet, tech-savvy, and consistent.", name: "Al Ahad MD", location: "Sharjah, Dubai, UAE", title: "Medical & Wellness Practice", initials: "AA", rating: 5 },
+    { id: "t4", quote: "In social care, consistency and reliability are critical. DeepTalent helped us secure trained support staff who understood our compliance-heavy environment from day one. They've improved our documentation, scheduling, and family communication turnarounds significantly.", name: "Peculiar Care Home", location: "Erith, London, UK", title: "Social Care Management", initials: "PC", rating: 5 },
   ];
 
   return (
@@ -2279,19 +2237,12 @@ function TestimonialCarousel() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12 gap-6">
           <div className="space-y-3">
-            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB]">Testimonials</p>
+            <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB]">Operations Support</p>
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
-              Loved by Users{" "}
-              <span className="text-[#3B5BDB]">Around the World</span>
+              Early clients on our{" "}
+              <span className="text-[#3B5BDB]">operations support</span>
             </h2>
-            <p className="text-gray-500 text-lg">See how DeepTalent is reshaping operations for businesses everywhere.</p>
-          </div>
-          <div className="inline-flex items-center gap-3 px-4 py-3 rounded-2xl border border-gray-200 bg-white shadow-sm shrink-0">
-            <svg viewBox="0 0 24 24" className="size-5" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/></svg>
-            <div>
-              <p className="text-sm font-bold text-gray-900">4.8 / 5.0</p>
-              <div className="flex gap-0.5">{[...Array(5)].map((_, i) => (<svg key={i} viewBox="0 0 24 24" className="size-3" aria-hidden="true"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279L12 19.445l-7.416 3.968 1.481-8.279L0 9.306l8.332-1.151z" fill="#00b67a"/></svg>))}</div>
-            </div>
+            <p className="text-gray-500 text-lg">A selection of businesses we&apos;ve supported with trained administrative, customer and executive-support talent.</p>
           </div>
         </div>
 
@@ -2410,7 +2361,7 @@ function IndustryInsights() {
 ═══════════════════════════════════════════════════════ */
 function FaqSection() {
   const faqs = [
-    { question: "What is Deeptalent?", answer: "Deeptalent is a global Human Capital Infrastructure company — not a recruitment agency, freelance marketplace, outsourcing firm or job board. We help enterprises, institutions and governments discover, verify, deploy and manage exceptional talent across borders, combining human expertise, technology, workforce intelligence and managed services in one connected platform." },
+    { question: "What is DeepTalent?", answer: "DeepTalent is a global Human Capital Infrastructure company — not a recruitment agency, freelance marketplace, outsourcing firm or job board. We help enterprises, institutions and governments discover, verify, deploy and manage exceptional talent across borders, combining human expertise, technology, workforce intelligence and managed services in one connected platform." },
     { question: "How does the vetting process work?", answer: "We use a proprietary mix of AI analysis and human expert review. Every candidate undergoes technical assessments, communication screening, and a past-performance audit before entering our network." },
     { question: "What are the fees for hiring?", answer: "We believe in transparency. Hirers pay a flat platform fee or a percentage markup depending on the engagement model. There are no hidden onboarding costs." },
     { question: "Is my data secure?", answer: "Absolutely. We use enterprise-grade encryption (SOC2 compliant standards) for all data, payments, and contract details. Your intellectual property and financial data are protected at all times." },
@@ -2549,7 +2500,7 @@ function Footer() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
             <div className="col-span-2 lg:col-span-2">
-              <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-10 w-auto mb-5 brightness-0 invert" />
+              <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-10 w-auto mb-5 brightness-0 invert" />
               <p className="text-gray-400 text-sm mb-6 max-w-xs leading-relaxed">
                 DeepTalent platform connects top-tier professionals with global opportunities. Pre-vetted talent, transparent hiring.
               </p>
