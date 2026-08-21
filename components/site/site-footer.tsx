@@ -186,9 +186,17 @@ export function SiteFooter() {
 
         <FooterFAQ />
 
-        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
-          <p>© {new Date().getFullYear()} DeepTalent. All rights reserved.</p>
-          <p>Built for the future of work.</p>
+        <div className="border-t border-white/10 pt-6 flex flex-col gap-3">
+          <p className="text-xs text-white/40 leading-relaxed text-balance">
+            DeepTalent is a trading name of Deeptalent Platform Limited, a company
+            registered in England &amp; Wales (company no.{" "}
+            <span className="text-white/60">17377493</span>). Registered office:
+            110 Ruscote Avenue, Banbury, Oxfordshire, OX16 2NN.
+          </p>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
+            <p>© {new Date().getFullYear()} Deeptalent Platform Limited. All rights reserved.</p>
+            <p>Built for the future of work.</p>
+          </div>
         </div>
       </div>
     </footer>
