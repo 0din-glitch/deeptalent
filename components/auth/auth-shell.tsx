@@ -79,7 +79,7 @@ export function AuthShell({
               <Link href="/" className="inline-flex items-center">
                 <img
                   src="/images/logo-wordmark.png"
-                  alt="Deep Talent"
+                  alt="DeepTalent"
                   className="h-8 w-auto brightness-0 invert"
                 />
               </Link>

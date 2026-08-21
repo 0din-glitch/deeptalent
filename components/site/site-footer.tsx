@@ -101,7 +101,7 @@ export function SiteFooter() {
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/images/logo-wordmark.png" alt="Deep Talent" className="h-12 w-auto" />
+              <img src="/images/logo-wordmark.png" alt="DeepTalent" className="h-12 w-auto" />
             </div>
             <p className="text-white/70 max-w-md text-pretty">
               Elite talent. Accredited and vetted professionals in finance, compliance, and technology — deployed globally.

@@ -59,7 +59,7 @@ const FEATURES = [
         <div className="flex items-center gap-2">
           <div className="size-7 rounded-full bg-[#3B5BDB] flex items-center justify-center text-white font-bold text-[9px]">DT</div>
           <div>
-            <p className="font-semibold text-gray-900">Deep Talent Match</p>
+            <p className="font-semibold text-gray-900">DeepTalent Match</p>
             <p className="text-gray-400 text-[10px]">Finance Analyst · FinTech London</p>
           </div>
           <span className="ml-auto px-2 py-0.5 bg-[#3B5BDB] text-white rounded-full text-[9px] font-bold">97% fit</span>
