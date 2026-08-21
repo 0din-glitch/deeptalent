@@ -279,7 +279,7 @@ function SolutionLifecycle() {
 
 /* ════════════════════════════════════════════════════
    PLATFORM PILLARS — the connected system
-═══════════════════════════════════════�����═══════════════ */
+═══════════════════════════════════════������═══════════════ */
 function PlatformPillars() {
   const pillars = [
     { icon: Globe, title: "Global Talent Infrastructure", desc: "A connected system for sourcing, assessing, verifying and deploying professionals across regions." },
@@ -1084,44 +1084,30 @@ function ServiceShowcase() {
     {
       id: "finance",
       title: "Finance & Accounting",
-      description: "Ensure financial accuracy and strategic insight with experienced finance professionals vetted at the highest standard.",
-      features: ["Bookkeeping & Financial Reporting", "Accounts Payable & Receivable", "Financial Planning & Analysis", "Credit Risk Assessment", "KYC / AML Compliance", "External & Internal Audit"],
+      description: "Ensure financial accuracy and strategic insight with ACCA-, ICAN- and CFA-track finance professionals vetted at the highest standard.",
+      features: ["Bookkeeping & Financial Reporting", "Accounts Payable & Receivable", "Financial Planning & Analysis (FP&A)", "Management & Statutory Accounts", "External & Internal Audit", "Treasury & Cash-Flow Management"],
       illustration: "/images/accounting-illustration.png",
+    },
+    {
+      id: "compliance",
+      title: "Compliance & Risk",
+      description: "Meet regulatory obligations with credentialled compliance, risk and financial-crime specialists experienced in regulated environments.",
+      features: ["KYC / AML & Financial Crime", "Regulatory Reporting", "Credit & Operational Risk Assessment", "Compliance Monitoring & Testing", "Sanctions & Fraud Screening", "Policy & Controls Documentation"],
+      illustration: "/images/ai-support-illustration.png",
     },
     {
       id: "engineering",
       title: "Engineering & Cloud",
-      description: "Build scalable applications and infrastructure with engineers experienced in modern systems and cloud environments.",
+      description: "Build scalable applications and infrastructure with engineers experienced in modern systems and regulated fintech environments.",
       features: ["Full Stack Application Development", "Cloud Infrastructure & DevOps", "API Development & Integration", "System Architecture Design", "CI/CD Pipeline Implementation", "Performance Optimization"],
       illustration: "/images/creative-roles-illustration.png",
     },
     {
       id: "data-ai",
       title: "Data & AI",
-      description: "Turn data into insights and automate workflows using modern analytics and AI tools.",
+      description: "Turn financial and operational data into insight and automation using modern analytics and AI tooling.",
       features: ["Data Analysis & Visualization", "Business Intelligence Dashboards", "AI Workflow Automation", "Predictive Reporting & Insights", "Data Cleaning & Transformation", "Process Automation Systems"],
       illustration: "/images/data-entry-illustration.png",
-    },
-    {
-      id: "security",
-      title: "Cybersecurity & Risk",
-      description: "Protect systems and data with experts focused on security, compliance, and risk mitigation.",
-      features: ["Threat Detection & Prevention", "Security Audits & Risk Assessment", "Compliance Monitoring", "Identity & Access Management", "Incident Response", "Vulnerability Testing"],
-      illustration: "/images/ai-support-illustration.png",
-    },
-    {
-      id: "operations",
-      title: "Executive & Business Operations",
-      description: "Streamline execution with experienced operators managing coordination, workflows, and executive support.",
-      features: ["Executive Calendar & Priority Management", "Cross-Team Coordination", "Project & Task Oversight", "Operational Workflow Optimization", "Internal Communication Systems", "Process Documentation & Reporting"],
-      illustration: "/images/virtual-assistant-illustration.png",
-    },
-    {
-      id: "customer-support",
-      title: "Customer Experience",
-      description: "Deliver fast, reliable, and high-quality customer interactions that improve retention and satisfaction.",
-      features: ["Multi-Channel Support", "Customer Success & Retention", "CRM Management & Optimization", "Customer Feedback Analysis", "Issue Resolution Handling", "Support Process Improvement"],
-      illustration: "/images/customer-service-illustration.png",
     },
   ];
 
@@ -1141,13 +1127,13 @@ function ServiceShowcase() {
       <section id="services" className="relative bg-[#F9FAFB] border-t border-gray-200 py-16 px-4">
         <div className="max-w-xl mx-auto">
           <div className="mb-8">
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Industries</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Where we specialise</p>
               <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-[1.1] text-gray-900">
-                Every Sector.<br />
-                <span className="text-[#3B5BDB]">One Infrastructure.</span>
+                Finance &amp; Compliance first.<br />
+                <span className="text-[#3B5BDB]">Then the tech around it.</span>
               </h2>
             <p className="text-gray-500 text-base mt-3 leading-relaxed">
-              Access verified professionals across the sectors that power the global economy — each screened, scored and ready to integrate into your workflow immediately.
+              We go deep in finance, accounting, compliance and risk — and the engineering and data roles that support regulated businesses. Every professional is credential-verified before you ever meet them.
             </p>
           </div>
 
@@ -1203,13 +1189,13 @@ function ServiceShowcase() {
               transition={{ duration: 0.6 }}
               className="mb-10 max-w-2xl"
             >
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Industries</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-[#3B5BDB] mb-2">Where we specialise</p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-gray-900">
-                Every Sector.<br />
-                <span className="text-[#3B5BDB]">One Infrastructure.</span>
+                Finance &amp; Compliance first.<br />
+                <span className="text-[#3B5BDB]">Then the tech around it.</span>
               </h2>
               <p className="text-gray-500 text-base md:text-lg mt-3 leading-relaxed">
-              Access verified professionals across the sectors that power the global economy — each screened, scored and ready to integrate into your workflow immediately.
+              We go deep in finance, accounting, compliance and risk — and the engineering and data roles that support regulated businesses. Every professional is credential-verified before you ever meet them.
             </p>
           </motion.div>
 
@@ -1719,7 +1705,7 @@ function HowItWorks() {
   );
 }
 
-/* ════════════════════════��═══════════════════════════
+/* ══════��═════════════════��═══════════════════════════
    WHY CHOOSE US — interactive card stack
 ═══════════════════════════════════════════════════════ */
 function WhyChooseUs() {
