@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { ConsentBot } from "@/components/site/consent-bot";
 import { YouTubePopup } from "@/components/site/youtube-popup";
+import { NyscFloatingTab } from "@/components/site/nysc-floating-tab";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
@@ -75,6 +76,7 @@ export default function Home() {
       <Footer />
       <ConsentBot />
       <YouTubePopup />
+      <NyscFloatingTab />
     </main>
   );
 }
@@ -279,7 +281,7 @@ function SolutionLifecycle() {
 
 /* ════════════════════════════════════════════════════
    PLATFORM PILLARS — the connected system
-═══════════════════════════════════════������═══════════════ */
+══��════════════════════════════════════������═══════════════ */
 function PlatformPillars() {
   const pillars = [
     { icon: Globe, title: "Global Talent Infrastructure", desc: "A connected system for sourcing, assessing, verifying and deploying professionals across regions." },
@@ -2454,7 +2456,7 @@ function FaqSection() {
 
 /* ════════════════════════════════════════════════════
    FOOTER — fluid CTA banner
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════���═══════════════ */
 function Footer() {
   return (
     <footer className="bg-[#0B1220] text-gray-300">
