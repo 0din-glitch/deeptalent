@@ -19,6 +19,9 @@ function ApplyLanding() {
     return qs ? `/talents/apply/form?${qs}` : "/talents/apply/form";
   })();
 
+  const isNysc = searchParams.get("audience") === "nysc";
+  const nyscTrack = searchParams.get("track");
+
   return (
     <main className="bg-white min-h-screen">
       {/* Top bar */}
@@ -36,7 +39,25 @@ function ApplyLanding() {
         </div>
       </header>
 
-      <div className="pt-28 pb-20 px-6 md:px-12">
+      {isNysc && (
+        <div className="pt-16 bg-[#3B5BDB] text-white text-sm">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 py-3 text-center text-pretty">
+            {nyscTrack === "training" ? (
+              <>
+                <span className="font-semibold">Get Global Workforce Ready:</span>{" "}
+                tell us your target certification and current level below — we&apos;ll route you toward the right training pathway.
+              </>
+            ) : (
+              <>
+                <span className="font-semibold">I&apos;m Global Workforce Ready:</span>{" "}
+                bring your ICAN, ACCA or tech credentials — verification happens as part of your application below.
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className={isNysc ? "pt-10 pb-20 px-6 md:px-12" : "pt-28 pb-20 px-6 md:px-12"}>
         <div className="max-w-6xl mx-auto">
           {/* Hero */}
           <div className="grid md:grid-cols-[1.4fr_1fr] gap-10 items-end mb-12">
