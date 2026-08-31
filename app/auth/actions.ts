@@ -202,12 +202,18 @@ export async function resolveNyscLogin(
   }
 
   const admin = createServiceClient();
-  const { data: profile } = await admin
+  // Use order+limit(1) instead of a bare .maybeSingle() so a rare duplicate
+  // state code (e.g. a retried signup) can't throw a "multiple rows" error
+  // and lock everyone with that code out of login — fall back to the most
+  // recently created matching profile instead.
+  const { data: profiles } = await admin
     .from("profiles")
     .select("email, nysc_track")
     .eq("nysc_state_code", normalized)
-    .maybeSingle();
+    .order("created_at", { ascending: false })
+    .limit(1);
 
+  const profile = profiles?.[0];
   if (!profile?.email) {
     return { error: "Invalid state code or password." };
   }
