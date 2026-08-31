@@ -117,6 +117,115 @@ export async function signUpWithResendConfirmation(
 }
 
 // ---------------------------------------------------------------------------
+// NYSC Corps Member sign-up: same OTP flow as above, plus the corps-member
+// specific fields (call-up number, state of origin, state code, track).
+// ---------------------------------------------------------------------------
+export async function signUpNyscCorpsMember(
+  email: string,
+  password: string,
+  fullName: string,
+  callUpNumber: string,
+  stateOfOrigin: string,
+  stateCode: string,
+  track: "ready" | "training"
+) {
+  const admin = createServiceClient();
+
+  const { data: existingProfile } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (existingProfile) {
+    return { error: "An account with this email address already exists. Please log in instead." };
+  }
+
+  const { data: authList } = await admin.auth.admin.listUsers();
+  const authConflict = (authList?.users ?? []).find((u) => u.email === email);
+  if (authConflict) {
+    return { error: "An account with this email address already exists. Please log in instead." };
+  }
+
+  const { data: createData, error: createError } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: false,
+    user_metadata: { full_name: fullName, role: "talent", nysc: true },
+  });
+
+  if (createError) {
+    return { error: createError.message };
+  }
+
+  const userId = createData.user?.id;
+  if (!userId) {
+    return { error: "Failed to create user" };
+  }
+
+  const { error: profileError } = await admin
+    .from("profiles")
+    .upsert(
+      {
+        id: userId,
+        email,
+        full_name: fullName,
+        role: "talent",
+        nysc_call_up_number: callUpNumber,
+        nysc_state_of_origin: stateOfOrigin,
+        nysc_state_code: stateCode,
+        nysc_track: track,
+      },
+      { onConflict: "id" }
+    );
+
+  if (profileError) {
+    console.error("[v0] NYSC profile upsert failed:", profileError.message);
+  }
+
+  const nextPath = track === "training" ? "/nysc/training" : "/nysc/roles";
+  const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
+    type: "signup",
+    email,
+    password,
+    options: { redirectTo, data: { full_name: fullName, role: "talent", nysc: true } },
+  });
+
+  if (linkError) {
+    console.error("[v0] NYSC generateLink failed:", linkError.message);
+    return { error: "Could not start email verification. Please try again." };
+  }
+
+  const code = linkData?.properties?.email_otp;
+  if (!code) {
+    console.error("[v0] NYSC generateLink returned no email_otp");
+    return { error: "Could not generate a verification code. Please try again." };
+  }
+
+  const emailResult = await sendVerificationCodeEmail(email, fullName, code);
+
+  if (!emailResult.success) {
+    console.error("[v0] NYSC verification code email failed:", emailResult.error);
+    return {
+      success: true,
+      userId,
+      needsCode: true,
+      email,
+      warning: "We couldn't email your code automatically. Tap \"Resend code\" to try again.",
+    };
+  }
+
+  return {
+    success: true,
+    userId,
+    needsCode: true,
+    email,
+    message: "We sent a 6-digit code to your email.",
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Verify the 6-digit email confirmation code and establish a session.
 // ---------------------------------------------------------------------------
 export async function verifyEmailCode(

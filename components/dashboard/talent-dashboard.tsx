@@ -11,6 +11,8 @@ import {
   LayoutDashboard,
   TrendingUp,
   PenTool,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 import { ResumesPanel } from "@/components/dashboard/resumes-panel";
@@ -76,6 +78,7 @@ export function TalentDashboard({
     setPrimaryResume: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
     addCertification: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
     deleteCertification: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
+    deleteApplication: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
     getResumeDownloadUrl: (path: string) => Promise<{ ok: boolean; url?: string; error?: string }>;
   };
 }) {
@@ -200,7 +203,7 @@ export function TalentDashboard({
         )}
         {tab === "applications" && (
           <Section title="Applications" subtitle="Track the status of every role you've applied to.">
-            <ApplicationsTable applications={applications} />
+            <ApplicationsTable applications={applications} deleteAction={actions.deleteApplication} />
           </Section>
         )}
         {tab === "openRoles" && (
@@ -291,8 +294,34 @@ function OpenRoles({ profile }: { profile: any }) {
   );
 }
 
-function ApplicationsTable({ applications }: { applications: any[] }) {
-  if (applications.length === 0) {
+function ApplicationsTable({
+  applications,
+  deleteAction,
+}: {
+  applications: any[];
+  deleteAction: (fd: FormData) => Promise<{ ok: boolean; error?: string }>;
+}) {
+  const [rows, setRows] = useState(applications);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    setPendingId(id);
+    setError(null);
+    const fd = new FormData();
+    fd.set("id", id);
+    const res = await deleteAction(fd);
+    setPendingId(null);
+    setConfirmId(null);
+    if (!res.ok) {
+      setError(res.error || "Could not delete this application. Please try again.");
+      return;
+    }
+    setRows((prev) => prev.filter((r) => r.id !== id));
+  }
+
+  if (rows.length === 0) {
     return (
       <div className="bg-white border border-gray-100 rounded-2xl p-10 text-center text-sm text-gray-500">
         No applications yet.
@@ -300,33 +329,71 @@ function ApplicationsTable({ applications }: { applications: any[] }) {
     );
   }
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden overflow-x-auto">
-      <table className="w-full">
-        <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          <tr>
-            <th className="px-6 py-3">Role category</th>
-            <th className="px-6 py-3">Specialization</th>
-            <th className="px-6 py-3">Years</th>
-            <th className="px-6 py-3">Country</th>
-            <th className="px-6 py-3">Status</th>
-            <th className="px-6 py-3">Submitted</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {applications.map((a) => (
-            <tr key={a.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 text-gray-900 font-medium">{a.role_category || "—"}</td>
-              <td className="px-6 py-4 text-gray-600">{a.specialization || "—"}</td>
-              <td className="px-6 py-4 text-gray-600">{a.years_experience ?? "—"}</td>
-              <td className="px-6 py-4 text-gray-600">{a.country || "—"}</td>
-              <td className="px-6 py-4">
-                <StatusBadge status={a.status} />
-              </td>
-              <td className="px-6 py-4 text-gray-500">{new Date(a.created_at).toLocaleDateString()}</td>
+    <div>
+      {error && (
+        <div className="mb-3 rounded-xl bg-red-50 border border-red-100 px-4 py-2.5 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+      <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <tr>
+              <th className="px-6 py-3">Role category</th>
+              <th className="px-6 py-3">Specialization</th>
+              <th className="px-6 py-3">Years</th>
+              <th className="px-6 py-3">Country</th>
+              <th className="px-6 py-3">Status</th>
+              <th className="px-6 py-3">Submitted</th>
+              <th className="px-6 py-3 text-right">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {rows.map((a) => (
+              <tr key={a.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 text-gray-900 font-medium">{a.role_category || "—"}</td>
+                <td className="px-6 py-4 text-gray-600">{a.specialization || "—"}</td>
+                <td className="px-6 py-4 text-gray-600">{a.years_experience ?? "—"}</td>
+                <td className="px-6 py-4 text-gray-600">{a.country || "—"}</td>
+                <td className="px-6 py-4">
+                  <StatusBadge status={a.status} />
+                </td>
+                <td className="px-6 py-4 text-gray-500">{new Date(a.created_at).toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-right">
+                  {confirmId === a.id ? (
+                    <div className="inline-flex items-center gap-2">
+                      <button
+                        onClick={() => handleDelete(a.id)}
+                        disabled={pendingId === a.id}
+                        className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full bg-red-600 text-white text-xs font-semibold hover:bg-red-700 disabled:opacity-60 transition-colors"
+                      >
+                        {pendingId === a.id ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => setConfirmId(null)}
+                        disabled={pendingId === a.id}
+                        className="h-8 px-3 rounded-full border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => { setError(null); setConfirmId(a.id); }}
+                      aria-label={`Delete ${a.role_category || "application"}`}
+                      className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-gray-200 text-gray-500 text-xs font-medium hover:border-red-200 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 className="size-3.5" />
+                      Delete
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

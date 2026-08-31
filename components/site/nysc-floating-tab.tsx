@@ -75,7 +75,7 @@ export function NyscFloatingTab() {
 
             <div className="space-y-2">
               <Link
-                href="/talents/apply?audience=nysc&track=ready"
+                href="/auth/nysc?track=ready"
                 className="group flex items-center gap-3 rounded-2xl border border-gray-200 p-3 hover:border-[#3B5BDB]/40 hover:bg-[#3B5BDB]/[0.03] transition-colors"
               >
                 <span className="shrink-0 size-9 rounded-xl bg-[#3B5BDB]/10 grid place-items-center">
@@ -93,7 +93,7 @@ export function NyscFloatingTab() {
               </Link>
 
               <Link
-                href="/talents/apply?audience=nysc&track=training"
+                href="/auth/nysc?track=training"
                 className="group flex items-center gap-3 rounded-2xl border border-gray-200 p-3 hover:border-[#3B5BDB]/40 hover:bg-[#3B5BDB]/[0.03] transition-colors"
               >
                 <span className="shrink-0 size-9 rounded-xl bg-[#8690FD]/10 grid place-items-center">
