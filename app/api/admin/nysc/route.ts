@@ -1,9 +1,34 @@
 import { NextResponse } from "next/server";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
+import { generateNyscCertificatePdf, generateCertificateNumber } from "@/lib/nysc/certificate";
+import { sendNyscCertificateEmail } from "@/lib/email/resend";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+async function requireAdmin() {
+  const supabase = await createServerClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return { error: "Unauthorized" as const, status: 401 as const };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userData.user.id)
+    .single();
+  if (profile?.role !== "admin") return { error: "Forbidden" as const, status: 403 as const };
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  if (!url || !serviceRoleKey)
+    return { error: "Service role key not configured" as const, status: 500 as const };
+
+  const sb = createClient(url, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  return { sb };
+}
 
 export async function GET() {
   const supabase = await createServerClient();
@@ -32,7 +57,7 @@ export async function GET() {
     sb
       .from("profiles")
       .select(
-        "id,email,full_name,role,created_at,nysc_call_up_number,nysc_state_of_origin,nysc_state_code,nysc_track"
+        "id,email,full_name,role,created_at,nysc_call_up_number,nysc_state_of_origin,nysc_state_code,nysc_track,nysc_course_completed_at,nysc_course_completed_source,nysc_certificate_number,nysc_certificate_sent_at"
       )
       .or("nysc_call_up_number.not.is.null,nysc_state_code.not.is.null")
       .order("created_at", { ascending: false })
@@ -72,6 +97,10 @@ export async function GET() {
       application_count: appCounts.get(p.id) || 0,
       email_confirmed: !!auth?.confirmed_at,
       last_sign_in_at: auth?.last_sign_in_at ?? null,
+      course_completed_at: p.nysc_course_completed_at,
+      course_completed_source: p.nysc_course_completed_source,
+      certificate_number: p.nysc_certificate_number,
+      certificate_sent_at: p.nysc_certificate_sent_at,
     };
   });
 
@@ -83,4 +112,77 @@ export async function GET() {
   };
 
   return NextResponse.json({ members, summary });
+}
+
+/**
+ * Admin-issued certificate: independent of the corps member's own
+ * self-report. Lets an admin certify and email anyone directly from the
+ * Corps Members tab, e.g. after verifying attendance out-of-band.
+ */
+export async function POST(request: Request) {
+  const auth = await requireAdmin();
+  if ("error" in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
+  const { sb } = auth;
+
+  const body = await request.json().catch(() => null);
+  const userId = body?.userId as string | undefined;
+  if (!userId) return NextResponse.json({ error: "userId is required" }, { status: 400 });
+
+  const { data: member, error } = await sb
+    .from("profiles")
+    .select(
+      "id,email,full_name,nysc_call_up_number,nysc_state_code,nysc_state_of_origin,nysc_course_completed_at,nysc_certificate_number,nysc_certificate_issued_at"
+    )
+    .eq("id", userId)
+    .single();
+
+  if (error || !member) return NextResponse.json({ error: "Corps member not found" }, { status: 404 });
+  if (!member.email) return NextResponse.json({ error: "This member has no email on file" }, { status: 400 });
+
+  const now = new Date();
+  const certificateNumber = member.nysc_certificate_number || generateCertificateNumber();
+  const completedAt = member.nysc_course_completed_at ? new Date(member.nysc_course_completed_at) : now;
+
+  const { error: updateError } = await sb
+    .from("profiles")
+    .update({
+      nysc_course_completed_at: member.nysc_course_completed_at || now.toISOString(),
+      nysc_course_completed_source: member.nysc_course_completed_at ? undefined : "admin_issued",
+      nysc_certificate_number: certificateNumber,
+      nysc_certificate_issued_at: member.nysc_certificate_issued_at || now.toISOString(),
+    })
+    .eq("id", userId);
+
+  if (updateError) {
+    console.error("[Admin NYSC] Failed to update profile for certificate:", updateError.message);
+    return NextResponse.json({ error: "Failed to record certificate" }, { status: 500 });
+  }
+
+  const pdfBytes = await generateNyscCertificatePdf({
+    certificateNumber,
+    fullName: member.full_name || "Corps Member",
+    callUpNumber: member.nysc_call_up_number,
+    stateCode: member.nysc_state_code,
+    stateOfOrigin: member.nysc_state_of_origin,
+    completedAt,
+    issuedAt: now,
+  });
+
+  const emailResult = await sendNyscCertificateEmail(
+    member.email,
+    member.full_name || "Corps Member",
+    certificateNumber,
+    pdfBytes
+  );
+
+  if (emailResult.success) {
+    await sb.from("profiles").update({ nysc_certificate_sent_at: now.toISOString() }).eq("id", userId);
+  }
+
+  return NextResponse.json({
+    success: true,
+    certificateNumber,
+    emailSent: emailResult.success,
+    emailError: emailResult.success ? null : emailResult.error,
+  });
 }

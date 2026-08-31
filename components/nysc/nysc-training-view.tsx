@@ -18,6 +18,7 @@ import {
   LEARNING_OUTCOMES,
   FIRST_LESSON,
 } from "@/lib/nysc/course-content";
+import { CertificateCard } from "@/components/nysc/certificate-card";
 
 const ngn = (n: number) => `NGN ${n.toLocaleString("en-NG")}`;
 
@@ -107,6 +108,8 @@ export function NyscTrainingView() {
           </div>
         </div>
       </div>
+
+      <CertificateCard />
 
       {/* Learning outcomes */}
       <div className="mt-10">
