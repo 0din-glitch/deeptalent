@@ -183,7 +183,8 @@ export async function signUpNyscCorpsMember(
     console.error("[v0] NYSC profile upsert failed:", profileError.message);
   }
 
-  const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`;
+  const nextPath = track === "training" ? "/nysc/training" : "/nysc/roles";
+  const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback?next=${encodeURIComponent(nextPath)}`;
   const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
     type: "signup",
     email,

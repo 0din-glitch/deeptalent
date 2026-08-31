@@ -87,14 +87,18 @@ function NyscForm() {
     setVerifying(true);
     setError(null);
 
-    const result = await verifyEmailCode(email, finalCode, "/interview");
+    // Ready corps members go straight to open junior roles; those choosing the
+    // training track land on the course catalogue with lesson one unlocked.
+    const destination = track === "training" ? "/nysc/training" : "/nysc/roles";
+
+    const result = await verifyEmailCode(email, finalCode, destination);
     if (result.error) {
       setError(result.error);
       setVerifying(false);
       return;
     }
 
-    router.push(result.redirect || "/interview");
+    router.push(result.redirect || destination);
     router.refresh();
   }
 
