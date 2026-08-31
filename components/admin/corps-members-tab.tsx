@@ -3,8 +3,10 @@
 import { useMemo, useState } from "react";
 import useSWR from "swr";
 import {
+  Award,
   BadgeCheck,
   GraduationCap,
+  Loader2,
   MapPin,
   RefreshCw,
   Rocket,
@@ -25,6 +27,10 @@ type Member = {
   application_count: number;
   email_confirmed: boolean;
   last_sign_in_at: string | null;
+  course_completed_at: string | null;
+  course_completed_source: "self_reported" | "admin_issued" | null;
+  certificate_number: string | null;
+  certificate_sent_at: string | null;
 };
 
 type Payload = {
@@ -87,6 +93,27 @@ export function CorpsMembersTab() {
 
   const [query, setQuery] = useState("");
   const [track, setTrack] = useState<"all" | "ready" | "training">("all");
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [certError, setCertError] = useState<{ id: string; message: string } | null>(null);
+
+  async function handleSendCertificate(userId: string) {
+    setSendingId(userId);
+    setCertError(null);
+    try {
+      const res = await fetch("/api/admin/nysc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error || "Failed to send certificate");
+      await mutate();
+    } catch (e: any) {
+      setCertError({ id: userId, message: e.message || "Failed to send certificate" });
+    } finally {
+      setSendingId(null);
+    }
+  }
 
   const members = useMemo(() => {
     let rows = data?.members ?? [];
@@ -180,7 +207,7 @@ export function CorpsMembersTab() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                {["Corps member", "Call-up number", "State", "Track", "Status", "Apps", "Joined"].map((h) => (
+                {["Corps member", "Call-up number", "State", "Track", "Status", "Apps", "Joined", "Certificate"].map((h) => (
                   <th
                     key={h}
                     className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap"
@@ -233,6 +260,42 @@ export function CorpsMembersTab() {
                     <td className="px-5 py-4 text-sm text-gray-700 tabular-nums">{m.application_count}</td>
                     <td className="px-5 py-4 text-xs text-gray-400 whitespace-nowrap">
                       {formatDate(m.created_at)}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap">
+                      {m.certificate_number ? (
+                        <div>
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-[#0F7A3D]">
+                            <Award className="size-3.5" /> Issued
+                          </span>
+                          <p className="text-xs text-gray-400 mt-0.5 font-mono">{m.certificate_number}</p>
+                          <p className="text-[11px] text-gray-400 mt-0.5">
+                            {m.certificate_sent_at ? `Emailed ${formatDate(m.certificate_sent_at)}` : "Not yet emailed"}
+                          </p>
+                          <button
+                            onClick={() => handleSendCertificate(m.id)}
+                            disabled={sendingId === m.id}
+                            className="mt-1.5 inline-flex items-center gap-1 rounded-md border border-gray-200 px-2 py-1 text-[11px] font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-60"
+                          >
+                            {sendingId === m.id && <Loader2 className="size-3 animate-spin" />} Resend
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleSendCertificate(m.id)}
+                          disabled={sendingId === m.id}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-[#0F7A3D] px-3 py-1.5 text-xs font-semibold text-[#0F7A3D] hover:bg-[#0F7A3D]/5 disabled:opacity-60"
+                        >
+                          {sendingId === m.id ? (
+                            <Loader2 className="size-3.5 animate-spin" />
+                          ) : (
+                            <Award className="size-3.5" />
+                          )}
+                          Send certificate
+                        </button>
+                      )}
+                      {certError?.id === m.id && (
+                        <p className="text-[11px] font-medium text-red-500 mt-1 max-w-[160px]">{certError.message}</p>
+                      )}
                     </td>
                   </tr>
                 );
