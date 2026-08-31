@@ -117,6 +117,35 @@ export async function signUpWithResendConfirmation(
 }
 
 // ---------------------------------------------------------------------------
+// NYSC Corps Member login: corps members sign in with their NYSC state code
+// instead of an email. Resolve the account's email (and destination track)
+// from the state code so the client can complete a normal password sign-in.
+// Returns a generic error on any miss to avoid leaking which codes exist.
+// ---------------------------------------------------------------------------
+export async function resolveNyscLogin(
+  stateCode: string
+): Promise<{ error: string } | { email: string; destination: string }> {
+  const normalized = stateCode.trim().toUpperCase();
+  if (!normalized) {
+    return { error: "Enter your NYSC state code." };
+  }
+
+  const admin = createServiceClient();
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("email, nysc_track")
+    .eq("nysc_state_code", normalized)
+    .maybeSingle();
+
+  if (!profile?.email) {
+    return { error: "Invalid state code or password." };
+  }
+
+  const destination = profile.nysc_track === "training" ? "/nysc/training" : "/nysc/roles";
+  return { email: profile.email, destination };
+}
+
+// ---------------------------------------------------------------------------
 // NYSC Corps Member sign-up: same OTP flow as above, plus the corps-member
 // specific fields (call-up number, state of origin, state code, track).
 // ---------------------------------------------------------------------------

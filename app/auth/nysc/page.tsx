@@ -181,7 +181,7 @@ function NyscForm() {
       footer={
         <>
           Already have an account?{" "}
-          <Link href="/auth/login" className="font-semibold text-white underline underline-offset-2 hover:text-white/80">
+          <Link href="/auth/nysc/login" className="font-semibold text-white underline underline-offset-2 hover:text-white/80">
             Log in
           </Link>
         </>
