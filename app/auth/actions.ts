@@ -2,7 +2,7 @@
 
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import { sendVerificationCodeEmail } from "@/lib/email/resend";
+import { sendVerificationCodeEmail, sendNyscVerificationCodeEmail } from "@/lib/email/resend";
 
 function createServiceClient() {
   return createAdminClient(
@@ -10,6 +10,84 @@ function createServiceClient() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
+}
+
+// ---------------------------------------------------------------------------
+// This Supabase project mints an 8-digit `email_otp`, which doesn't fit the
+// app's 6-box code input. Rather than depend on that digit count, we mint our
+// own 6-digit code, store it alongside Supabase's `hashed_token` (its actual
+// verification secret), and email only our 6-digit code to the user. On
+// verify, we look up the matching `hashed_token` and use it — the real
+// Supabase secret never has to match the digit count shown in the UI.
+// ---------------------------------------------------------------------------
+type ServiceClient = ReturnType<typeof createServiceClient>;
+
+async function mintVerificationCode(
+  admin: ServiceClient,
+  params:
+    | { type: "signup"; email: string; password: string; redirectTo?: string; data?: Record<string, unknown> }
+    | { type: "magiclink"; email: string }
+): Promise<{ code: string } | { error: string }> {
+  const { data: linkData, error: linkError } =
+    params.type === "signup"
+      ? await admin.auth.admin.generateLink({
+          type: "signup",
+          email: params.email,
+          password: params.password,
+          options: { redirectTo: params.redirectTo, data: params.data },
+        })
+      : await admin.auth.admin.generateLink({ type: "magiclink", email: params.email });
+
+  const hashedToken = linkData?.properties?.hashed_token;
+  if (linkError || !hashedToken) {
+    console.error("[v0] generateLink failed:", linkError?.message || "no hashed_token returned");
+    return { error: "Could not generate a verification code. Please try again." };
+  }
+
+  const verificationType = linkData.properties?.verification_type || params.type;
+  const code = String(Math.floor(100000 + Math.random() * 900000)); // always 6 digits
+
+  // Invalidate any earlier unused codes for this email so only the latest one works.
+  await admin
+    .from("email_verification_codes")
+    .update({ consumed_at: new Date().toISOString() })
+    .eq("email", params.email)
+    .is("consumed_at", null);
+
+  const { error: insertError } = await admin.from("email_verification_codes").insert({
+    email: params.email,
+    code,
+    hashed_token: hashedToken,
+    verification_type: verificationType,
+    expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour, matches email copy
+  });
+
+  if (insertError) {
+    console.error("[v0] Failed to store verification code:", insertError.message);
+    return { error: "Could not generate a verification code. Please try again." };
+  }
+
+  return { code };
+}
+
+async function resolveVerificationCode(admin: ServiceClient, email: string, code: string) {
+  const { data, error } = await admin
+    .from("email_verification_codes")
+    .select("id, hashed_token, verification_type, expires_at")
+    .eq("email", email)
+    .eq("code", code)
+    .is("consumed_at", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data || new Date(data.expires_at).getTime() < Date.now()) {
+    return { error: "That code is invalid or has expired. Please try again." };
+  }
+
+  await admin.from("email_verification_codes").update({ consumed_at: new Date().toISOString() }).eq("id", data.id);
+
+  return { hashedToken: data.hashed_token as string, verificationType: data.verification_type as string };
 }
 
 export async function signUpWithResendConfirmation(
@@ -69,30 +147,23 @@ export async function signUpWithResendConfirmation(
     console.error("[v0] Profile upsert failed:", profileError.message);
   }
 
-  // Step 3: generate a signup confirmation OTP (does NOT send an email).
-  // generateLink returns a 6-digit `email_otp` alongside the action link.
+  // Step 3: mint our own 6-digit signup confirmation code (does NOT send an email).
   const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`;
-  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
+  const minted = await mintVerificationCode(admin, {
     type: "signup",
     email,
     password,
-    options: { redirectTo, data: { full_name: fullName, role } },
+    redirectTo,
+    data: { full_name: fullName, role },
   });
 
-  if (linkError) {
-    console.error("[v0] generateLink failed:", linkError.message);
-    return { error: "Could not start email verification. Please try again." };
-  }
-
-  const code = linkData?.properties?.email_otp;
-  if (!code) {
-    console.error("[v0] generateLink returned no email_otp");
-    return { error: "Could not generate a verification code. Please try again." };
+  if ("error" in minted) {
+    return { error: minted.error };
   }
 
   // Step 4: send the branded 6-digit code email via Resend.
   console.log("[v0] Sending verification code email to:", email);
-  const emailResult = await sendVerificationCodeEmail(email, fullName, code);
+  const emailResult = await sendVerificationCodeEmail(email, fullName, minted.code);
 
   if (!emailResult.success) {
     console.error("[v0] Verification code email failed:", emailResult.error);
@@ -214,25 +285,19 @@ export async function signUpNyscCorpsMember(
 
   const nextPath = track === "training" ? "/nysc/training" : "/nysc/roles";
   const redirectTo = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback?next=${encodeURIComponent(nextPath)}`;
-  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
+  const minted = await mintVerificationCode(admin, {
     type: "signup",
     email,
     password,
-    options: { redirectTo, data: { full_name: fullName, role: "talent", nysc: true } },
+    redirectTo,
+    data: { full_name: fullName, role: "talent", nysc: true },
   });
 
-  if (linkError) {
-    console.error("[v0] NYSC generateLink failed:", linkError.message);
-    return { error: "Could not start email verification. Please try again." };
+  if ("error" in minted) {
+    return { error: minted.error };
   }
 
-  const code = linkData?.properties?.email_otp;
-  if (!code) {
-    console.error("[v0] NYSC generateLink returned no email_otp");
-    return { error: "Could not generate a verification code. Please try again." };
-  }
-
-  const emailResult = await sendVerificationCodeEmail(email, fullName, code);
+  const emailResult = await sendNyscVerificationCodeEmail(email, fullName, minted.code);
 
   if (!emailResult.success) {
     console.error("[v0] NYSC verification code email failed:", emailResult.error);
@@ -263,19 +328,23 @@ export async function verifyEmailCode(
   next?: string | null
 ) {
   const supabase = await createClient();
+  const admin = createServiceClient();
 
-  // generateLink(type:'signup') and resend(type:'magiclink') both mint an
-  // email_otp; verifyOtp confirms the address and sets the session cookies.
-  let verified = false;
-  for (const type of ["signup", "email", "magiclink"] as const) {
-    const { error } = await supabase.auth.verifyOtp({ email, token: code, type });
-    if (!error) {
-      verified = true;
-      break;
-    }
+  // Look up the Supabase hashed_token our 6-digit code maps to, then verify
+  // with that token_hash — this confirms the address and sets session cookies
+  // regardless of how many digits Supabase's own email_otp happens to be.
+  const resolved = await resolveVerificationCode(admin, email, code);
+  if ("error" in resolved) {
+    return { error: resolved.error };
   }
 
-  if (!verified) {
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    token_hash: resolved.hashedToken,
+    type: resolved.verificationType as "signup" | "magiclink" | "email" | "invite" | "recovery" | "email_change",
+  });
+
+  if (verifyError) {
+    console.error("[v0] verifyOtp (token_hash) failed:", verifyError.message);
     return { error: "That code is invalid or has expired. Please try again." };
   }
 
@@ -312,18 +381,12 @@ export async function verifyEmailCode(
 // ---------------------------------------------------------------------------
 // Resend a fresh 6-digit verification code (no password required).
 // ---------------------------------------------------------------------------
-export async function resendEmailCode(email: string) {
+export async function resendEmailCode(email: string, variant: "default" | "nysc" = "default") {
   const admin = createServiceClient();
 
-  // magiclink also returns a fresh email_otp and confirms the email on verify.
-  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
-    type: "magiclink",
-    email,
-  });
-
-  const code = linkData?.properties?.email_otp;
-  if (linkError || !code) {
-    console.error("[v0] resend generateLink failed:", linkError?.message);
+  const minted = await mintVerificationCode(admin, { type: "magiclink", email });
+  if ("error" in minted) {
+    console.error("[v0] resend mintVerificationCode failed:", minted.error);
     return { error: "Could not resend a code right now. Please try again shortly." };
   }
 
@@ -333,11 +396,11 @@ export async function resendEmailCode(email: string) {
     .eq("email", email)
     .maybeSingle();
 
-  const emailResult = await sendVerificationCodeEmail(
-    email,
-    profile?.full_name || "there",
-    code
-  );
+  const fullName = profile?.full_name || "there";
+  const emailResult =
+    variant === "nysc"
+      ? await sendNyscVerificationCodeEmail(email, fullName, minted.code)
+      : await sendVerificationCodeEmail(email, fullName, minted.code);
 
   if (!emailResult.success) {
     return { error: "Could not send the code email. Please try again." };

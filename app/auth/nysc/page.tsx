@@ -106,7 +106,7 @@ function NyscForm() {
     setResending(true);
     setError(null);
     setResent(false);
-    const result = await resendEmailCode(email);
+    const result = await resendEmailCode(email, "nysc");
     if (result.error) {
       setError(result.error);
     } else {
