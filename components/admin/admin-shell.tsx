@@ -21,6 +21,7 @@ import { TasksTab } from "@/components/admin/tasks-tab";
 import { CalendarTab } from "@/components/admin/calendar-tab";
 import { SocialTab } from "@/components/admin/social-tab";
 import { OutboundTab } from "@/components/admin/outbound-tab";
+import { CorpsMembersTab } from "@/components/admin/corps-members-tab";
 import { useAdminMe } from "@/components/admin/use-admin-me";
 import {
   Activity,
@@ -42,6 +43,7 @@ import {
   UserCheck,
   UserPlus,
   Building2,
+  ShieldCheck,
 } from "lucide-react";
 
 type Message = {
@@ -68,6 +70,7 @@ type LegacyFile = {
 
 type Tab =
   | "users"
+  | "corps_members"
   | "applications"
   | "approved_talent"
   | "interviews"
@@ -149,6 +152,13 @@ export function AdminShell({
   );
   const outboundCount = outboundData?.summary?.total ?? 0;
 
+  const { data: nyscData } = useSWR<{ summary?: { total: number } }>(
+    "/api/admin/nysc",
+    fetcher,
+    { refreshInterval: 60_000 }
+  );
+  const corpsCount = nyscData?.summary?.total ?? 0;
+
   const appCount = appData?.rows?.length ?? applications.length;
   const inqCount = inqData?.rows?.length ?? inquiries.length;
   const approvedCount = (appData?.rows ?? applications).filter(
@@ -161,6 +171,7 @@ export function AdminShell({
       label: "People",
       items: [
         { id: "users" as Tab, label: "Users", icon: Users, count: userCount },
+        { id: "corps_members" as Tab, label: "Corps Members", icon: ShieldCheck, count: corpsCount > 0 ? corpsCount : null },
         { id: "applications" as Tab, label: "Applications", icon: FileText, count: appCount },
         { id: "approved_talent" as Tab, label: "Approved Talent", icon: UserCheck, count: approvedCount },
         { id: "inquiries" as Tab, label: "Company Inquiries", icon: Building2, count: inqCount },
@@ -329,6 +340,7 @@ export function AdminShell({
         <main className="flex-1 overflow-y-auto p-8">
           <div className="max-w-6xl mx-auto">
             {tab === "users" && <UsersTab />}
+            {tab === "corps_members" && <CorpsMembersTab />}
             {tab === "placements" && <PlacementsTab />}
             {tab === "outbound" && <OutboundTab />}
             {tab === "files" && <FilesTab initialFiles={files} />}
