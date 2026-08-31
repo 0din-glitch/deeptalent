@@ -191,6 +191,23 @@ export async function addCertification(formData: FormData) {
   return { ok: true };
 }
 
+export async function deleteApplication(formData: FormData) {
+  const { supabase, user } = await requireUser();
+  const id = String(formData.get("id") ?? "");
+  if (!id) return { ok: false, error: "Missing id" };
+
+  // RLS (ta_delete_own) restricts this to the talent's own applications.
+  const { error } = await supabase
+    .from("talent_applications")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
 export async function deleteCertification(formData: FormData) {
   const { supabase, user } = await requireUser();
   const id = String(formData.get("id") ?? "");

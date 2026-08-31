@@ -12,6 +12,7 @@ import {
   setPrimaryResume,
   addCertification,
   deleteCertification,
+  deleteApplication,
   getResumeDownloadUrl,
 } from "@/lib/dashboard/actions";
 import { CompanyDashboard } from "@/components/dashboard/company-dashboard";
@@ -92,6 +93,7 @@ export default async function DashboardPage() {
               setPrimaryResume,
               addCertification,
               deleteCertification,
+              deleteApplication,
               getResumeDownloadUrl,
             }}
           />
