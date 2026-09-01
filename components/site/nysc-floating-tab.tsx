@@ -134,6 +134,12 @@ export function NyscFloatingTab() {
         >
           NYSC Corps Members
         </span>
+        <span
+          className="rounded-full bg-[#8690FD]/15 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-[#8690FD]"
+          style={{ writingMode: "vertical-rl" }}
+        >
+          Post-NYSC
+        </span>
       </button>
     </div>
   );
