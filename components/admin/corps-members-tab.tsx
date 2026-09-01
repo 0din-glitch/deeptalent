@@ -159,7 +159,7 @@ export function CorpsMembersTab() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <StatCard label="Total corps members" value={summary.total} icon={ShieldCheck} tone="bg-[#3B5BDB]/10 text-[#3B5BDB]" />
         <StatCard label="Workforce ready" value={summary.ready} icon={Rocket} tone="bg-emerald-50 text-emerald-600" />
-        <StatCard label="In training track" value={summary.training} icon={GraduationCap} tone="bg-amber-50 text-amber-600" />
+        <StatCard label="In post-NYSC track" value={summary.training} icon={GraduationCap} tone="bg-amber-50 text-amber-600" />
         <StatCard label="Have logged in" value={summary.signed_in} icon={BadgeCheck} tone="bg-blue-50 text-blue-600" />
       </div>
 
@@ -183,7 +183,7 @@ export function CorpsMembersTab() {
                 track === t ? "bg-[#3B5BDB] text-white" : "text-gray-500 hover:bg-gray-50"
               }`}
             >
-              {t === "all" ? "All tracks" : t === "ready" ? "Ready" : "Training"}
+              {t === "all" ? "All tracks" : t === "ready" ? "Ready" : "Post-NYSC"}
             </button>
           ))}
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   PlayCircle,
@@ -8,9 +9,9 @@ import {
   Clock,
   Lock,
   ArrowLeft,
-  ArrowRight,
   Sparkles,
   GraduationCap,
+  XCircle,
 } from "lucide-react";
 import {
   COURSE,
@@ -19,6 +20,7 @@ import {
   FIRST_LESSON,
 } from "@/lib/nysc/course-content";
 import { CertificateCard } from "@/components/nysc/certificate-card";
+import { EnrolButton } from "@/components/nysc/enrol-button";
 
 const ngn = (n: number) => `NGN ${n.toLocaleString("en-NG")}`;
 
@@ -29,12 +31,57 @@ const UPCOMING = [
 ];
 
 export function NyscTrainingView() {
+  return (
+    <Suspense fallback={null}>
+      <NyscTrainingViewInner />
+    </Suspense>
+  );
+}
+
+function PaymentBanner() {
+  const searchParams = useSearchParams();
+  const [dismissed, setDismissed] = useState(false);
+  const enrolled = searchParams.get("enrolled");
+
+  if (dismissed || !enrolled) return null;
+
+  const success = enrolled === "1";
+  return (
+    <div
+      className={`mb-6 flex items-start gap-3 rounded-2xl border p-4 text-sm ${
+        success
+          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+          : "border-red-200 bg-red-50 text-red-700"
+      }`}
+    >
+      {success ? (
+        <CheckCircle2 className="mt-0.5 size-5 shrink-0" />
+      ) : (
+        <XCircle className="mt-0.5 size-5 shrink-0" />
+      )}
+      <p className="flex-1 leading-relaxed">
+        {success
+          ? "Payment received — you're enrolled. All 13 modules are unlocked."
+          : "We couldn't confirm that payment. If you were charged, contact support before trying again."}
+      </p>
+      <button
+        onClick={() => setDismissed(true)}
+        className="text-xs font-medium underline underline-offset-2 opacity-70 hover:opacity-100"
+      >
+        Dismiss
+      </button>
+    </div>
+  );
+}
+
+function NyscTrainingViewInner() {
   const [view, setView] = useState<"catalogue" | "lesson">("catalogue");
 
   if (view === "lesson") return <LessonView onBack={() => setView("catalogue")} />;
 
   return (
     <div>
+      <PaymentBanner />
       {/* Featured course */}
       <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
         <div
@@ -59,10 +106,13 @@ export function NyscTrainingView() {
               <p className="mt-0.5 text-xs text-white/60">one-off · certificate on pass</p>
               <button
                 onClick={() => setView("lesson")}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#0F7A3D] transition-colors hover:bg-white/90"
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
               >
                 <PlayCircle className="size-4" /> Start lesson 1 free
               </button>
+              <div className="mt-2">
+                <EnrolButton variant="primary" />
+              </div>
             </div>
           </div>
 
@@ -225,12 +275,7 @@ function LessonView({ onBack }: { onBack: () => void }) {
                 <p className="font-semibold text-gray-900">Enjoyed lesson 1?</p>
                 <p className="text-sm text-gray-500">Enrol to unlock all 13 modules and the live practical.</p>
               </div>
-              <button
-                onClick={onBack}
-                className="inline-flex items-center gap-1 rounded-full bg-[#0F7A3D] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#0c6633]"
-              >
-                Enrol <ArrowRight className="size-4" />
-              </button>
+              <EnrolButton variant="outline" />
             </div>
           </article>
 

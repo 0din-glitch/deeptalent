@@ -10,6 +10,7 @@ interface CertificateStatus {
   completedSource: "self_reported" | "admin_issued" | null;
   certificateNumber: string | null;
   sentAt: string | null;
+  enrolled: boolean;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -45,6 +46,7 @@ export function CertificateCard() {
   }
 
   const completed = data?.completed;
+  const enrolled = data?.enrolled;
 
   return (
     <div className="mt-10 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
@@ -66,7 +68,9 @@ export function CertificateCard() {
                 ? `Issued to you as certificate no. ${data?.certificateNumber}. A signed PDF was emailed to your inbox${
                     data?.sentAt ? "" : " and is on its way"
                   }.`
-                : "Once you've completed the live practical and all modules, confirm below to receive your DeepTalent certificate by email."}
+                : enrolled
+                  ? "Once you've completed the live practical and all modules, confirm below to receive your DeepTalent certificate by email."
+                  : "Enrol in the post-NYSC course (NGN 2,000) above to unlock the certificate once you finish."}
             </p>
             {completed && (
               <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[#0F7A3D]">
@@ -106,7 +110,9 @@ export function CertificateCard() {
           ) : (
             <button
               onClick={() => setConfirming(true)}
-              className="inline-flex items-center gap-2 rounded-xl border border-[#0F7A3D] px-5 py-2.5 text-sm font-semibold text-[#0F7A3D] transition-colors hover:bg-[#0F7A3D]/5"
+              disabled={!enrolled}
+              title={enrolled ? undefined : "Enrol in the course first"}
+              className="inline-flex items-center gap-2 rounded-xl border border-[#0F7A3D] px-5 py-2.5 text-sm font-semibold text-[#0F7A3D] transition-colors hover:bg-[#0F7A3D]/5 disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400 disabled:hover:bg-transparent"
             >
               <Award className="size-4" /> Mark course complete
             </button>

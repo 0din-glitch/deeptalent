@@ -100,11 +100,14 @@ export function NyscFloatingTab() {
                   <GraduationCap className="size-4 text-[#8690FD]" />
                 </span>
                 <span className="flex-1 min-w-0">
-                  <span className="block text-xs font-semibold text-gray-900 leading-tight">
+                  <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 leading-tight">
                     Get Global Workforce Ready
+                    <span className="shrink-0 rounded-full bg-[#8690FD]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#8690FD]">
+                      Post-NYSC
+                    </span>
                   </span>
                   <span className="block text-[11px] text-gray-500 leading-tight mt-0.5">
-                    Start the training pathway to reach that standard
+                    Start the post-NYSC pathway to reach that standard
                   </span>
                 </span>
                 <ArrowRight className="size-3.5 text-gray-300 group-hover:text-[#3B5BDB] shrink-0 transition-colors" />
@@ -119,7 +122,7 @@ export function NyscFloatingTab() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        aria-label="NYSC Corps Members — Work global. Stay in Nigeria."
+        aria-label="Post-NYSC Corps Members — Work global. Stay in Nigeria."
         className={`shrink-0 flex flex-col items-center gap-2 rounded-l-2xl border border-r-0 border-gray-200 bg-white shadow-lg shadow-black/5 px-2.5 py-4 hover:bg-gray-50 transition-colors ${
           open ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
@@ -129,7 +132,13 @@ export function NyscFloatingTab() {
           className="text-[11px] font-semibold text-gray-800 tracking-wide"
           style={{ writingMode: "vertical-rl" }}
         >
-          NYSC Corps Members
+          Post-NYSC Corps Members
+        </span>
+        <span
+          className="rounded-full bg-[#8690FD]/15 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-[#8690FD]"
+          style={{ writingMode: "vertical-rl" }}
+        >
+          Post-NYSC
         </span>
       </button>
     </div>

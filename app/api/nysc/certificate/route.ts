@@ -25,7 +25,7 @@ async function getSelfProfile() {
   const { data: profile, error } = await sb
     .from("profiles")
     .select(
-      "id,email,full_name,nysc_call_up_number,nysc_state_code,nysc_state_of_origin,nysc_course_completed_at,nysc_course_completed_source,nysc_certificate_number,nysc_certificate_issued_at,nysc_certificate_sent_at"
+      "id,email,full_name,nysc_call_up_number,nysc_state_code,nysc_state_of_origin,nysc_course_completed_at,nysc_course_completed_source,nysc_certificate_number,nysc_certificate_issued_at,nysc_certificate_sent_at,nysc_course_paid_at"
     )
     .eq("id", userData.user.id)
     .single();
@@ -45,6 +45,7 @@ export async function GET() {
     completedSource: profile.nysc_course_completed_source,
     certificateNumber: profile.nysc_certificate_number,
     sentAt: profile.nysc_certificate_sent_at,
+    enrolled: !!profile.nysc_course_paid_at,
   });
 }
 
@@ -58,6 +59,13 @@ export async function POST() {
   if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
 
   const { profile, sb } = result;
+
+  if (!profile.nysc_course_paid_at && !profile.nysc_course_completed_at) {
+    return NextResponse.json(
+      { error: "Enrol in the course (NGN 2,000) before confirming completion." },
+      { status: 403 }
+    );
+  }
 
   const now = new Date();
   const certificateNumber = profile.nysc_certificate_number || generateCertificateNumber();

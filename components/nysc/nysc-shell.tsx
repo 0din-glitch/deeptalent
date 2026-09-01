@@ -13,7 +13,7 @@ interface NyscShellProps {
 
 const NAV = [
   { key: "roles", label: "Global roles", href: "/nysc/roles" },
-  { key: "training", label: "Training", href: "/nysc/training" },
+  { key: "training", label: "Post-NYSC", href: "/nysc/training" },
 ] as const;
 
 /**
