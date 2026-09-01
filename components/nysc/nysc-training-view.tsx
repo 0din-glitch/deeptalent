@@ -14,6 +14,7 @@ import {
   Sparkles,
   GraduationCap,
   XCircle,
+  BookOpen,
 } from "lucide-react";
 import {
   COURSE,
@@ -23,6 +24,7 @@ import {
   type Lesson,
 } from "@/lib/nysc/course-content";
 import { CertificateCard } from "@/components/nysc/certificate-card";
+import { StudyGuideCard } from "@/components/nysc/study-guide-card";
 import { EnrolButton } from "@/components/nysc/enrol-button";
 
 const ngn = (n: number) => `NGN ${n.toLocaleString("en-NG")}`;
@@ -193,6 +195,7 @@ function NyscTrainingViewInner() {
       </div>
 
       <CertificateCard />
+      <StudyGuideCard />
 
       {/* Learning outcomes */}
       <div className="mt-10">
@@ -413,6 +416,15 @@ function LessonView({
                 >
                   <ArrowLeft className="size-3.5" /> {prev.code} {prev.title}
                 </button>
+              )}
+              {enrolled && (
+                <a
+                  href="/documents/nysc-post-nysc-study-guide.pdf"
+                  download
+                  className="mt-4 flex items-center gap-1.5 rounded-lg border border-gray-100 px-3 py-2 text-xs font-medium text-[#0F7A3D] transition-colors hover:bg-[#F4FBF6]"
+                >
+                  <BookOpen className="size-3.5" /> Download study guide (PDF)
+                </a>
               )}
             </div>
           </aside>
