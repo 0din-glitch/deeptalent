@@ -100,8 +100,11 @@ export function NyscFloatingTab() {
                   <GraduationCap className="size-4 text-[#8690FD]" />
                 </span>
                 <span className="flex-1 min-w-0">
-                  <span className="block text-xs font-semibold text-gray-900 leading-tight">
+                  <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 leading-tight">
                     Get Global Workforce Ready
+                    <span className="shrink-0 rounded-full bg-[#8690FD]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#8690FD]">
+                      Post-NYSC
+                    </span>
                   </span>
                   <span className="block text-[11px] text-gray-500 leading-tight mt-0.5">
                     Start the post-NYSC pathway to reach that standard
