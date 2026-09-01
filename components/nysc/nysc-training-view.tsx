@@ -49,10 +49,19 @@ function PaymentBanner() {
   const searchParams = useSearchParams();
   const [dismissed, setDismissed] = useState(false);
   const enrolled = searchParams.get("enrolled");
+  const reprint = searchParams.get("reprint");
 
-  if (dismissed || !enrolled) return null;
+  if (dismissed || (!enrolled && !reprint)) return null;
 
-  const success = enrolled === "1";
+  const success = (enrolled ?? reprint) === "1";
+  const message = enrolled
+    ? success
+      ? "Payment received — you're enrolled. All 13 modules are unlocked below."
+      : "We couldn't confirm that payment. If you were charged, contact support before trying again."
+    : success
+      ? "Payment received — your certificate reprint is ready to download below."
+      : "We couldn't confirm that reprint payment. If you were charged, contact support before trying again.";
+
   return (
     <div
       className={`mb-6 flex items-start gap-3 rounded-2xl border p-4 text-sm ${
@@ -66,11 +75,7 @@ function PaymentBanner() {
       ) : (
         <XCircle className="mt-0.5 size-5 shrink-0" />
       )}
-      <p className="flex-1 leading-relaxed">
-        {success
-          ? "Payment received — you're enrolled. All 13 modules are unlocked below."
-          : "We couldn't confirm that payment. If you were charged, contact support before trying again."}
-      </p>
+      <p className="flex-1 leading-relaxed">{message}</p>
       <button
         onClick={() => setDismissed(true)}
         className="text-xs font-medium underline underline-offset-2 opacity-70 hover:opacity-100"

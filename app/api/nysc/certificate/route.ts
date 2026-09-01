@@ -25,7 +25,7 @@ async function getSelfProfile() {
   const { data: profile, error } = await sb
     .from("profiles")
     .select(
-      "id,email,full_name,nysc_call_up_number,nysc_state_code,nysc_state_of_origin,nysc_course_completed_at,nysc_course_completed_source,nysc_certificate_number,nysc_certificate_issued_at,nysc_certificate_sent_at,nysc_course_paid_at"
+      "id,email,full_name,nysc_call_up_number,nysc_state_code,nysc_state_of_origin,nysc_course_completed_at,nysc_course_completed_source,nysc_certificate_number,nysc_certificate_issued_at,nysc_certificate_sent_at,nysc_course_paid_at,nysc_certificate_downloaded_at,nysc_certificate_reprint_credits"
     )
     .eq("id", userData.user.id)
     .single();
@@ -46,6 +46,8 @@ export async function GET() {
     certificateNumber: profile.nysc_certificate_number,
     sentAt: profile.nysc_certificate_sent_at,
     enrolled: !!profile.nysc_course_paid_at,
+    downloadedAt: profile.nysc_certificate_downloaded_at,
+    reprintCredits: profile.nysc_certificate_reprint_credits || 0,
   });
 }
 

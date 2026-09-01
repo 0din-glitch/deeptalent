@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { confirmCoursePayment } from "@/lib/nysc/payment";
+import { confirmCoursePayment, confirmCertificateReprintPayment } from "@/lib/nysc/payment";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,11 +21,16 @@ export async function POST(request: NextRequest) {
 
   const payload = await request.json().catch(() => null);
   const transactionId = payload?.data?.id;
+  const txRef = payload?.data?.tx_ref as string | undefined;
 
   if (!transactionId) {
     return NextResponse.json({ received: true });
   }
 
-  await confirmCoursePayment(String(transactionId));
+  if (txRef?.startsWith("dt-nysc-reprint-")) {
+    await confirmCertificateReprintPayment(String(transactionId));
+  } else {
+    await confirmCoursePayment(String(transactionId));
+  }
   return NextResponse.json({ received: true });
 }
