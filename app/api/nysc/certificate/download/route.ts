@@ -20,13 +20,35 @@ export async function GET() {
   const { data: profile } = await sb
     .from("profiles")
     .select(
-      "full_name,nysc_call_up_number,nysc_state_code,nysc_state_of_origin,nysc_course_completed_at,nysc_certificate_number,nysc_certificate_issued_at"
+      "full_name,nysc_call_up_number,nysc_state_code,nysc_state_of_origin,nysc_course_completed_at,nysc_certificate_number,nysc_certificate_issued_at,nysc_certificate_downloaded_at,nysc_certificate_reprint_credits"
     )
     .eq("id", userData.user.id)
     .single();
 
   if (!profile?.nysc_course_completed_at || !profile.nysc_certificate_number) {
     return NextResponse.json({ error: "Certificate not yet issued" }, { status: 404 });
+  }
+
+  const alreadyUsedFreeDownload = !!profile.nysc_certificate_downloaded_at;
+  const hasReprintCredit = (profile.nysc_certificate_reprint_credits || 0) > 0;
+
+  if (alreadyUsedFreeDownload && !hasReprintCredit) {
+    return NextResponse.json(
+      { error: "You've already downloaded your certificate. Reprinting costs NGN 500.", requiresPayment: true },
+      { status: 402 }
+    );
+  }
+
+  if (!alreadyUsedFreeDownload) {
+    await sb
+      .from("profiles")
+      .update({ nysc_certificate_downloaded_at: new Date().toISOString() })
+      .eq("id", userData.user.id);
+  } else {
+    await sb
+      .from("profiles")
+      .update({ nysc_certificate_reprint_credits: profile.nysc_certificate_reprint_credits - 1 })
+      .eq("id", userData.user.id);
   }
 
   const pdfBytes = await generateNyscCertificatePdf({

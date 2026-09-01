@@ -11,9 +11,9 @@ export const dynamic = "force-dynamic";
  * client-controlled `status` param.
  */
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const { searchParams, origin } = new URL(request.url);
   const transactionId = searchParams.get("transaction_id");
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || origin;
 
   if (!transactionId) {
     return NextResponse.redirect(`${appUrl}/nysc/training?enrolled=0`);
