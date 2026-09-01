@@ -104,7 +104,7 @@ export function NyscFloatingTab() {
                     Get Global Workforce Ready
                   </span>
                   <span className="block text-[11px] text-gray-500 leading-tight mt-0.5">
-                    Start the training pathway to reach that standard
+                    Start the post-NYSC pathway to reach that standard
                   </span>
                 </span>
                 <ArrowRight className="size-3.5 text-gray-300 group-hover:text-[#3B5BDB] shrink-0 transition-colors" />

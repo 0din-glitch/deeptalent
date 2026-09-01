@@ -175,7 +175,7 @@ function NyscForm() {
       title="NYSC Corps Member sign up"
       subtitle={
         track === "training"
-          ? "Get Global Workforce Ready — tell us where you're starting from and we'll route you into a training pathway."
+          ? "Get Global Workforce Ready — tell us where you're starting from and we'll route you into a post-NYSC pathway."
           : "I'm Global Workforce Ready — verify your credentials and apply to global roles."
       }
       footer={

@@ -45,7 +45,7 @@ function ApplyLanding() {
             {nyscTrack === "training" ? (
               <>
                 <span className="font-semibold">Get Global Workforce Ready:</span>{" "}
-                tell us your target certification and current level below — we&apos;ll route you toward the right training pathway.
+                tell us your target certification and current level below — we&apos;ll route you toward the right post-NYSC pathway.
               </>
             ) : (
               <>
