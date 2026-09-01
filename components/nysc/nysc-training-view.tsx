@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 import { motion, AnimatePresence } from "motion/react";
 import {
   PlayCircle,
@@ -9,6 +10,7 @@ import {
   Clock,
   Lock,
   ArrowLeft,
+  ArrowRight,
   Sparkles,
   GraduationCap,
   XCircle,
@@ -17,12 +19,15 @@ import {
   COURSE,
   COURSE_DAYS,
   LEARNING_OUTCOMES,
-  FIRST_LESSON,
+  LESSONS,
+  type Lesson,
 } from "@/lib/nysc/course-content";
 import { CertificateCard } from "@/components/nysc/certificate-card";
 import { EnrolButton } from "@/components/nysc/enrol-button";
 
 const ngn = (n: number) => `NGN ${n.toLocaleString("en-NG")}`;
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const FREE_CODE = "1.1";
 
 const UPCOMING = [
   { title: "Finance & Accounting Deep-Dive", desc: "IFRS, month-end and FP&A for global SME finance teams.", tag: "Finance" },
@@ -61,7 +66,7 @@ function PaymentBanner() {
       )}
       <p className="flex-1 leading-relaxed">
         {success
-          ? "Payment received — you're enrolled. All 13 modules are unlocked."
+          ? "Payment received — you're enrolled. All 13 modules are unlocked below."
           : "We couldn't confirm that payment. If you were charged, contact support before trying again."}
       </p>
       <button
@@ -75,9 +80,20 @@ function PaymentBanner() {
 }
 
 function NyscTrainingViewInner() {
-  const [view, setView] = useState<"catalogue" | "lesson">("catalogue");
+  const [activeCode, setActiveCode] = useState<string | null>(null);
+  const { data } = useSWR<{ enrolled: boolean }>("/api/nysc/certificate", fetcher);
+  const enrolled = Boolean(data?.enrolled);
 
-  if (view === "lesson") return <LessonView onBack={() => setView("catalogue")} />;
+  if (activeCode) {
+    return (
+      <LessonView
+        code={activeCode}
+        enrolled={enrolled}
+        onBack={() => setActiveCode(null)}
+        onSelect={setActiveCode}
+      />
+    );
+  }
 
   return (
     <div>
@@ -105,7 +121,7 @@ function NyscTrainingViewInner() {
               <p className="mt-1 text-3xl font-extrabold text-white">{ngn(COURSE.priceNgn)}</p>
               <p className="mt-0.5 text-xs text-white/60">one-off · certificate on pass</p>
               <button
-                onClick={() => setView("lesson")}
+                onClick={() => setActiveCode(FREE_CODE)}
                 className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
               >
                 <PlayCircle className="size-4" /> Start lesson 1 free
@@ -130,6 +146,9 @@ function NyscTrainingViewInner() {
         {/* Curriculum */}
         <div className="px-7 py-8 md:px-10">
           <h3 className="text-sm font-semibold uppercase tracking-widest text-[#0F7A3D]">Programme at a glance</h3>
+          <p className="mt-1.5 text-sm text-gray-500">
+            {enrolled ? "You're enrolled — every module below is unlocked." : "Module 1.1 is free. Enrol to unlock the rest."}
+          </p>
           <div className="mt-5 grid gap-5 md:grid-cols-3">
             {COURSE_DAYS.map((d) => (
               <div key={d.day} className="rounded-2xl border border-gray-100 bg-[#F4FBF6] p-5">
@@ -142,16 +161,30 @@ function NyscTrainingViewInner() {
                     <p className="text-[11px] text-gray-400">{d.total}</p>
                   </div>
                 </div>
-                <p className="mt-2 text-sm font-medium text-gray-700">{d.title}</p>
-                <ul className="mt-3 space-y-2">
-                  {d.modules.map((m) => (
-                    <li key={m.code} className="flex items-start justify-between gap-2 text-sm">
-                      <span className="text-gray-600">
-                        <span className="font-mono text-xs text-[#0F7A3D]">{m.code}</span> {m.title}
-                      </span>
-                      <span className="shrink-0 text-xs text-gray-400">{m.minutes}m</span>
-                    </li>
-                  ))}
+                <ul className="mt-3 space-y-1">
+                  {d.modules.map((m) => {
+                    const unlocked = enrolled || m.code === FREE_CODE;
+                    return (
+                      <li key={m.code}>
+                        <button
+                          onClick={() => setActiveCode(m.code)}
+                          className={`flex w-full items-start justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors ${
+                            unlocked ? "text-gray-600 hover:bg-white hover:text-[#0F7A3D]" : "text-gray-400 hover:bg-white"
+                          }`}
+                        >
+                          <span className="flex items-center gap-1.5">
+                            {unlocked ? (
+                              <PlayCircle className="size-3.5 shrink-0 text-[#0F7A3D]/70" />
+                            ) : (
+                              <Lock className="size-3 shrink-0 text-gray-300" />
+                            )}
+                            <span className="font-mono text-xs text-[#0F7A3D]">{m.code}</span> {m.title}
+                          </span>
+                          <span className="shrink-0 text-xs text-gray-400">{m.minutes}m</span>
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}
@@ -205,11 +238,28 @@ function NyscTrainingViewInner() {
   );
 }
 
-function LessonView({ onBack }: { onBack: () => void }) {
+function LessonView({
+  code,
+  enrolled,
+  onBack,
+  onSelect,
+}: {
+  code: string;
+  enrolled: boolean;
+  onBack: () => void;
+  onSelect: (code: string) => void;
+}) {
+  const index = LESSONS.findIndex((l) => l.code === code);
+  const lesson = LESSONS[index] ?? LESSONS[0];
+  const unlocked = enrolled || lesson.code === FREE_CODE;
+  const day = COURSE_DAYS.find((d) => d.day === lesson.day)!;
+  const prev = index > 0 ? LESSONS[index - 1] : null;
+  const next = index < LESSONS.length - 1 ? LESSONS[index + 1] : null;
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key="lesson"
+        key={code}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
@@ -226,81 +276,144 @@ function LessonView({ onBack }: { onBack: () => void }) {
           <article className="order-2 lg:order-1">
             <div className="flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-[#0F7A3D] px-3 py-1 text-xs font-semibold text-white">
-                Day {FIRST_LESSON.day} · Module {FIRST_LESSON.code}
+                Day {lesson.day} · Module {lesson.code}
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400">
-                <Clock className="size-3.5" /> {FIRST_LESSON.minutes} min
+                <Clock className="size-3.5" /> {lesson.minutes} min
               </span>
             </div>
 
             <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-gray-900 text-balance md:text-3xl">
-              {FIRST_LESSON.title}
+              {lesson.title}
             </h2>
-            <p className="mt-3 text-base leading-relaxed text-gray-600 text-pretty">{FIRST_LESSON.intro}</p>
+            <p className="mt-3 text-base leading-relaxed text-gray-600 text-pretty">{lesson.intro}</p>
 
-            {/* Who hires */}
-            <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-[#0F7A3D]">
-                {FIRST_LESSON.whoHires.heading}
-              </h3>
-              <ul className="mt-4 space-y-3">
-                {FIRST_LESSON.whoHires.points.map((p) => (
-                  <li key={p} className="flex items-start gap-3 text-sm leading-relaxed text-gray-600">
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#0F7A3D]" />
-                    <span>{p}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {unlocked ? (
+              <>
+                {lesson.blocks.map((block, i) =>
+                  block.type === "points" ? (
+                    <div key={i} className="mt-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                      <h3 className="text-sm font-semibold uppercase tracking-widest text-[#0F7A3D]">
+                        {block.heading}
+                      </h3>
+                      <ul className="mt-4 space-y-3">
+                        {block.points.map((p) => (
+                          <li key={p} className="flex items-start gap-3 text-sm leading-relaxed text-gray-600">
+                            <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#0F7A3D]" />
+                            <span>{p}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div key={i} className="mt-8">
+                      <h3 className="text-lg font-bold text-gray-900">{block.heading}</h3>
+                      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                        {block.cards.map((t) => (
+                          <div key={t.n} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                            <span className="font-mono text-sm font-bold text-[#0F7A3D]">{t.n}</span>
+                            <p className="mt-1 font-semibold text-gray-900">{t.title}</p>
+                            <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{t.body}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
 
-            {/* What the screen tests */}
-            <h3 className="mt-10 text-lg font-bold text-gray-900">What the screen actually tests</h3>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {FIRST_LESSON.screenTests.map((t) => (
-                <div key={t.n} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                  <span className="font-mono text-sm font-bold text-[#0F7A3D]">{t.n}</span>
-                  <p className="mt-1 font-semibold text-gray-900">{t.title}</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{t.body}</p>
+                {/* Closing */}
+                <div className="mt-8 rounded-2xl border-l-4 border-[#0F7A3D] bg-[#F4FBF6] p-5">
+                  <p className="text-sm leading-relaxed text-gray-700 text-pretty">{lesson.closing}</p>
                 </div>
-              ))}
-            </div>
 
-            {/* Closing */}
-            <div className="mt-8 rounded-2xl border-l-4 border-[#0F7A3D] bg-[#F4FBF6] p-5">
-              <p className="text-sm leading-relaxed text-gray-700 text-pretty">{FIRST_LESSON.closing}</p>
-            </div>
-
-            <div className="mt-8 flex items-center justify-between rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <div>
-                <p className="font-semibold text-gray-900">Enjoyed lesson 1?</p>
-                <p className="text-sm text-gray-500">Enrol to unlock all 13 modules and the live practical.</p>
+                {lesson.code === FREE_CODE && !enrolled ? (
+                  <div className="mt-8 flex items-center justify-between rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                    <div>
+                      <p className="font-semibold text-gray-900">Enjoyed lesson 1?</p>
+                      <p className="text-sm text-gray-500">Enrol to unlock all 13 modules and the live practical.</p>
+                    </div>
+                    <EnrolButton variant="outline" />
+                  </div>
+                ) : (
+                  <div className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <CheckCircle2 className="size-4 text-[#0F7A3D]" />
+                      Module complete
+                    </div>
+                    {next ? (
+                      <button
+                        onClick={() => onSelect(next.code)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-[#0F7A3D] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#0c6633]"
+                      >
+                        Next: {next.code} {next.title} <ArrowRight className="size-4" />
+                      </button>
+                    ) : (
+                      <span className="text-sm font-medium text-[#0F7A3D]">
+                        That's the final module — check your certificate below.
+                      </span>
+                    )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-[#F4FBF6] p-8 text-center">
+                <span className="mx-auto grid size-12 place-items-center rounded-full bg-[#0F7A3D]/10 text-[#0F7A3D]">
+                  <Lock className="size-5" />
+                </span>
+                <p className="mt-4 font-semibold text-gray-900">This module is part of the full course</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-gray-500">
+                  Lesson 1.1 is free to preview. Enrol for NGN 2,000 to unlock this module and the other eleven,
+                  plus the live practical and your certificate.
+                </p>
+                <div className="mt-5 flex justify-center">
+                  <EnrolButton variant="outline" />
+                </div>
               </div>
-              <EnrolButton variant="outline" />
-            </div>
+            )}
           </article>
 
           {/* Running order sidebar */}
           <aside className="order-1 lg:order-2">
             <div className="lg:sticky lg:top-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Day 1 · running order</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+                Day {lesson.day} · running order
+              </p>
               <ul className="mt-3 space-y-1">
-                {COURSE_DAYS[0].modules.map((m, i) => (
-                  <li
-                    key={m.code}
-                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-                      i === 0 ? "bg-[#0F7A3D]/10 font-medium text-[#0F7A3D]" : "text-gray-500"
-                    }`}
-                  >
-                    {i === 0 ? (
-                      <PlayCircle className="size-4 shrink-0" />
-                    ) : (
-                      <Lock className="size-3.5 shrink-0 text-gray-300" />
-                    )}
-                    <span className="font-mono text-xs">{m.code}</span>
-                    <span className="truncate">{m.title}</span>
-                  </li>
-                ))}
+                {day.modules.map((m) => {
+                  const isActive = m.code === lesson.code;
+                  const isUnlocked = enrolled || m.code === FREE_CODE;
+                  return (
+                    <li key={m.code}>
+                      <button
+                        onClick={() => onSelect(m.code)}
+                        className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                          isActive
+                            ? "bg-[#0F7A3D]/10 font-medium text-[#0F7A3D]"
+                            : isUnlocked
+                            ? "text-gray-600 hover:bg-[#F4FBF6]"
+                            : "text-gray-400 hover:bg-[#F4FBF6]"
+                        }`}
+                      >
+                        {isUnlocked ? (
+                          <PlayCircle className="size-4 shrink-0" />
+                        ) : (
+                          <Lock className="size-3.5 shrink-0 text-gray-300" />
+                        )}
+                        <span className="font-mono text-xs">{m.code}</span>
+                        <span className="truncate">{m.title}</span>
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
+              {prev && (
+                <button
+                  onClick={() => onSelect(prev.code)}
+                  className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 transition-colors hover:text-[#0F7A3D]"
+                >
+                  <ArrowLeft className="size-3.5" /> {prev.code} {prev.title}
+                </button>
+              )}
             </div>
           </aside>
         </div>

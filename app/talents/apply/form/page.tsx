@@ -335,8 +335,14 @@ function FormContent() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
+                href="/dashboard"
+                className="h-11 px-6 inline-flex items-center justify-center rounded-full bg-[#0F7A3D] text-white font-semibold hover:bg-[#0c6633] transition-colors"
+              >
+                Go to dashboard
+              </Link>
+              <Link
                 href="/"
-                className="h-11 px-6 inline-flex items-center justify-center rounded-full bg-[#3B5BDB] text-white font-semibold hover:bg-[#2f49b2] transition-colors"
+                className="h-11 px-6 inline-flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-800 font-semibold hover:bg-gray-50 transition-colors"
               >
                 Back to home
               </Link>
