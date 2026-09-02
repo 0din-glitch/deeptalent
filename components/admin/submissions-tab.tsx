@@ -9,11 +9,14 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronRight,
+  Clock3,
   CreditCard,
+  Eye,
   ExternalLink,
   FileText,
   Globe,
   ImageIcon,
+  Layers,
   Linkedin,
   Mail,
   MapPin,
@@ -107,6 +110,24 @@ type Row = TalentRow | CompanyRow;
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
+const STATUS_ICON: Record<string, typeof Clock3> = {
+  pending: Clock3,
+  reviewing: Eye,
+  approved: CheckCircle2,
+  rejected: XCircle,
+};
+
+function relativeDate(iso: string) {
+  const then = new Date(iso).getTime();
+  const diffMs = Date.now() - then;
+  const day = 86_400_000;
+  if (diffMs < 60_000) return "just now";
+  if (diffMs < 3_600_000) return `${Math.floor(diffMs / 60_000)}m ago`;
+  if (diffMs < day) return `${Math.floor(diffMs / 3_600_000)}h ago`;
+  if (diffMs < 7 * day) return `${Math.floor(diffMs / day)}d ago`;
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
 export function SubmissionsTab({ kind }: { kind: Kind }) {
   const apiUrl =
     kind === "talent_application"
@@ -190,36 +211,70 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
     }
   }
 
+  const isTalent = kind === "talent_application";
+
   return (
     <div className="space-y-4">
+      {isTalent ? (
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">Applications</h2>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {counts.all} candidate{counts.all === 1 ? "" : "s"} in the pipeline
+            </p>
+          </div>
+          <button
+            onClick={() => mutate()}
+            className="h-9 px-3 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 inline-flex items-center gap-1.5 shrink-0"
+          >
+            <RefreshCw className="size-3.5" /> Refresh
+          </button>
+        </div>
+      ) : null}
+
       {/* Status filter chips */}
       <div className="flex items-center gap-2 flex-wrap">
-        {statusOptions.map((s) => (
-          <button
-            key={s}
-            onClick={() => setStatusFilter(s)}
-            className={`h-9 px-3 rounded-lg text-xs font-medium border transition-colors inline-flex items-center gap-2 ${
-              statusFilter === s
-                ? "bg-[#3B5BDB] text-white border-[#3B5BDB]"
-                : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
-            }`}
-          >
-            <span className="capitalize">{s === "all" ? "All" : s}</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                statusFilter === s ? "bg-white/20" : "bg-gray-100"
-              }`}
+        {statusOptions.map((s) => {
+          const Icon = isTalent ? STATUS_ICON[s] : null;
+          const active = statusFilter === s;
+          return (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={
+                isTalent
+                  ? `h-9 px-3.5 rounded-full text-xs font-semibold border transition-all inline-flex items-center gap-1.5 ${
+                      active
+                        ? "bg-[#3B5BDB] text-white border-[#3B5BDB] shadow-sm shadow-[#3B5BDB]/20"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                    }`
+                  : `h-9 px-3 rounded-lg text-xs font-medium border transition-colors inline-flex items-center gap-2 ${
+                      active
+                        ? "bg-[#3B5BDB] text-white border-[#3B5BDB]"
+                        : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+                    }`
+              }
             >
-              {counts[s] || 0}
-            </span>
+              {Icon && <Icon className="size-3.5" />}
+              <span className="capitalize">{s === "all" ? "All" : s}</span>
+              <span
+                className={`text-[10px] leading-none px-1.5 py-0.5 rounded-full ${
+                  active ? "bg-white/20" : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                {counts[s] || 0}
+              </span>
+            </button>
+          );
+        })}
+        {!isTalent && (
+          <button
+            onClick={() => mutate()}
+            className="ml-auto h-9 px-3 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 inline-flex items-center gap-1.5"
+          >
+            <RefreshCw className="size-3.5" /> Refresh
           </button>
-        ))}
-        <button
-          onClick={() => mutate()}
-          className="ml-auto h-9 px-3 rounded-lg text-xs font-medium border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 inline-flex items-center gap-1.5"
-        >
-          <RefreshCw className="size-3.5" /> Refresh
-        </button>
+        )}
         {kind === "company_inquiry" && (
           <button
             onClick={() => setShowAddRole(true)}
@@ -231,9 +286,11 @@ export function SubmissionsTab({ kind }: { kind: Kind }) {
       </div>
 
       {/* Role filter — talent applications only */}
-      {kind === "talent_application" && roleOptions.length > 1 && (
+      {isTalent && roleOptions.length > 1 && (
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">Role</span>
+          <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">
+            <Layers className="size-3.5" /> Role
+          </span>
           {roleOptions.map((r) => (
             <button
               key={r}
@@ -520,12 +577,23 @@ function StatusBadge({ status }: { status: string }) {
     qualified: "bg-emerald-50 text-emerald-700",
     closed: "bg-gray-100 text-gray-700",
   };
+  const dots: Record<string, string> = {
+    pending: "bg-amber-500",
+    reviewing: "bg-blue-500",
+    approved: "bg-emerald-500",
+    rejected: "bg-rose-500",
+    new: "bg-amber-500",
+    contacted: "bg-blue-500",
+    qualified: "bg-emerald-500",
+    closed: "bg-gray-400",
+  };
   return (
     <span
-      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${
         colors[status] || "bg-gray-100 text-gray-700"
       }`}
     >
+      <span className={`size-1.5 rounded-full ${dots[status] || "bg-gray-400"}`} />
       {status}
     </span>
   );
@@ -555,7 +623,15 @@ function SlimTalentList({
   return (
     <ul className="divide-y divide-gray-100">
       {rows.map((r) => {
-        const role = r.specialization || r.role_category || r.inferred_role || "—";
+        const role = r.specialization || r.role_category || r.inferred_role || null;
+        const matched =
+          matchSalaryRow(r.specialization) || matchSalaryRow(r.role_category) || matchSalaryRow(r.inferred_role) || null;
+        const initials = (r.full_name || r.email || "?")
+          .trim()
+          .split(/\s+/)
+          .slice(0, 2)
+          .map((p) => p.charAt(0).toUpperCase())
+          .join("");
         return (
           <li key={r.id}>
             <div
@@ -568,22 +644,46 @@ function SlimTalentList({
                   onOpen(r.id);
                 }
               }}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer text-left focus:outline-none focus:bg-gray-50"
+              className="group w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50/80 cursor-pointer text-left focus:outline-none focus:bg-gray-50/80 transition-colors"
             >
-              <div className="size-9 rounded-full bg-[#3B5BDB]/10 text-[#3B5BDB] text-sm font-bold flex items-center justify-center shrink-0">
-                {(r.full_name || r.email || "?").charAt(0).toUpperCase()}
+              <div className="size-10 rounded-full bg-gradient-to-br from-[#3B5BDB] to-[#8690FD] text-white text-sm font-bold flex items-center justify-center shrink-0">
+                {initials}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-medium text-gray-900 truncate">{r.full_name}</span>
+                  <span className="font-semibold text-gray-900 truncate">{r.full_name}</span>
                   <StatusBadge status={r.status} />
                 </div>
-                <div className="text-xs text-gray-500 truncate">
-                  {role} · {r.email}
+                <div className="mt-1 flex items-center gap-2.5 text-xs text-gray-500 flex-wrap">
+                  {role && (
+                    <span className="inline-flex items-center gap-1">
+                      <Briefcase className="size-3 text-gray-400" />
+                      {role}
+                    </span>
+                  )}
+                  {r.years_experience != null && (
+                    <span className="text-gray-300">·</span>
+                  )}
+                  {r.years_experience != null && (
+                    <span>{r.years_experience} yr{r.years_experience === 1 ? "" : "s"} exp</span>
+                  )}
+                  {r.country && <span className="text-gray-300">·</span>}
+                  {r.country && (
+                    <span className="inline-flex items-center gap-1">
+                      <MapPin className="size-3 text-gray-400" />
+                      {r.country}
+                    </span>
+                  )}
                 </div>
               </div>
-              <span className="text-xs text-gray-400 shrink-0 hidden sm:block">
-                {new Date(r.created_at).toLocaleDateString()}
+              {matched && (
+                <span className="hidden md:inline-flex shrink-0 items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold">
+                  <Wallet className="size-3" />
+                  {formatRange(matched.usd.junior, matched.usd.senior)}
+                </span>
+              )}
+              <span className="text-xs text-gray-400 shrink-0 hidden sm:block w-16 text-right">
+                {relativeDate(r.created_at)}
               </span>
               <button
                 onClick={(e) => {
@@ -591,11 +691,11 @@ function SlimTalentList({
                   onEmail(r);
                 }}
                 title="Send custom email"
-                className="shrink-0 size-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#3B5BDB] hover:bg-blue-50 transition-colors"
+                className="shrink-0 size-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-[#3B5BDB] hover:bg-blue-50 transition-colors opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
               >
                 <Mail className="size-4" />
               </button>
-              <ChevronRight className="size-4 text-gray-300 shrink-0" />
+              <ChevronRight className="size-4 text-gray-300 shrink-0 transition-transform group-hover:translate-x-0.5" />
             </div>
           </li>
         );
