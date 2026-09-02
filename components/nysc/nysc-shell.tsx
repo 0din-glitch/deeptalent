@@ -41,11 +41,11 @@ export function NyscShell({ active, name, eyebrow, title, subtitle, children }: 
             <Link href="/" className="inline-flex items-center gap-2.5">
               <img
                 src="/images/nysc-logo.png"
-                alt="NYSC"
+                alt="Post-NYSC"
                 className="size-10 rounded-full bg-white/90 object-contain p-0.5"
               />
               <span className="text-sm font-semibold text-white">
-                DeepTalent <span className="text-white/60">for NYSC</span>
+                DeepTalent <span className="text-white/60">for post-NYSC</span>
               </span>
             </Link>
 

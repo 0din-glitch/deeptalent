@@ -172,7 +172,7 @@ function NyscForm() {
 
   return (
     <NyscAuthShell
-      title="NYSC Corps Member sign up"
+      title="Post-NYSC Corps Member sign up"
       subtitle={
         track === "training"
           ? "Get Global Workforce Ready — tell us where you're starting from and we'll route you into a post-NYSC pathway."
@@ -235,7 +235,7 @@ function NyscForm() {
 
         <div>
           <label htmlFor="callUpNumber" className="mb-1.5 block text-sm font-medium text-white/90">
-            NYSC call-up number
+            Post-NYSC call-up number
           </label>
           <input
             id="callUpNumber"
@@ -272,7 +272,7 @@ function NyscForm() {
 
         <div>
           <label htmlFor="stateCode" className="mb-1.5 block text-sm font-medium text-white/90">
-            NYSC state code
+Post-NYSC state code
           </label>
           <input
             id="stateCode"

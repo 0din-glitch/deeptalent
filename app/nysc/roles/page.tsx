@@ -4,9 +4,9 @@ import { NyscShell } from "@/components/nysc/nysc-shell";
 import { NyscRolesView } from "@/components/nysc/nysc-roles-view";
 
 export const metadata = {
-  title: "Global roles for NYSC corps members | DeepTalent",
+  title: "Global roles for post-NYSC corps members | DeepTalent",
   description:
-    "Entry-level remote roles with UK, US, Canadian and Australian employers, open to Global Workforce Ready NYSC corps members.",
+    "Entry-level remote roles with UK, US, Canadian and Australian employers, open to Global Workforce Ready post-NYSC corps members.",
 };
 
 export default async function NyscRolesPage() {

@@ -23,7 +23,7 @@ function NyscLoginForm() {
 
     const normalized = stateCode.trim().toUpperCase();
     if (!STATE_CODE_PATTERN.test(normalized)) {
-      setError("Enter a valid NYSC state code, e.g. OG/24B/1234.");
+      setError("Enter a valid post-NYSC state code, e.g. OG/24B/1234.");
       return;
     }
 
@@ -75,7 +75,7 @@ function NyscLoginForm() {
   return (
     <NyscAuthShell
       title="Corps Member log in"
-      subtitle="Log in with your NYSC state code to pick up where you left off."
+      subtitle="Log in with your post-NYSC state code to pick up where you left off."
       footer={
         <>
           New corps member?{" "}
@@ -91,7 +91,7 @@ function NyscLoginForm() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
           <label htmlFor="stateCode" className="mb-1.5 block text-sm font-medium text-white/90">
-            NYSC state code
+Post-NYSC state code
           </label>
           <input
             id="stateCode"

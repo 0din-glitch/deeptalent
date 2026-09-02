@@ -4,9 +4,9 @@ import { NyscShell } from "@/components/nysc/nysc-shell";
 import { NyscTrainingView } from "@/components/nysc/nysc-training-view";
 
 export const metadata = {
-  title: "Post-NYSC pathways for NYSC corps members | DeepTalent",
+  title: "Post-NYSC pathways for post-NYSC corps members | DeepTalent",
   description:
-    "Get Global Workforce Ready — a three-day course that prepares NYSC corps members for remote roles with UK, US, Canadian and Australian employers.",
+    "Get Global Workforce Ready — a three-day course that prepares post-NYSC corps members for remote roles with UK, US, Canadian and Australian employers.",
 };
 
 export default async function NyscTrainingPage() {
