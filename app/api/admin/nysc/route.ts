@@ -57,7 +57,7 @@ export async function GET() {
     sb
       .from("profiles")
       .select(
-        "id,email,full_name,role,created_at,nysc_call_up_number,nysc_state_of_origin,nysc_state_code,nysc_track,nysc_course_completed_at,nysc_course_completed_source,nysc_certificate_number,nysc_certificate_sent_at"
+        "id,email,full_name,role,created_at,nysc_call_up_number,nysc_state_of_origin,nysc_state_code,nysc_track,nysc_course_completed_at,nysc_course_completed_source,nysc_certificate_number,nysc_certificate_sent_at,nysc_course_paid_at,nysc_course_payment_amount_ngn"
       )
       .or("nysc_call_up_number.not.is.null,nysc_state_code.not.is.null")
       .order("created_at", { ascending: false })
@@ -101,6 +101,8 @@ export async function GET() {
       course_completed_source: p.nysc_course_completed_source,
       certificate_number: p.nysc_certificate_number,
       certificate_sent_at: p.nysc_certificate_sent_at,
+      enrolled_at: p.nysc_course_paid_at,
+      enrollment_amount_ngn: p.nysc_course_payment_amount_ngn,
     };
   });
 
@@ -109,6 +111,7 @@ export async function GET() {
     ready: members.filter((m) => m.track === "ready").length,
     training: members.filter((m) => m.track === "training").length,
     signed_in: members.filter((m) => m.last_sign_in_at).length,
+    enrolled: members.filter((m) => m.enrolled_at).length,
   };
 
   return NextResponse.json({ members, summary });

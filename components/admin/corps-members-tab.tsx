@@ -5,8 +5,10 @@ import useSWR from "swr";
 import {
   Award,
   BadgeCheck,
+  CreditCard,
   GraduationCap,
   Loader2,
+  Lock,
   MapPin,
   RefreshCw,
   Rocket,
@@ -31,11 +33,13 @@ type Member = {
   course_completed_source: "self_reported" | "admin_issued" | null;
   certificate_number: string | null;
   certificate_sent_at: string | null;
+  enrolled_at: string | null;
+  enrollment_amount_ngn: number | null;
 };
 
 type Payload = {
   members: Member[];
-  summary: { total: number; ready: number; training: number; signed_in: number };
+  summary: { total: number; ready: number; training: number; signed_in: number; enrolled: number };
 };
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -59,6 +63,33 @@ function TrackBadge({ track }: { track: string | null }) {
     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
       <Rocket className="size-3.5" /> Workforce ready
     </span>
+  );
+}
+
+function EnrollmentBadge({
+  enrolledAt,
+  amountNgn,
+}: {
+  enrolledAt: string | null;
+  amountNgn: number | null;
+}) {
+  if (!enrolledAt) {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-400">
+        <Lock className="size-3.5" /> Not enrolled
+      </span>
+    );
+  }
+  return (
+    <div>
+      <span className="inline-flex items-center gap-1 text-xs font-medium text-[#3B5BDB]">
+        <CreditCard className="size-3.5" /> Enrolled
+      </span>
+      <p className="text-[11px] text-gray-400 mt-0.5">
+        {formatDate(enrolledAt)}
+        {amountNgn != null ? ` · ₦${amountNgn.toLocaleString("en-NG")}` : ""}
+      </p>
+    </div>
   );
 }
 
@@ -132,7 +163,7 @@ export function CorpsMembersTab() {
     return rows;
   }, [data, query, track]);
 
-  const summary = data?.summary ?? { total: 0, ready: 0, training: 0, signed_in: 0 };
+  const summary = data?.summary ?? { total: 0, ready: 0, training: 0, signed_in: 0, enrolled: 0 };
 
   return (
     <div>
@@ -156,8 +187,9 @@ export function CorpsMembersTab() {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
         <StatCard label="Total corps members" value={summary.total} icon={ShieldCheck} tone="bg-[#3B5BDB]/10 text-[#3B5BDB]" />
+        <StatCard label="Enrolled (paid)" value={summary.enrolled} icon={CreditCard} tone="bg-indigo-50 text-indigo-600" />
         <StatCard label="Workforce ready" value={summary.ready} icon={Rocket} tone="bg-emerald-50 text-emerald-600" />
         <StatCard label="In post-NYSC track" value={summary.training} icon={GraduationCap} tone="bg-amber-50 text-amber-600" />
         <StatCard label="Have logged in" value={summary.signed_in} icon={BadgeCheck} tone="bg-blue-50 text-blue-600" />
@@ -207,7 +239,7 @@ export function CorpsMembersTab() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                {["Corps member", "Call-up number", "State", "Track", "Status", "Apps", "Joined", "Certificate"].map((h) => (
+                {["Corps member", "Call-up number", "State", "Track", "Status", "Enrolment", "Apps", "Joined", "Certificate"].map((h) => (
                   <th
                     key={h}
                     className="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap"
@@ -256,6 +288,9 @@ export function CorpsMembersTab() {
                         </span>
                       )}
                       {lastSignIn && <p className="text-xs text-gray-400 mt-0.5">{lastSignIn}</p>}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap">
+                      <EnrollmentBadge enrolledAt={m.enrolled_at} amountNgn={m.enrollment_amount_ngn} />
                     </td>
                     <td className="px-5 py-4 text-sm text-gray-700 tabular-nums">{m.application_count}</td>
                     <td className="px-5 py-4 text-xs text-gray-400 whitespace-nowrap">
