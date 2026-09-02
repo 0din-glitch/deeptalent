@@ -194,20 +194,20 @@ export async function sendNyscVerificationCodeEmail(
 
     const firstName = (fullName || "there").split(" ")[0];
 
-    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Your DeepTalent NYSC verification code</title></head><body style="margin:0;padding:0;background-color:#eefbf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;">
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Your DeepTalent Post-NYSC verification code</title></head><body style="margin:0;padding:0;background-color:#eefbf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#eefbf3;padding:32px 0;">
         <tr><td align="center">
           <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,122,61,0.14);">
             <!-- Header -->
             <tr><td style="background:linear-gradient(135deg,#0b4d27 0%,#0F7A3D 55%,#34c46e 100%);padding:44px 32px;text-align:center;color:#ffffff;">
-              <p style="margin:0;font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85;">DeepTalent &middot; NYSC Corps Members</p>
+              <p style="margin:0;font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85;">DeepTalent &middot; Post-NYSC Corps Members</p>
               <h1 style="margin:12px 0 0 0;font-size:26px;font-weight:700;letter-spacing:-0.4px;">Verify your email</h1>
-              <p style="margin:8px 0 0 0;font-size:14px;opacity:.9;">One quick step to activate your corps member account.</p>
+              <p style="margin:8px 0 0 0;font-size:14px;opacity:.9;">One quick step to activate your post corps member account.</p>
             </td></tr>
             <!-- Body -->
             <tr><td style="padding:40px 40px 8px 40px;">
               <p style="margin:0 0 14px 0;font-size:16px;font-weight:500;color:#111827;">Hi ${firstName},</p>
-              <p style="margin:0 0 28px 0;font-size:15px;line-height:1.7;color:#4b5563;">Use the verification code below to confirm your email address and finish setting up your DeepTalent NYSC account.</p>
+              <p style="margin:0 0 28px 0;font-size:15px;line-height:1.7;color:#4b5563;">Use the verification code below to confirm your email address and finish setting up your DeepTalent Post-NYSC account.</p>
               <!-- Code -->
               <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto 8px auto;"><tr>${digitCells}</tr></table>
               <p style="margin:20px 0 0 0;text-align:center;font-size:13px;color:#9ca3af;">This code expires in <strong style="color:#6b7280;">1 hour</strong>.</p>
@@ -218,7 +218,7 @@ export async function sendNyscVerificationCodeEmail(
             <!-- Footer -->
             <tr><td style="padding:28px 40px 40px 40px;">
               <div style="border-top:1px solid #e5e7eb;padding-top:22px;text-align:center;font-size:13px;color:#9ca3af;">
-                <p style="margin:0 0 6px 0;font-weight:600;color:#6b7280;">DeepTalent for NYSC</p>
+                <p style="margin:0 0 6px 0;font-weight:600;color:#6b7280;">DeepTalent for Post-NYSC</p>
                 <p style="margin:0;">© ${new Date().getFullYear()} DeepTalent. Cross-border talent infrastructure.</p>
               </div>
             </td></tr>
@@ -231,7 +231,7 @@ export async function sendNyscVerificationCodeEmail(
       from: FROM_EMAIL,
       to: email,
       replyTo: REPLY_TO_EMAIL,
-      subject: `${code} is your DeepTalent NYSC verification code`,
+      subject: `${code} is your DeepTalent Post-NYSC verification code`,
       html: withReplyNotice(html),
     });
 
@@ -258,20 +258,20 @@ export async function sendNyscCertificateEmail(
     const resend = getResendClient();
     const firstName = (fullName || "there").split(" ")[0];
 
-    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Your DeepTalent NYSC certificate</title></head><body style="margin:0;padding:0;background-color:#eefbf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;">
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Your DeepTalent Post-NYSC certificate</title></head><body style="margin:0;padding:0;background-color:#eefbf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#374151;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#eefbf3;padding:32px 0;">
         <tr><td align="center">
           <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,122,61,0.14);">
             <!-- Header -->
             <tr><td style="background:linear-gradient(135deg,#0b4d27 0%,#0F7A3D 55%,#34c46e 100%);padding:44px 32px;text-align:center;color:#ffffff;">
-              <p style="margin:0;font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85;">DeepTalent &middot; NYSC Corps Members</p>
+              <p style="margin:0;font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85;">DeepTalent &middot; Post-NYSC Corps Members</p>
               <h1 style="margin:12px 0 0 0;font-size:26px;font-weight:700;letter-spacing:-0.4px;">Congratulations, ${firstName}!</h1>
               <p style="margin:8px 0 0 0;font-size:14px;opacity:.9;">Your Global Workforce Readiness certificate is ready.</p>
             </td></tr>
             <!-- Body -->
             <tr><td style="padding:40px 40px 8px 40px;">
               <p style="margin:0 0 14px 0;font-size:16px;font-weight:500;color:#111827;">Hi ${firstName},</p>
-              <p style="margin:0 0 20px 0;font-size:15px;line-height:1.7;color:#4b5563;">You've successfully completed the DeepTalent Global Workforce Readiness Programme for NYSC corps members. Your official certificate is attached to this email as a PDF, signed and issued by DeepTalent.</p>
+              <p style="margin:0 0 20px 0;font-size:15px;line-height:1.7;color:#4b5563;">You've successfully completed the DeepTalent Global Workforce Readiness Programme for post-NYSC corps members. Your official certificate is attached to this email as a PDF, signed and issued by DeepTalent.</p>
               <div style="background:#ecfdf5;border-left:4px solid #0F7A3D;border-radius:8px;padding:14px 18px;margin:8px 0 28px 0;font-size:13px;color:#065f46;line-height:1.7;">
                 Certificate No. <strong>${certificateNumber}</strong>
               </div>
@@ -280,7 +280,7 @@ export async function sendNyscCertificateEmail(
             <!-- Footer -->
             <tr><td style="padding:28px 40px 40px 40px;">
               <div style="border-top:1px solid #e5e7eb;padding-top:22px;text-align:center;font-size:13px;color:#9ca3af;">
-                <p style="margin:0 0 6px 0;font-weight:600;color:#6b7280;">DeepTalent for NYSC</p>
+                <p style="margin:0 0 6px 0;font-weight:600;color:#6b7280;">DeepTalent for Post-NYSC</p>
                 <p style="margin:0;">© ${new Date().getFullYear()} DeepTalent. Cross-border talent infrastructure.</p>
               </div>
             </td></tr>
@@ -293,7 +293,7 @@ export async function sendNyscCertificateEmail(
       from: FROM_EMAIL,
       to: email,
       replyTo: REPLY_TO_EMAIL,
-      subject: "Your DeepTalent NYSC certificate of completion",
+      subject: "Your DeepTalent Post-NYSC certificate of completion",
       html: withReplyNotice(html),
       attachments: [
         {
