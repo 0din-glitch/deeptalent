@@ -74,11 +74,11 @@ function NyscLoginForm() {
 
   return (
     <NyscAuthShell
-      title="Corps Member log in"
+      title="Post Corps Member log in"
       subtitle="Log in with your post-NYSC state code to pick up where you left off."
       footer={
         <>
-          New corps member?{" "}
+          New post corps member?{" "}
           <Link
             href="/auth/nysc"
             className="font-semibold text-white underline underline-offset-2 hover:text-white/80"
