@@ -44,11 +44,11 @@ export function NyscAuthShell({ title, subtitle, children, footer }: NyscAuthShe
             <Link href="/" className="inline-flex items-center gap-2.5">
               <img
                 src="/images/nysc-logo.png"
-                alt="NYSC"
+                alt="Post-NYSC"
                 className="size-9 rounded-full bg-white/90 object-contain p-0.5"
               />
               <span className="text-sm font-semibold text-white/90">
-                DeepTalent <span className="text-white/60">for NYSC</span>
+                DeepTalent <span className="text-white/60">for post-NYSC</span>
               </span>
             </Link>
 

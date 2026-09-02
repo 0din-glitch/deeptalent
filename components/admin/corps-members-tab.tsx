@@ -172,10 +172,10 @@ export function CorpsMembersTab() {
         <div>
           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
             <ShieldCheck className="size-5 text-[#3B5BDB]" />
-            NYSC Corps Members
+            Post-NYSC Corps Members
           </h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            Sign-ups and logins from the dedicated NYSC corps member pages.
+            Sign-ups and logins from the dedicated post-NYSC corps member pages.
           </p>
         </div>
         <button
@@ -231,7 +231,7 @@ export function CorpsMembersTab() {
           <ShieldCheck className="size-8 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500">No corps members yet.</p>
           <p className="text-gray-400 text-sm mt-1">
-            Sign-ups from the NYSC corps member pages will appear here.
+            Sign-ups from the post-NYSC corps member pages will appear here.
           </p>
         </div>
       ) : (

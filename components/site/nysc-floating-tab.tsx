@@ -17,7 +17,7 @@ function NigeriaFlag({ className }: { className?: string }) {
 }
 
 /**
- * A floating tab pinned to the right edge for NYSC Corps Members. Collapsed it
+ * A floating tab pinned to the right edge for Post-NYSC Corps Members. Collapsed it
  * shows a vertical label with a small Nigerian-flag mark; on hover (desktop) or
  * tap (touch) it expands into a panel with the two matched pathways.
  */
@@ -52,13 +52,13 @@ export function NyscFloatingTab() {
             exit={{ opacity: 0, x: 24 }}
             transition={{ type: "spring", stiffness: 260, damping: 26 }}
             role="dialog"
-            aria-label="NYSC Corps Members pathways"
+            aria-label="Post-NYSC Corps Members pathways"
             className="w-[280px] max-w-[calc(100vw-4.5rem)] rounded-l-3xl border border-r-0 border-gray-200 bg-white shadow-2xl shadow-black/10 p-5"
           >
             <div className="flex items-start justify-between gap-3 mb-1">
               <div className="flex items-center gap-2">
                 <NigeriaFlag className="h-4 w-6 rounded-[2px] shrink-0" />
-                <p className="text-sm font-bold text-gray-900 leading-tight">NYSC Corps Members</p>
+                <p className="text-sm font-bold text-gray-900 leading-tight">Post-NYSC Corps Members</p>
               </div>
               <button
                 type="button"
