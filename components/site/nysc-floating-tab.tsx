@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { GraduationCap, ShieldCheck, UserPlus, X } from "lucide-react";
-import { FluidCTA } from "@/components/site/fluid-cta";
+import { ArrowRight, GraduationCap, ShieldCheck, X } from "lucide-react";
 
 /** Small Nigerian flag mark — the "pictorial representation" for the tab. */
 function NigeriaFlag({ className }: { className?: string }) {
@@ -19,9 +18,8 @@ function NigeriaFlag({ className }: { className?: string }) {
 
 /**
  * A floating tab pinned to the right edge for Post-NYSC Corps Members. Collapsed it
- * shows a bold green vertical label with a Nigerian-flag mark and a gentle
- * attention pulse so it's easy to spot; on hover (desktop) or tap (touch) it
- * expands into a panel with the pathways — each a green fluid-morph CTA.
+ * shows a vertical label with a small Nigerian-flag mark; on hover (desktop) or
+ * tap (touch) it expands into a panel with the two matched pathways.
  */
 export function NyscFloatingTab() {
   const [open, setOpen] = useState(false);
@@ -55,117 +53,94 @@ export function NyscFloatingTab() {
             transition={{ type: "spring", stiffness: 260, damping: 26 }}
             role="dialog"
             aria-label="Post-NYSC Corps Members pathways"
-            className="w-[320px] max-w-[calc(100vw-4.5rem)] rounded-l-3xl border border-r-0 border-gray-200 bg-white shadow-2xl shadow-black/10 p-6"
+            className="w-[280px] max-w-[calc(100vw-4.5rem)] rounded-l-3xl border border-r-0 border-gray-200 bg-white shadow-2xl shadow-black/10 p-5"
           >
             <div className="flex items-start justify-between gap-3 mb-1">
               <div className="flex items-center gap-2">
-                <NigeriaFlag className="h-5 w-8 rounded-[2px] shrink-0" />
-                <p className="text-base font-bold text-gray-900 leading-tight">Post-NYSC Corps Members</p>
+                <NigeriaFlag className="h-4 w-6 rounded-[2px] shrink-0" />
+                <p className="text-sm font-bold text-gray-900 leading-tight">Post-NYSC Corps Members</p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
-                className="shrink-0 size-7 rounded-full grid place-items-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                className="shrink-0 size-6 rounded-full grid place-items-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
               >
-                <X className="size-4" />
+                <X className="size-3.5" />
               </button>
             </div>
-            <p className="text-sm text-gray-500 leading-relaxed mb-5">
+            <p className="text-xs text-gray-500 leading-relaxed mb-4">
               Work global. Stay in Nigeria.
             </p>
 
-            <div className="flex flex-col gap-2.5">
-              <FluidCTA
+            <div className="space-y-2">
+              <Link
                 href="/auth/nysc?track=ready"
-                color="green"
-                size="md"
-                className="w-full justify-between"
+                className="group flex items-center gap-3 rounded-2xl border border-gray-200 p-3 hover:border-[#3B5BDB]/40 hover:bg-[#3B5BDB]/[0.03] transition-colors"
               >
-                <span className="inline-flex items-center gap-2">
-                  <ShieldCheck className="size-4" />
-                  I&apos;m Global Workforce Ready
+                <span className="shrink-0 size-9 rounded-xl bg-[#3B5BDB]/10 grid place-items-center">
+                  <ShieldCheck className="size-4 text-[#3B5BDB]" />
                 </span>
-              </FluidCTA>
-
-              <FluidCTA
-                href="/auth/nysc?track=training"
-                color="green"
-                variant="outline"
-                size="md"
-                className="w-full justify-between"
-              >
-                <span className="inline-flex items-center gap-2">
-                  <GraduationCap className="size-4" />
-                  Get Global Workforce Ready
+                <span className="flex-1 min-w-0">
+                  <span className="block text-xs font-semibold text-gray-900 leading-tight">
+                    I&apos;m Global Workforce Ready
+                  </span>
+                  <span className="block text-[11px] text-gray-500 leading-tight mt-0.5">
+                    Already ICAN, ACCA or tech-certified — verify &amp; apply
+                  </span>
                 </span>
-              </FluidCTA>
-            </div>
-
-            {/* Not-in-NYSC path — no call-up number or state code required */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <FluidCTA
-                href="/auth/nysc?track=training&open=1"
-                color="green"
-                variant="outline"
-                size="sm"
-                showArrow={false}
-                className="w-full"
-              >
-                <span className="inline-flex items-center gap-2">
-                  <UserPlus className="size-4" />
-                  Not in NYSC? Join here
-                </span>
-              </FluidCTA>
-              <p className="mt-2 text-center text-[11px] text-gray-400 leading-tight">
-                Same programme — no call-up number or state code needed.
-              </p>
-            </div>
-
-            <p className="mt-4 text-center text-xs text-gray-500">
-              Already registered?{" "}
-              <Link href="/auth/nysc/login" className="font-semibold text-[#0F7A3D] underline underline-offset-2">
-                Log in
+                <ArrowRight className="size-3.5 text-gray-300 group-hover:text-[#3B5BDB] shrink-0 transition-colors" />
               </Link>
-            </p>
+
+              <Link
+                href="/auth/nysc?track=training"
+                className="group flex items-center gap-3 rounded-2xl border border-gray-200 p-3 hover:border-[#3B5BDB]/40 hover:bg-[#3B5BDB]/[0.03] transition-colors"
+              >
+                <span className="shrink-0 size-9 rounded-xl bg-[#8690FD]/10 grid place-items-center">
+                  <GraduationCap className="size-4 text-[#8690FD]" />
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 leading-tight">
+                    Get Global Workforce Ready
+                    <span className="shrink-0 rounded-full bg-[#8690FD]/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-[#8690FD]">
+                      Post-NYSC
+                    </span>
+                  </span>
+                  <span className="block text-[11px] text-gray-500 leading-tight mt-0.5">
+                    Start the post-NYSC pathway to reach that standard
+                  </span>
+                </span>
+                <ArrowRight className="size-3.5 text-gray-300 group-hover:text-[#3B5BDB] shrink-0 transition-colors" />
+              </Link>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Collapsed tab — bold green so it's easy to find, with an attention pulse */}
-      <div className="relative shrink-0">
-        <motion.span
-          aria-hidden="true"
-          className="absolute inset-0 rounded-l-2xl bg-[#0F7A3D]"
-          animate={{ opacity: [0.45, 0, 0.45], scale: [1, 1.12, 1] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          aria-expanded={open}
-          aria-label="Post-NYSC Corps Members — Work global. Stay in Nigeria."
-          className={`relative flex flex-col items-center gap-2.5 rounded-l-2xl bg-[#0F7A3D] shadow-xl shadow-[#0F7A3D]/30 px-3.5 py-6 text-white transition-colors hover:bg-[#0B5E2F] ${
-            open ? "opacity-0 pointer-events-none" : "opacity-100"
-          }`}
+      {/* Collapsed tab */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-label="Post-NYSC Corps Members — Work global. Stay in Nigeria."
+        className={`shrink-0 flex flex-col items-center gap-2 rounded-l-2xl border border-r-0 border-gray-200 bg-white shadow-lg shadow-black/5 px-2.5 py-4 hover:bg-gray-50 transition-colors ${
+          open ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
+        <NigeriaFlag className="h-4 w-6 rounded-[2px]" />
+        <span
+          className="text-[11px] font-semibold text-gray-800 tracking-wide"
+          style={{ writingMode: "vertical-rl" }}
         >
-          <span className="grid place-items-center rounded-md bg-white/95 p-1">
-            <NigeriaFlag className="h-4 w-6 rounded-[1px]" />
-          </span>
-          <span
-            className="text-[13px] font-bold tracking-wide"
-            style={{ writingMode: "vertical-rl" }}
-          >
-            Post-NYSC Corps Members
-          </span>
-          <span
-            className="rounded-full bg-white/20 px-1.5 py-1.5 text-[10px] font-bold uppercase tracking-wide"
-            style={{ writingMode: "vertical-rl" }}
-          >
-            Start here
-          </span>
-        </button>
-      </div>
+          Post-NYSC Corps Members
+        </span>
+        <span
+          className="rounded-full bg-[#8690FD]/15 px-1.5 py-1 text-[9px] font-bold uppercase tracking-wide text-[#8690FD]"
+          style={{ writingMode: "vertical-rl" }}
+        >
+          Post-NYSC
+        </span>
+      </button>
     </div>
   );
 }

@@ -7,7 +7,6 @@ import { ArrowUpRight } from "lucide-react";
 
 type Size = "sm" | "md" | "lg";
 type Variant = "primary" | "outline";
-type Color = "blue" | "green";
 
 interface FluidCTAProps {
   href?: string;
@@ -15,7 +14,6 @@ interface FluidCTAProps {
   children: React.ReactNode;
   size?: Size;
   variant?: Variant;
-  color?: Color;
   className?: string;
   showArrow?: boolean;
   type?: "button" | "submit";
@@ -38,7 +36,6 @@ export function FluidCTA({
   children,
   size = "md",
   variant = "primary",
-  color = "blue",
   className = "",
   showArrow = true,
   type = "button",
@@ -46,36 +43,24 @@ export function FluidCTA({
   const [hovered, setHovered] = useState(false);
 
   const isPrimary = variant === "primary";
-  const isGreen = color === "green";
 
-  // Brand shades per color
-  const baseColor = isGreen ? "#0F7A3D" : "#3B5BDB";
-  const darkColor = isGreen ? "#0B5E2F" : "#2F49B0";
-  const shadowRgb = isGreen ? "15,122,61" : "59,91,219";
-
-  // Resting appearance (inline styles so dynamic brand colors are reliable)
-  const restingStyle: React.CSSProperties = isPrimary
-    ? {
-        backgroundColor: baseColor,
-        color: "#ffffff",
-        boxShadow: `0 8px 24px rgba(${shadowRgb},0.25)`,
-      }
-    : {
-        backgroundColor: "#ffffff",
-        color: baseColor,
-        border: `1px solid ${baseColor}66`,
-      };
+  // Base (resting) colors
+  const resting = isPrimary
+    ? "bg-[#3B5BDB] text-white shadow-[0_8px_24px_rgba(59,91,219,0.25)]"
+    : "bg-white border border-[#3B5BDB]/40 text-[#3B5BDB]";
 
   // The rising liquid layer color (contrasting shade for depth)
-  const liquidColor = isPrimary ? darkColor : baseColor;
+  const liquid = isPrimary ? "bg-[#2F49B0]" : "bg-[#3B5BDB]";
+
+  // Text color once the liquid covers the button
+  const hoverText = isPrimary ? "text-white" : "text-white";
 
   const inner = (
     <>
       {/* Rising liquid fill with a wobbling top edge */}
       <motion.span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-0"
-        style={{ backgroundColor: liquidColor }}
+        className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 ${liquid}`}
         initial={false}
         animate={{
           height: hovered ? "100%" : "0%",
@@ -86,7 +71,7 @@ export function FluidCTA({
       />
       <motion.span
         className={`relative z-10 inline-flex items-center gap-2 transition-colors duration-200 ${
-          hovered ? "text-white" : ""
+          hovered ? hoverText : ""
         }`}
         animate={{ x: hovered && showArrow ? -2 : 0 }}
         transition={{ duration: 0.2 }}
@@ -104,15 +89,14 @@ export function FluidCTA({
     </>
   );
 
-  const classes = `group relative overflow-hidden inline-flex items-center justify-center font-semibold rounded-full transition-shadow duration-300 ${PADS[size]} ${
-    isPrimary ? "hover:shadow-lg" : "hover:shadow-md"
+  const classes = `group relative overflow-hidden inline-flex items-center justify-center font-semibold rounded-full transition-shadow duration-300 ${PADS[size]} ${resting} ${
+    isPrimary ? "hover:shadow-[0_12px_32px_rgba(59,91,219,0.35)]" : "hover:shadow-md"
   } ${className}`;
 
   if (href) {
     return (
       <Link
         href={href}
-        style={restingStyle}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className={classes}
@@ -126,7 +110,6 @@ export function FluidCTA({
     <button
       type={type}
       onClick={onClick}
-      style={restingStyle}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={classes}
