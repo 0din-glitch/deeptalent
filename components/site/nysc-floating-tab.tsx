@@ -105,7 +105,7 @@ export function NyscFloatingTab() {
             {/* Not-in-NYSC path — no call-up number or state code required */}
             <div className="mt-4 pt-4 border-t border-gray-100">
               <FluidCTA
-                href="/auth/nysc?track=training&open=1"
+                href="/auth/nysc?track=training&noCallUp=1"
                 color="green"
                 variant="outline"
                 size="sm"
