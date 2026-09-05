@@ -32,6 +32,9 @@ export async function generateMetadata({
     title: `${content.headline} — DeepTalent`,
     description: `${content.subheadline}. Published salary range: $${row.usd.junior.toLocaleString("en-US")}–$${row.usd.senior.toLocaleString("en-US")}/mo (junior→senior). Apply to DeepTalent's selective network or express interest today.`,
     keywords: content.keywords.join(", "),
+    alternates: {
+      canonical: `${APP_URL}/roles/${slug}`,
+    },
     openGraph: {
       title: `${content.headline} — DeepTalent`,
       description: content.subheadline,
