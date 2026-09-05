@@ -11,6 +11,8 @@ import { ArrowLeft } from "lucide-react";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://deeptalent.app";
+
 type Post = {
   id: string;
   slug: string;
@@ -75,11 +77,52 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} — DeepTalent Insights`,
     description: post.excerpt ?? undefined,
+    alternates: {
+      canonical: `${APP_URL}/insights/${slug}`,
+    },
     openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      url: `${APP_URL}/insights/${slug}`,
+      publishedTime: post.published_at ?? undefined,
+      authors: post.author_name ? [post.author_name] : undefined,
+      images: post.cover_image_url ? [post.cover_image_url] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
       title: post.title,
       description: post.excerpt ?? undefined,
       images: post.cover_image_url ? [post.cover_image_url] : undefined,
     },
+  };
+}
+
+function buildArticleSchema(post: Post) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    image: post.cover_image_url ? [post.cover_image_url] : undefined,
+    datePublished: post.published_at ?? undefined,
+    dateModified: post.published_at ?? undefined,
+    author: post.author_name
+      ? { "@type": "Person", name: post.author_name }
+      : { "@type": "Organization", name: "DeepTalent" },
+    publisher: {
+      "@type": "Organization",
+      name: "DeepTalent",
+      logo: {
+        "@type": "ImageObject",
+        url: `${APP_URL}/images/logo-wordmark.png`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${APP_URL}/insights/${post.slug}`,
+    },
+    articleSection: post.category ?? undefined,
   };
 }
 
@@ -95,6 +138,10 @@ export default async function InsightArticle({
 
   return (
     <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildArticleSchema(post)) }}
+      />
       <SiteNavbar />
 
       <article className="pt-24 md:pt-28 pb-16">

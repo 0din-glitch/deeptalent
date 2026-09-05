@@ -8,10 +8,22 @@ import { ArrowRight } from "lucide-react";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://deeptalent.app";
+
 export const metadata = {
   title: "Insights — DeepTalent",
   description:
     "Strategic intelligence on global hiring, AI vetting, and remote team scaling from the DeepTalent team.",
+  alternates: {
+    canonical: `${APP_URL}/insights`,
+  },
+  openGraph: {
+    type: "website",
+    title: "Insights — DeepTalent",
+    description:
+      "Strategic intelligence on global hiring, AI vetting, and remote team scaling from the DeepTalent team.",
+    url: `${APP_URL}/insights`,
+  },
 };
 
 type Post = {
