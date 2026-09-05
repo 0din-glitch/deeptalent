@@ -226,14 +226,34 @@ export async function resolveNyscLogin(
 // NYSC Corps Member sign-up: same OTP flow as above, plus the corps-member
 // specific fields (call-up number, state of origin, state code, track).
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Corps members without a call-up number/state code (e.g. not yet mobilized)
+// log in with plain email + password instead. After a successful client-side
+// sign-in, resolve their pathway destination from the session server-side.
+// ---------------------------------------------------------------------------
+export async function getNyscDestination(): Promise<string> {
+  const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) return "/auth/nysc/login";
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("nysc_track")
+    .eq("id", userData.user.id)
+    .maybeSingle();
+
+  return profile?.nysc_track === "training" ? "/nysc/training" : "/nysc/roles";
+}
+
 export async function signUpNyscCorpsMember(
   email: string,
   password: string,
   fullName: string,
-  callUpNumber: string,
-  stateOfOrigin: string,
-  stateCode: string,
-  track: "ready" | "training"
+  callUpNumber: string | null,
+  stateOfOrigin: string | null,
+  stateCode: string | null,
+  track: "ready" | "training",
+  options?: { school?: string; nyscStatus?: "serving" | "not_started" }
 ) {
   const admin = createServiceClient();
 
@@ -281,6 +301,8 @@ export async function signUpNyscCorpsMember(
         nysc_state_of_origin: stateOfOrigin,
         nysc_state_code: stateCode,
         nysc_track: track,
+        nysc_school: options?.school || null,
+        nysc_status: options?.nyscStatus || "serving",
       },
       { onConflict: "id" }
     );

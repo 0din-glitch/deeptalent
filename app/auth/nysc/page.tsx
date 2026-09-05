@@ -17,6 +17,7 @@ function NyscForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const track = searchParams.get("track") === "training" ? "training" : "ready";
+  const noCallUp = searchParams.get("noCallUp") === "1";
 
   const [step, setStep] = useState<"form" | "verify">("form");
   const [fullName, setFullName] = useState("");
@@ -25,6 +26,7 @@ function NyscForm() {
   const [callUpNumber, setCallUpNumber] = useState("");
   const [stateOfOrigin, setStateOfOrigin] = useState("");
   const [stateCode, setStateCode] = useState("");
+  const [school, setSchool] = useState("");
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
@@ -40,19 +42,24 @@ function NyscForm() {
     setError(null);
     setWarning(null);
 
-    const normalizedCallUp = callUpNumber.trim().toUpperCase();
-    if (!CALL_UP_PATTERN.test(normalizedCallUp)) {
-      setError("Enter a valid call-up number, e.g. NYSC/UNL/2024/1234567.");
-      return;
-    }
-    const normalizedStateCode = stateCode.trim().toUpperCase();
-    if (!STATE_CODE_PATTERN.test(normalizedStateCode)) {
-      setError("Enter a valid NYSC state code, e.g. OG/24B/1234.");
-      return;
-    }
-    if (!stateOfOrigin) {
-      setError("Select your state of origin.");
-      return;
+    let normalizedCallUp: string | null = null;
+    let normalizedStateCode: string | null = null;
+
+    if (!noCallUp) {
+      normalizedCallUp = callUpNumber.trim().toUpperCase();
+      if (!CALL_UP_PATTERN.test(normalizedCallUp)) {
+        setError("Enter a valid call-up number, e.g. NYSC/UNL/2024/1234567.");
+        return;
+      }
+      normalizedStateCode = stateCode.trim().toUpperCase();
+      if (!STATE_CODE_PATTERN.test(normalizedStateCode)) {
+        setError("Enter a valid post-NYSC state code, e.g. OG/24B/1234.");
+        return;
+      }
+      if (!stateOfOrigin) {
+        setError("Select your state of origin.");
+        return;
+      }
     }
     if (!captchaVerified) {
       setError("Complete the security check before continuing.");
@@ -65,9 +72,10 @@ function NyscForm() {
       password,
       fullName,
       normalizedCallUp,
-      stateOfOrigin,
+      noCallUp ? null : stateOfOrigin,
       normalizedStateCode,
-      track
+      track,
+      noCallUp ? { school: school.trim() || undefined, nyscStatus: "not_started" } : undefined
     );
 
     if (result.error && !("needsCode" in result && result.needsCode)) {
@@ -172,9 +180,11 @@ function NyscForm() {
 
   return (
     <NyscAuthShell
-      title="Post-NYSC Corps Member sign up"
+      title={noCallUp ? "Join the Post-NYSC pathway" : "Post-NYSC Corps Member sign up"}
       subtitle={
-        track === "training"
+        noCallUp
+          ? "Not in NYSC yet? No call-up number or state code needed — sign up with your email and we'll get you Global Workforce Ready."
+          : track === "training"
           ? "Get Global Workforce Ready — tell us where you're starting from and we'll route you into a post-NYSC pathway."
           : "I'm Global Workforce Ready — verify your credentials and apply to global roles."
       }
@@ -233,56 +243,76 @@ function NyscForm() {
           />
         </div>
 
-        <div>
-          <label htmlFor="callUpNumber" className="mb-1.5 block text-sm font-medium text-white/90">
-            Post-NYSC call-up number
-          </label>
-          <input
-            id="callUpNumber"
-            required
-            value={callUpNumber}
-            onChange={(e) => setCallUpNumber(e.target.value)}
-            className="frosted-input uppercase"
-            placeholder="NYSC/UNL/2024/1234567"
-          />
-          <p className="mt-1 text-xs text-white/60">Format: NYSC/[SCHOOL]/[YEAR]/[NUMBER]</p>
-        </div>
+        {noCallUp ? (
+          <div>
+            <label htmlFor="school" className="mb-1.5 block text-sm font-medium text-white/90">
+              School / institution <span className="text-white/50">(optional)</span>
+            </label>
+            <input
+              id="school"
+              value={school}
+              onChange={(e) => setSchool(e.target.value)}
+              className="frosted-input"
+              placeholder="University of Lagos"
+            />
+            <p className="mt-1 text-xs text-white/60">
+              No call-up number yet? No problem — you can log in and complete this later.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div>
+              <label htmlFor="callUpNumber" className="mb-1.5 block text-sm font-medium text-white/90">
+                Post-NYSC call-up number
+              </label>
+              <input
+                id="callUpNumber"
+                required
+                value={callUpNumber}
+                onChange={(e) => setCallUpNumber(e.target.value)}
+                className="frosted-input uppercase"
+                placeholder="NYSC/UNL/2024/1234567"
+              />
+              <p className="mt-1 text-xs text-white/60">Format: NYSC/[SCHOOL]/[YEAR]/[NUMBER]</p>
+            </div>
 
-        <div>
-          <label htmlFor="stateOfOrigin" className="mb-1.5 block text-sm font-medium text-white/90">
-            State of origin
-          </label>
-          <select
-            id="stateOfOrigin"
-            required
-            value={stateOfOrigin}
-            onChange={(e) => setStateOfOrigin(e.target.value)}
-            className="frosted-input [color-scheme:dark]"
-          >
-            <option value="" disabled className="text-gray-900">
-              Select your state
-            </option>
-            {NIGERIAN_STATES.map((state) => (
-              <option key={state} value={state} className="text-gray-900">
-                {state}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div>
+              <label htmlFor="stateOfOrigin" className="mb-1.5 block text-sm font-medium text-white/90">
+                State of origin
+              </label>
+              <select
+                id="stateOfOrigin"
+                required
+                value={stateOfOrigin}
+                onChange={(e) => setStateOfOrigin(e.target.value)}
+                className="frosted-input [color-scheme:dark]"
+              >
+                <option value="" disabled className="text-gray-900">
+                  Select your state
+                </option>
+                {NIGERIAN_STATES.map((state) => (
+                  <option key={state} value={state} className="text-gray-900">
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div>
-          <label htmlFor="stateCode" className="mb-1.5 block text-sm font-medium text-white/90">
-Post-NYSC state code
-          </label>
-          <input
-            id="stateCode"
-            required
-            value={stateCode}
-            onChange={(e) => setStateCode(e.target.value)}
-            className="frosted-input uppercase"
-            placeholder="OG/24B/1234"
-          />
-        </div>
+            <div>
+              <label htmlFor="stateCode" className="mb-1.5 block text-sm font-medium text-white/90">
+                Post-NYSC state code
+              </label>
+              <input
+                id="stateCode"
+                required
+                value={stateCode}
+                onChange={(e) => setStateCode(e.target.value)}
+                className="frosted-input uppercase"
+                placeholder="OG/24B/1234"
+              />
+            </div>
+          </>
+        )}
 
         <CaptchaCheck onVerified={setCaptchaVerified} />
 
@@ -305,6 +335,12 @@ Post-NYSC state code
           <Link href="/terms" className="underline">Terms</Link> and{" "}
           <Link href="/privacy" className="underline">Privacy Policy</Link>.
         </p>
+
+        {noCallUp && (
+          <p className="text-center text-xs text-white/60">
+            You&apos;ll log in with this email — no state code required.
+          </p>
+        )}
       </form>
     </NyscAuthShell>
   );
