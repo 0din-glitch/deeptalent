@@ -76,20 +76,9 @@ export function NyscFloatingTab() {
             </p>
 
             <div className="flex flex-col gap-2.5">
+              {/* 1. Get Global Workforce Ready — now uses the no-call-up-number form */}
               <FluidCTA
-                href="/auth/nysc?track=ready"
-                color="green"
-                size="md"
-                className="w-full justify-between"
-              >
-                <span className="inline-flex items-center gap-2">
-                  <ShieldCheck className="size-4" />
-                  I&apos;m Global Workforce Ready
-                </span>
-              </FluidCTA>
-
-              <FluidCTA
-                href="/auth/nysc?track=training"
+                href="/auth/nysc?track=training&noCallUp=1"
                 color="green"
                 variant="outline"
                 size="md"
@@ -100,10 +89,8 @@ export function NyscFloatingTab() {
                   Get Global Workforce Ready
                 </span>
               </FluidCTA>
-            </div>
 
-            {/* Not-in-NYSC path — no call-up number or state code required */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
+              {/* 2. Not in NYSC? Join here — same no-call-up-number form */}
               <FluidCTA
                 href="/auth/nysc?track=training&noCallUp=1"
                 color="green"
@@ -117,10 +104,24 @@ export function NyscFloatingTab() {
                   Not in NYSC? Join here
                 </span>
               </FluidCTA>
-              <p className="mt-2 text-center text-[11px] text-gray-400 leading-tight">
-                Same programme — no call-up number or state code needed.
-              </p>
+
+              {/* 3. I'm Global Workforce Ready — unchanged form */}
+              <FluidCTA
+                href="/auth/nysc?track=ready"
+                color="green"
+                size="md"
+                className="w-full justify-between"
+              >
+                <span className="inline-flex items-center gap-2">
+                  <ShieldCheck className="size-4" />
+                  I&apos;m Global Workforce Ready
+                </span>
+              </FluidCTA>
             </div>
+
+            <p className="mt-3 text-center text-[11px] text-gray-400 leading-tight">
+              Same programme — no call-up number or state code needed to get ready.
+            </p>
 
             <p className="mt-4 text-center text-xs text-gray-500">
               Already registered?{" "}
