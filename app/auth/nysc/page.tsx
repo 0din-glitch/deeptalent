@@ -183,7 +183,7 @@ function NyscForm() {
       title={noCallUp ? "Join the Post-NYSC pathway" : "Post-NYSC Corps Member sign up"}
       subtitle={
         noCallUp
-          ? "Not in NYSC yet? No call-up number or state code needed — sign up with your email and we'll get you Global Workforce Ready."
+          ? "Not in NYSC? No call-up number or state code needed — sign up with your email and we'll get you Global Workforce Ready."
           : track === "training"
           ? "Get Global Workforce Ready — tell us where you're starting from and we'll route you into a post-NYSC pathway."
           : "I'm Global Workforce Ready — verify your credentials and apply to global roles."
